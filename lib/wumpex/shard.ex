@@ -17,18 +17,50 @@ defmodule Wumpex.Shard do
   If your bot is in more than 250K guilds, check out [Sharding for Very Large Bots](https://discord.com/developers/docs/topics/gateway#sharding-for-very-large-bots)
   """
 
-  use Supervisor
+  use GenServer
 
-  @spec start_link(init_args :: keyword()) :: Supervisor.on_start()
-  def start_link(init_args) do
-    Supervisor.start_link(__MODULE__, init_args, name: __MODULE__)
+  require Logger
+
+  @typedoc """
+  The options that can be passed into `start_link/1` and `init/1`.
+
+  Contains the following fields:
+    * `:shard` - the identifier for this shard, in the form of `[current_shard, shard_count]`
+  """
+  @type options :: [
+    shard: {non_neg_integer(), non_neg_integer()},
+    gateway: String.t()
+  ]
+
+  @typedoc """
+  The state of the shard.
+
+  Contains the following fields:
+    * `:supervisor` - the `DynamicSupervisor` that supervises the children of the shard.
+  """
+  @type state :: %{
+    supervisor: pid()
+  }
+
+  @spec start_link(init_args :: options()) :: GenServer.on_start()
+  def start_link(init_args \\ []) do
+    GenServer.start_link(__MODULE__, init_args)
   end
 
-  @impl Supervisor
-  def init(_init_args) do
-    children = [
-    ]
+  @impl GenServer
+  def init(init_args) do
+    {:ok, supervisor} = DynamicSupervisor.start_link(strategy: :one_for_one)
 
-    Supervisor.init(children, strategy: :one_for_one)
+    {:ok, %{
+      supervisor: supervisor
+    }, {:continue, init_args}}
+  end
+
+  # Finish up the initialization.
+  @impl GenServer
+  def handle_continue(init_args, state) do
+    Logger.info(inspect(init_args))
+
+    {:noreply, state}
   end
 end
