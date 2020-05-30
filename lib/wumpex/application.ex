@@ -6,8 +6,8 @@ defmodule Wumpex.Application do
   @impl Application
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Wumpex.Worker.start_link(arg)
-      # {Wumpex.Worker, arg}
+      # Normally the shard configuration comes from the Discord API, we're taking shortcuts here
+      {Wumpex.Shard, [shard: {0, 1}, gateway: "wss://gateway.discord.gg"]}
     ]
 
     Supervisor.start_link(children,

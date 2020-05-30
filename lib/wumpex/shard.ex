@@ -42,24 +42,28 @@ defmodule Wumpex.Shard do
     supervisor: pid()
   }
 
-  @spec start_link(init_args :: options()) :: GenServer.on_start()
-  def start_link(init_args \\ []) do
-    GenServer.start_link(__MODULE__, init_args)
+  @spec start_link(options :: options()) :: GenServer.on_start()
+  def start_link(options \\ []) do
+    GenServer.start_link(__MODULE__, options)
   end
 
   @impl GenServer
-  def init(init_args) do
+  def init(options) do
     {:ok, supervisor} = DynamicSupervisor.start_link(strategy: :one_for_one)
 
     {:ok, %{
       supervisor: supervisor
-    }, {:continue, init_args}}
+    }, {:continue, options}}
   end
 
   # Finish up the initialization.
   @impl GenServer
-  def handle_continue(init_args, state) do
-    Logger.info(inspect(init_args))
+  def handle_continue(options, %{supervisor: supervisor} = state) do
+    shard = Keyword.fetch!(options, :shard)
+    gateway = Keyword.fetch!(options, :gateway)
+
+    {:ok, worker} = DynamicSupervisor.start_child(supervisor, {Wumpex.Gateway.Worker, shard: shard})
+    {:ok, _websocket} = DynamicSupervisor.start_child(supervisor, {Wumpex.Base.Websocket, url: "#{gateway}?v=6&encoding=etf", worker: worker})
 
     {:noreply, state}
   end
