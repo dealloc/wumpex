@@ -1,0 +1,9 @@
+{
+	"recommendations": [
+		"JakeBecker.elixir-ls",
+		"EditorConfig.EditorConfig",
+		"pgourlain.erlang",
+		"benvp.vscode-hex-pm-intellisense",
+		"joshjg.vscode-credo"
+	]
+}
