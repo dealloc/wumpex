@@ -9,4 +9,6 @@
   "makeup": {:hex, :makeup, "1.0.2", "0b9f7bfb7a88bed961341b359bc2cc1b233517af891ba4890ec5a580ffe738b4", [:mix], [{:nimble_parsec, "~> 0.5", [hex: :nimble_parsec, repo: "hexpm", optional: false]}], "hexpm", "43833299231c6a6983afc75a34e43eeba638521d5527ff89809fa6372424fd7e"},
   "makeup_elixir": {:hex, :makeup_elixir, "0.14.1", "4f0e96847c63c17841d42c08107405a005a2680eb9c7ccadfd757bd31dabccfb", [:mix], [{:makeup, "~> 1.0", [hex: :makeup, repo: "hexpm", optional: false]}], "hexpm", "f2438b1a80eaec9ede832b5c41cd4f373b38fd7aa33e3b22d9db79e640cbde11"},
   "nimble_parsec": {:hex, :nimble_parsec, "0.6.0", "32111b3bf39137144abd7ba1cce0914533b2d16ef35e8abc5ec8be6122944263", [:mix], [], "hexpm", "27eac315a94909d4dc68bc07a4a83e06c8379237c5ea528a9acff4ca1c873c52"},
+  "socket": {:hex, :socket, "0.3.13", "98a2ab20ce17f95fb512c5cadddba32b57273e0d2dba2d2e5f976c5969d0c632", [:mix], [], "hexpm", "f82ea9833ef49dde272e6568ab8aac657a636acb4cf44a7de8a935acb8957c2e"},
+  "websocket_client": {:hex, :websocket_client, "1.4.2", "f1036e3f9427eecdb66808eee56dbcaeb5a1a352306e6a0d0d23a9487205f4d7", [:rebar3], [], "hexpm", "c005e5f8f2f6a8533c497a509dc52f3e6fb42fa2e0d67bff8ebc8802868d84ed"},
 }
