@@ -1,10 +1,10 @@
-defmodule Wumpex.Websocket do
+defmodule Wumpex.Base.Websocket do
   @moduledoc """
   Provides a generic component for opening a websocket connection and interacting with it.
 
   This module is designed to be used as part of a supervision tree:
 
-      {Wumpex.Websocket, url: "wss://some.server", worker: MyApplication.WebsocketHandler}
+      {Wumpex.Base.Websocket, url: "wss://some.server", worker: MyApplication.WebsocketHandler}
 
   This will start a websocket connection (secured with SSL) to *some.server* and send incoming events to a module called `MyApplication.WebsocketHandler`.
 

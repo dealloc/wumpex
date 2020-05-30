@@ -1,13 +1,13 @@
-defmodule Wumpex.WebsocketTest do
+defmodule Wumpex.Base.WebsocketTest do
   use ExUnit.Case, async: false
 
   @moduletag :integration
-  doctest Wumpex.Websocket
+  doctest Wumpex.Base.Websocket
 
-  describe "Wumpex.Websocket should" do
+  describe "Wumpex.Base.Websocket should" do
     test "connect to websocket servers" do
       server = WebsocketHelpers.accept_one()
-      {:ok, client} = Wumpex.Websocket.start_link(url: "ws://localhost:8080", worker: self())
+      {:ok, client} = Wumpex.Base.Websocket.start_link(url: "ws://localhost:8080", worker: self())
       assert Process.alive?(client)
 
       Task.await(server, 1_000)
@@ -15,8 +15,8 @@ defmodule Wumpex.WebsocketTest do
 
     test "send messages to it's worker in :text mode" do
       server = WebsocketHelpers.echo_one()
-      {:ok, client} = Wumpex.Websocket.start_link(url: "ws://localhost:8080", worker: self())
-      Wumpex.Websocket.send(client, "Hello world", mode: :text)
+      {:ok, client} = Wumpex.Base.Websocket.start_link(url: "ws://localhost:8080", worker: self())
+      Wumpex.Base.Websocket.send(client, "Hello world", mode: :text)
       assert_receive {:"$gen_cast", {{:text, "Hello world"}, _pid}}
 
       Task.await(server, 1_000)
@@ -24,8 +24,8 @@ defmodule Wumpex.WebsocketTest do
 
     test "send messages to it's worker in :binary mode" do
       server = WebsocketHelpers.echo_one()
-      {:ok, client} = Wumpex.Websocket.start_link(url: "ws://localhost:8080", worker: self())
-      Wumpex.Websocket.send(client, "Hello world", mode: :binary)
+      {:ok, client} = Wumpex.Base.Websocket.start_link(url: "ws://localhost:8080", worker: self())
+      Wumpex.Base.Websocket.send(client, "Hello world", mode: :binary)
       assert_receive {:"$gen_cast", {{:binary, "Hello world"}, _pid}}
 
       Task.await(server, 1_000)
