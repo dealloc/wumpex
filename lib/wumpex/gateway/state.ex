@@ -11,15 +11,17 @@ defmodule Wumpex.Gateway.State do
     * `:ack` - Whether or not a heartbeat ACK has been received.
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
+    * `:guild_sup` - The `Wumpex.Guild.Guilds` supervisor.
   """
   @type t :: %__MODULE__{
           token: String.t(),
           ack: boolean(),
           sequence: non_neg_integer() | nil,
-          session_id: String.t() | nil
+          session_id: String.t() | nil,
+          guild_sup: pid()
         }
 
   @enforce_keys [:token, :ack]
 
-  defstruct [:token, :ack, :sequence, :session_id]
+  defstruct [:token, :ack, :sequence, :session_id, :guild_sup]
 end

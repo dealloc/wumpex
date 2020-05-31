@@ -13,16 +13,16 @@ defmodule Wumpex.MixProject do
       aliases: aliases(),
       docs: [
         groups_for_modules: [
-          "Base": [
+          Base: [
             Wumpex.Base.Websocket,
             Wumpex.Base.Distributed
           ],
-          "Gateway": [
+          Gateway: [
             Wumpex.Gateway,
             Wumpex.Gateway.Worker,
             Wumpex.Gateway.State,
             Wumpex.Gateway.Opcodes,
-            Wumpex.Gateway.EventHandler,
+            Wumpex.Gateway.EventHandler
           ]
         ]
       ]

@@ -21,6 +21,8 @@ defmodule Wumpex.Shard do
 
   require Logger
 
+  alias Wumpex.Guild.Guilds
+
   @typedoc """
   The options that can be passed into `start_link/1` and `init/1`.
 
@@ -64,10 +66,13 @@ defmodule Wumpex.Shard do
     shard = Keyword.fetch!(options, :shard)
     gateway = Keyword.fetch!(options, :gateway)
 
+    {:ok, guild_sup} = Guilds.start_link([])
+
     {:ok, worker} =
       DynamicSupervisor.start_child(
         supervisor,
-        {Wumpex.Gateway.Worker, shard: shard, gateway: gateway, token: Wumpex.token()}
+        {Wumpex.Gateway.Worker,
+         shard: shard, gateway: gateway, token: Wumpex.token(), guild_sup: guild_sup}
       )
 
     {:ok, _websocket} =

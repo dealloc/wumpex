@@ -22,11 +22,13 @@ defmodule Wumpex.Gateway.Worker do
     * `:token` - The bot token
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
     * `:gateway` - The URL this shard should connect to.
+    * `:guild_sup` - The `Wumpex.Guild.Guilds` supervisor.
   """
   @type options :: [
           token: String.t(),
           shard: {non_neg_integer(), non_neg_integer()},
-          gateway: String.t()
+          gateway: String.t(),
+          guild_sup: pid()
         ]
 
   @spec start_link(options :: options()) :: GenServer.on_start()
@@ -40,7 +42,8 @@ defmodule Wumpex.Gateway.Worker do
     {:ok,
      %State{
        token: Keyword.fetch!(options, :token),
-       ack: false
+       ack: false,
+       guild_sup: Keyword.fetch!(options, :guild_sup)
      }}
   end
 

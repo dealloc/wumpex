@@ -1,6 +1,16 @@
 defmodule Wumpex.Gateway.EventHandler do
-  alias Wumpex.Gateway.State
+  @moduledoc """
+  Contains event handling logic for `Wumpex.Gateway.Worker`.
+
+  This module contains the `dispatch/3` method which the `Wumpex.Gateway.Worker` calls after decoding an incoming message.
+  Events that do not affect a specific guild directly (HELLO, READY, RESUMED, ...) are handled here.
+
+  Events that are for a specific guild (MESSAGE_CREATE, PRESENCE_UPDATE, ...) are dispatched to the approperiate `Wumpex.Guild.Client` using the `Wumpex.Guild.Guilds` module.
+  """
+
   alias Wumpex.Base.Websocket
+  alias Wumpex.Gateway.State
+  alias Wumpex.Guild.Guilds
 
   require Logger
 
@@ -30,10 +40,14 @@ defmodule Wumpex.Gateway.EventHandler do
     %State{state | sequence: sequence, session_id: session_id}
   end
 
-  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, _websocket, state) do
+  def dispatch(
+        %{op: 0, s: sequence, t: :GUILD_CREATE, d: event},
+        _websocket,
+        %State{guild_sup: guild_sup} = state
+      ) do
     Logger.info("Guild became available: #{inspect(event)}")
 
-    # TODO we should start up a guild worker here.
+    Guilds.start_guild(guild_sup, event.id)
 
     %State{state | sequence: sequence}
   end
@@ -41,19 +55,29 @@ defmodule Wumpex.Gateway.EventHandler do
   def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, _websocket, state) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
-    # TODO we should start up a guild worker here.
+    Guilds.stop_guild(guild_id)
 
     %State{state | sequence: sequence}
   end
 
-  def dispatch(%{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event}, _websocket, state) do
+  def dispatch(
+        %{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event},
+        _websocket,
+        state
+      ) do
     Logger.info("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    # TODO we should dispatch to the relevant guild worker here
+    Guilds.dispatch!(guild_id, event)
 
     %State{state | sequence: sequence}
   end
 
+  @doc """
+  The dispatch event is called for all incoming events from the Discord gateway.
+
+  The `Wumpex.Gateway.EventHandler` tries to handle any non-specific event inline, maintains the sequence state and handles resumes.
+  Unknown events are simply discarded and a warning is logged.
+  """
   @spec dispatch(event :: State.t(), websocket :: pid(), state :: State.t()) :: State.t()
   def dispatch(event, _websocket, state) do
     Logger.warn("Received an unhandled event: #{inspect(event)}")

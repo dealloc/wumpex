@@ -5,15 +5,26 @@ defmodule Wumpex.Gateway.Opcodes do
   See the [official documentation](https://discord.com/developers/docs/topics/gateway#commands-and-events-gateway-commands) for a full list.
   """
 
+  @typedoc """
+  Represents a generic OPCODE response.
+
+  Opcodes usually have a top level `"op"` field which contains the numerical ID and a `"d"` field which contains the payload.
+  """
   @type opcode :: map()
 
   @doc """
   Generates a HEARTBEAT opcode.
 
+      iex> Wumpex.Gateway.Opcodes.heartbeat(nil)
+      %{"op" => 1, "d" => nil}
+
+      iex> Wumpex.Gateway.Opcodes.heartbeat(100)
+      %{"op" => 1, "d" => 100}
+
   See the [official documentation](https://discord.com/developers/docs/topics/gateway#heartbeat).
   """
   @spec heartbeat(sequence :: non_neg_integer() | nil) :: opcode()
-  def heartbeat(sequence),
+  def heartbeat(sequence) when is_nil(sequence) or is_integer(sequence),
     do: %{
       "op" => 1,
       "d" => sequence
@@ -21,6 +32,19 @@ defmodule Wumpex.Gateway.Opcodes do
 
   @doc """
   Generate an IDENTIFY opcode.
+
+      iex> Wumpex.Gateway.Opcodes.identify("test")
+      %{
+        "op" => 2,
+        "d" => %{
+          "token" => "test",
+          "properties" => %{
+            "$os" => :linux,
+            "$browser" => "wumpex",
+            "$device" => "wumpex"
+          }
+        }
+      }
 
   See the [official documentation](https://discord.com/developers/docs/topics/gateway#identify)
   """
@@ -44,6 +68,16 @@ defmodule Wumpex.Gateway.Opcodes do
 
   @doc """
   Generate a RESUME opcode.
+
+      iex> Wumpex.Gateway.Opcodes.resume("test", 20, "session")
+      %{
+        "op" => 6,
+        "d" => %{
+          "token" => "test",
+          "session_id" => "session",
+          "seq" => 20
+        }
+      }
 
   See the [official documentation](https://discord.com/developers/docs/topics/gateway#resume)
   """
