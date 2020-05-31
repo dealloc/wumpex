@@ -19,17 +19,23 @@ defmodule Wumpex.Gateway.EventHandler do
     send(self(), {:heartbeat, interval, websocket})
     send(self(), {:identify, websocket})
 
+    Logger.debug("Received HELLO!")
     %State{state | ack: true}
   end
 
   # Handles HEARTBEAT_ACK
-  def dispatch(%{op: 11}, _websocket, state), do: %State{state | ack: true}
+  def dispatch(%{op: 11}, _websocket, state) do
+    Logger.debug("Received heartbeat ack!")
+
+    %State{state | ack: true}
+  end
 
   # Handles INVALID_SESSION
   # https://discord.com/developers/docs/topics/gateway#invalid-session
   def dispatch(%{"op" => 9}, websocket, state) do
     Websocket.close(websocket, :invalid_session)
 
+    Logger.warn("Received INVALID_SESSION, Websocket will be closed!")
     state
   end
 
@@ -65,7 +71,7 @@ defmodule Wumpex.Gateway.EventHandler do
         _websocket,
         state
       ) do
-    Logger.info("#{event_name} (#{guild_id}): #{inspect(event)}")
+    Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
     Guilds.dispatch!(guild_id, event)
 

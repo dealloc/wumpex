@@ -15,6 +15,8 @@ defmodule Wumpex.Gateway.Worker do
   alias Wumpex.Gateway.Opcodes
   alias Wumpex.Gateway.State
 
+  require Logger
+
   @typedoc """
   The options that can be passed into `start_link/1` and `init/1`.
 
@@ -66,9 +68,11 @@ defmodule Wumpex.Gateway.Worker do
     message =
       case session_id do
         nil ->
+          Logger.info("Sending IDENTIFY")
           Opcodes.identify(token)
 
         session_id ->
+          Logger.info("Sending RESUME")
           Opcodes.resume(token, sequence, session_id)
       end
 
@@ -85,6 +89,7 @@ defmodule Wumpex.Gateway.Worker do
     message = Opcodes.heartbeat(sequence)
     Gateway.dispatch(websocket, message)
 
+    Logger.info("Sent heartbeat ##{sequence}")
     Process.send_after(self(), {:heartbeat, interval, websocket}, interval)
     {:noreply, %State{state | ack: false}}
   end
@@ -93,6 +98,8 @@ defmodule Wumpex.Gateway.Worker do
   # According to the docs, we need to close the connection and resume.
   @impl GenServer
   def handle_info({:heartbeat, _interval, _websocket}, state) do
+    Logger.warn("No heartbeat ack was received between heartbeats!")
+
     {:noreply, %State{state | ack: false}}
   end
 end
