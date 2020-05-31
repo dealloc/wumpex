@@ -11,7 +11,6 @@ defmodule Wumpex.Base.Websocket do
   ## Options
   The websocket supports the following options (also see `t:options/0`):
     * `:url` - The URL to which the websocket should connect.
-    * `:name` - The name under which the websocket process should register itself (this defaults to `{:local, __MODULE__}`, see `t:GenServer.name/0` for more information).
     * `:worker` - The worker to which incoming events will be dispatched (see `t:GenServer.server/0` for more information).
 
   ## Workers
@@ -52,14 +51,11 @@ defmodule Wumpex.Base.Websocket do
   @typedoc """
   The options that can be passed into the `child_spec/1` and `start_link/1` method.
     * `:url` - The URL to which the websocket should connect.
-    * `:name` - The name under which the websocket process should register itself (this defaults to `{:local, __MODULE__}`, see `t:GenServer.name/0` for more information).
     * `:worker` - The worker to which incoming events will be dispatched (see `t:GenServer.server/0` for more information).
   """
   @type options :: [
           # The URL to which the websocket should connect.
           url: String.t() | binary(),
-          # The name under which to register the process.
-          name: GenServer.name() | nil,
           # The worker which handles incoming events.
           worker: GenServer.server()
         ]
@@ -124,10 +120,9 @@ defmodule Wumpex.Base.Websocket do
   @spec start_link(options()) :: :ignore | {:error, any()} | {:ok, pid}
   def start_link(options) do
     url = Keyword.fetch!(options, :url)
-    name = Keyword.get(options, :name, {:local, __MODULE__})
 
     Logger.debug("Connecting to #{url}")
-    :websocket_client.start_link(name, url, __MODULE__, options, [])
+    :websocket_client.start_link(url, __MODULE__, options, [])
   end
 
   # Initialize the state and re-connection strategy of the websocket.
