@@ -25,12 +25,13 @@ defmodule Wumpex.Shard do
   The options that can be passed into `start_link/1` and `init/1`.
 
   Contains the following fields:
-    * `:shard` - the identifier for this shard, in the form of `[current_shard, shard_count]`
+    * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
+    * `:gateway` - The URL this shard should connect to.
   """
   @type options :: [
-    shard: {non_neg_integer(), non_neg_integer()},
-    gateway: String.t()
-  ]
+          shard: {non_neg_integer(), non_neg_integer()},
+          gateway: String.t()
+        ]
 
   @typedoc """
   The state of the shard.
@@ -39,8 +40,8 @@ defmodule Wumpex.Shard do
     * `:supervisor` - the `DynamicSupervisor` that supervises the children of the shard.
   """
   @type state :: %{
-    supervisor: pid()
-  }
+          supervisor: pid()
+        }
 
   @spec start_link(options :: options()) :: GenServer.on_start()
   def start_link(options \\ []) do
@@ -51,9 +52,10 @@ defmodule Wumpex.Shard do
   def init(options) do
     {:ok, supervisor} = DynamicSupervisor.start_link(strategy: :one_for_one)
 
-    {:ok, %{
-      supervisor: supervisor
-    }, {:continue, options}}
+    {:ok,
+     %{
+       supervisor: supervisor
+     }, {:continue, options}}
   end
 
   # Finish up the initialization.
@@ -62,8 +64,17 @@ defmodule Wumpex.Shard do
     shard = Keyword.fetch!(options, :shard)
     gateway = Keyword.fetch!(options, :gateway)
 
-    {:ok, worker} = DynamicSupervisor.start_child(supervisor, {Wumpex.Gateway.Worker, shard: shard})
-    {:ok, _websocket} = DynamicSupervisor.start_child(supervisor, {Wumpex.Base.Websocket, url: "#{gateway}?v=6&encoding=etf", worker: worker})
+    {:ok, worker} =
+      DynamicSupervisor.start_child(
+        supervisor,
+        {Wumpex.Gateway.Worker, shard: shard, gateway: gateway, token: Wumpex.token()}
+      )
+
+    {:ok, _websocket} =
+      DynamicSupervisor.start_child(
+        supervisor,
+        {Wumpex.Base.Websocket, url: "#{gateway}?v=6&encoding=etf", worker: worker}
+      )
 
     {:noreply, state}
   end

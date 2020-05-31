@@ -10,7 +10,22 @@ defmodule Wumpex.MixProject do
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      docs: [
+        groups_for_modules: [
+          "Base": [
+            Wumpex.Base.Websocket,
+            Wumpex.Base.Distributed
+          ],
+          "Gateway": [
+            Wumpex.Gateway,
+            Wumpex.Gateway.Worker,
+            Wumpex.Gateway.State,
+            Wumpex.Gateway.Opcodes,
+            Wumpex.Gateway.EventHandler,
+          ]
+        ]
+      ]
     ]
   end
 

@@ -17,14 +17,14 @@ defmodule Wumpex.Base.DistributedTest do
   describe "Wumpex.Base.Distributed.join/2 should" do
     test "create the group if it does not exist" do
       refute Enum.any?(:pg2.which_groups(), fn group ->
-        group == @test_group
-      end)
+               group == @test_group
+             end)
 
       :ok = Distributed.join(@test_group, self())
 
       assert Enum.any?(:pg2.which_groups(), fn group ->
-        group == @test_group
-      end)
+               group == @test_group
+             end)
     end
 
     test "adds the pid to the group" do

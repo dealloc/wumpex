@@ -25,3 +25,6 @@ wumpex-*.tar
 # Ignore IDE specific files and folders.
 .idea/
 .elixir_ls/
+
+# Ignore local development files
+config/.secret.exs

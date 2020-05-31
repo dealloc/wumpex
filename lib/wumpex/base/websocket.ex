@@ -102,7 +102,8 @@ defmodule Wumpex.Base.Websocket do
       Websocket.send(socket, "Hello world", mode: :binary)
   """
   @spec send(websocket :: pid(), message :: any(), options :: keyword(atom())) :: term()
-  def send(websocket, message, [mode: mode]) when is_pid(websocket) and is_binary(message) and is_atom(mode) do
+  def send(websocket, message, mode: mode)
+      when is_pid(websocket) and is_binary(message) and is_atom(mode) do
     send(websocket, {:send, {mode, message}})
   end
 
