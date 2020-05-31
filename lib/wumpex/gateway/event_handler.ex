@@ -73,7 +73,7 @@ defmodule Wumpex.Gateway.EventHandler do
       ) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    Guilds.dispatch!(guild_id, event)
+    Guilds.dispatch!(guild_id, {event_name, event})
 
     %State{state | sequence: sequence}
   end
