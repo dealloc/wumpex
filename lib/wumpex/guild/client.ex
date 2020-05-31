@@ -4,6 +4,13 @@ defmodule Wumpex.Guild.Client do
 
   The client module is basically an event handler for a specific guild.
   Keep in mind that due to sharding, there might be more than one handler for a specific guild active.
+
+  The client module is started when the gateway is notified a guild becomes available (see `Wumpex.Gateway.EventHandler.dispatch/3`).
+  The guild information is not passed to the process for a simple reason:
+  if the guild process would crash, the supervisor (see `Wumpex.Guild.Guilds`) would restart with the settings that it was originally given.
+  However, if the guild information had changed since then, the guild would be given invalid information.
+
+  If you require state, it's recommended to start an `Agent` which tracks the current guild information for you.
   """
 
   use GenServer, restart: :transient
