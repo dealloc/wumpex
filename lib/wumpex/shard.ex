@@ -19,9 +19,9 @@ defmodule Wumpex.Shard do
 
   use GenServer
 
-  require Logger
-
   alias Wumpex.Guild.Guilds
+
+  require Logger
 
   @typedoc """
   The options that can be passed into `start_link/1` and `init/1`.

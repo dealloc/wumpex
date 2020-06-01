@@ -41,11 +41,16 @@ defmodule Wumpex.Gateway.Worker do
   @impl GenServer
   @spec init(options :: options()) :: {:ok, State.t()}
   def init(options) do
+    token = Keyword.fetch!(options, :token)
+    guild_sup = Keyword.fetch!(options, :guild_sup)
+    shard = Keyword.fetch!(options, :shard)
+
+    Logger.metadata(shard: inspect(shard))
     {:ok,
      %State{
-       token: Keyword.fetch!(options, :token),
+       token: token,
        ack: false,
-       guild_sup: Keyword.fetch!(options, :guild_sup)
+       guild_sup: guild_sup
      }}
   end
 
