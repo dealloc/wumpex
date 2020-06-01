@@ -12,16 +12,18 @@ defmodule Wumpex.Gateway.State do
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
     * `:guild_sup` - The `Wumpex.Guild.Guilds` supervisor.
+    * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
   """
   @type t :: %__MODULE__{
           token: String.t(),
           ack: boolean(),
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
-          guild_sup: pid()
+          guild_sup: pid(),
+          shard: {non_neg_integer(), non_neg_integer()}
         }
 
   @enforce_keys [:token, :ack]
 
-  defstruct [:token, :ack, :sequence, :session_id, :guild_sup]
+  defstruct [:token, :ack, :sequence, :session_id, :guild_sup, :shard]
 end

@@ -38,6 +38,21 @@ defmodule Wumpex.Gateway.Opcodes do
         "op" => 2,
         "d" => %{
           "token" => "test",
+          "shard" => [0, 1],
+          "properties" => %{
+            "$os" => :linux,
+            "$browser" => "wumpex",
+            "$device" => "wumpex"
+          }
+        }
+      }
+
+      iex> Wumpex.Gateway.Opcodes.identify("test", {1, 2})
+      %{
+        "op" => 2,
+        "d" => %{
+          "token" => "test",
+          "shard" => [1, 2],
           "properties" => %{
             "$os" => :linux,
             "$browser" => "wumpex",
@@ -48,14 +63,15 @@ defmodule Wumpex.Gateway.Opcodes do
 
   See the [official documentation](https://discord.com/developers/docs/topics/gateway#identify)
   """
-  @spec identify(token :: String.t()) :: opcode()
-  def identify(token) do
+  @spec identify(token :: String.t(), shard :: {non_neg_integer(), non_neg_integer()}) :: opcode()
+  def identify(token, shard \\ {0, 1}) do
     {_, os} = :os.type()
 
     %{
       "op" => 2,
       "d" => %{
         "token" => token,
+        "shard" => Tuple.to_list(shard),
         # "intents" => 512,
         "properties" => %{
           "$os" => os,

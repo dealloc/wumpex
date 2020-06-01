@@ -50,7 +50,8 @@ defmodule Wumpex.Gateway.Worker do
      %State{
        token: token,
        ack: false,
-       guild_sup: guild_sup
+       guild_sup: guild_sup,
+       shard: shard
      }}
   end
 
@@ -68,13 +69,13 @@ defmodule Wumpex.Gateway.Worker do
   @impl GenServer
   def handle_info(
         {:identify, websocket},
-        %State{token: token, sequence: sequence, session_id: session_id} = state
+        %State{token: token, sequence: sequence, session_id: session_id, shard: shard} = state
       ) do
     message =
       case session_id do
         nil ->
           Logger.info("Sending IDENTIFY")
-          Opcodes.identify(token)
+          Opcodes.identify(token, shard)
 
         session_id ->
           Logger.info("Sending RESUME")
