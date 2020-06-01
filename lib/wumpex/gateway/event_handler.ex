@@ -53,7 +53,7 @@ defmodule Wumpex.Gateway.EventHandler do
       ) do
     Logger.info("Guild became available: #{inspect(event)}")
 
-    Guilds.start_guild(guild_sup, event.id)
+    {:ok, _guild} = Guilds.start_guild(guild_sup, event.id)
 
     %State{state | sequence: sequence}
   end

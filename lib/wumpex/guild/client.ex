@@ -19,12 +19,13 @@ defmodule Wumpex.Guild.Client do
 
   @spec start_link(options :: keyword()) :: GenServer.on_start()
   def start_link(guild_id: guild_id) do
-    GenServer.start_link(__MODULE__, [guild_id: guild_id], name: {:via, Registry, {Wumpex.Guild.Guilds, guild_id}})
+    GenServer.start_link(__MODULE__, [guild_id: guild_id])
   end
 
   @impl GenServer
   def init(guild_id: guild_id) do
     Logger.metadata(guild_id: guild_id)
+    Registry.register(Wumpex.Guild.Guilds, guild_id, nil)
 
     {:ok, []}
   end
