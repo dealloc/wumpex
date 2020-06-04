@@ -45,7 +45,8 @@ defmodule Wumpex.MixProject do
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:websocket_client, "~> 1.4"},
       {:socket, "~> 0.3", only: [:test]},
-      {:httpoison, "~> 1.6"}
+      {:httpoison, "~> 1.6"},
+      {:jason, "~> 1.2"}
     ]
   end
 
