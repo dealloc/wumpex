@@ -68,12 +68,12 @@ defmodule Wumpex.Gateway.EventHandler do
 
   def dispatch(
         %{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event},
-        _websocket,
+        websocket,
         state
       ) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    Guilds.dispatch!(guild_id, {event_name, event})
+    Guilds.dispatch!(guild_id, {event_name, event, websocket})
 
     %State{state | sequence: sequence}
   end

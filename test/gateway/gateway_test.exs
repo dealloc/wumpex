@@ -14,11 +14,14 @@ defmodule Wumpex.GatewayTest do
   @ready_opcode %{op: 0, s: 1, t: :READY, d: %{session_id: @test_session}}
 
   setup do
+    {:ok, guild_sup} = DynamicSupervisor.start_link(strategy: :one_for_one)
+
     {:ok, gateway} =
       Wumpex.Gateway.Worker.start_link(
         token: @test_token,
         shard: @test_shard,
-        gateway: @test_gateway
+        gateway: @test_gateway,
+        guild_sup: guild_sup
       )
 
     {:ok,

@@ -34,7 +34,7 @@ defmodule Wumpex.Guild.Client do
   @impl GenServer
   def handle_info({:close, reason}, state), do: {:stop, reason, state}
 
-  def handle_info({:event, {event_name, event}}, state) do
+  def handle_info({:event, {event_name, event, _gateway}}, state) do
     Logger.info(inspect({event_name, event}))
 
     {:noreply, state}
