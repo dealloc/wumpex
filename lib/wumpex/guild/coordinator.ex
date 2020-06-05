@@ -1,4 +1,4 @@
-defmodule Wumpex.Guild.Guilds do
+defmodule Wumpex.Guild.Coordinator do
   @moduledoc """
   Tracks all active `Wumpex.Guild.Client` processes for a given `Wumpex.Shard`.
 
@@ -33,7 +33,8 @@ defmodule Wumpex.Guild.Guilds do
 
   This allows to attach custom listeners, such as for temporary listeners.
   """
-  @spec start_guild_listener(guild_sup :: pid(), child_spec :: Supervisor.child_spec()) :: Supervisor.on_start_child()
+  @spec start_guild_listener(guild_sup :: pid(), child_spec :: Supervisor.child_spec()) ::
+          Supervisor.on_start_child()
   def start_guild_listener(guild_sup, child_spec) do
     DynamicSupervisor.start_child(guild_sup, child_spec)
   end

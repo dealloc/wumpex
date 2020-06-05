@@ -24,7 +24,7 @@ defmodule Wumpex.Gateway.Worker do
     * `:token` - The bot token
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
     * `:gateway` - The URL this shard should connect to.
-    * `:guild_sup` - The `Wumpex.Guild.Guilds` supervisor.
+    * `:guild_sup` - The `Wumpex.Guild.Coordinator`, which acts as a guild supervisor.
   """
   @type options :: [
           token: String.t(),
@@ -46,6 +46,7 @@ defmodule Wumpex.Gateway.Worker do
     shard = Keyword.fetch!(options, :shard)
 
     Logger.metadata(shard: inspect(shard))
+
     {:ok,
      %State{
        token: token,

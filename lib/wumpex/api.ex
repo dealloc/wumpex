@@ -16,12 +16,17 @@ defmodule Wumpex.Api do
   def process_request_body(body), do: Jason.encode!(body)
 
   @impl HTTPoison.Base
-  def process_request_headers(headers), do: Keyword.merge([
-    "user-agent": "Wumpex (https://github.com/dealloc/wumpex, 0.1.0)",
-    "content-type": "application/json",
-    authorization: "Bot #{Wumpex.token()}",
-    "x-ratelimit-precision": "millisecond"
-  ], headers)
+  def process_request_headers(headers),
+    do:
+      Keyword.merge(
+        [
+          "user-agent": "Wumpex (https://github.com/dealloc/wumpex, 0.1.0)",
+          "content-type": "application/json",
+          authorization: "Bot #{Wumpex.token()}",
+          "x-ratelimit-precision": "millisecond"
+        ],
+        headers
+      )
 
   @impl HTTPoison.Base
   def process_response_body(""), do: ""

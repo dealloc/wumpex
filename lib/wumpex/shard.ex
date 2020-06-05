@@ -19,7 +19,7 @@ defmodule Wumpex.Shard do
 
   use GenServer
 
-  alias Wumpex.Guild.Guilds
+  alias Wumpex.Guild.Coordinator
 
   require Logger
 
@@ -66,7 +66,7 @@ defmodule Wumpex.Shard do
     shard = Keyword.fetch!(options, :shard)
     gateway = Keyword.fetch!(options, :gateway)
 
-    {:ok, guild_sup} = Guilds.start_link([])
+    {:ok, guild_sup} = DynamicSupervisor.start_child(supervisor, Coordinator)
 
     {:ok, worker} =
       DynamicSupervisor.start_child(

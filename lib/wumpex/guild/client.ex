@@ -7,7 +7,7 @@ defmodule Wumpex.Guild.Client do
 
   The client module is started when the gateway is notified a guild becomes available (see `Wumpex.Gateway.EventHandler.dispatch/3`).
   The guild information is not passed to the process for a simple reason:
-  if the guild process would crash, the supervisor (see `Wumpex.Guild.Guilds`) would restart with the settings that it was originally given.
+  if the guild process would crash, the supervisor (see `Wumpex.Guild.Coordinator`) would restart with the settings that it was originally given.
   However, if the guild information had changed since then, the guild would be given invalid information.
 
   If you require state, it's recommended to start an `Agent` which tracks the current guild information for you.
@@ -19,13 +19,13 @@ defmodule Wumpex.Guild.Client do
 
   @spec start_link(options :: keyword()) :: GenServer.on_start()
   def start_link(guild_id: guild_id) do
-    GenServer.start_link(__MODULE__, [guild_id: guild_id])
+    GenServer.start_link(__MODULE__, guild_id: guild_id)
   end
 
   @impl GenServer
   def init(guild_id: guild_id) do
     Logger.metadata(guild_id: guild_id)
-    Registry.register(Wumpex.Guild.Guilds, guild_id, nil)
+    Registry.register(Wumpex.Guild.Coordinator, guild_id, nil)
 
     {:ok, []}
   end

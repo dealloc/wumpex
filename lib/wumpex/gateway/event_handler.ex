@@ -5,12 +5,12 @@ defmodule Wumpex.Gateway.EventHandler do
   This module contains the `dispatch/3` method which the `Wumpex.Gateway.Worker` calls after decoding an incoming message.
   Events that do not affect a specific guild directly (HELLO, READY, RESUMED, ...) are handled here.
 
-  Events that are for a specific guild (MESSAGE_CREATE, PRESENCE_UPDATE, ...) are dispatched to the approperiate `Wumpex.Guild.Client` using the `Wumpex.Guild.Guilds` module.
+  Events that are for a specific guild (MESSAGE_CREATE, PRESENCE_UPDATE, ...) are dispatched to the approperiate `Wumpex.Guild.Client` using the `Wumpex.Guild.Coordinator` module.
   """
 
   alias Wumpex.Base.Websocket
   alias Wumpex.Gateway.State
-  alias Wumpex.Guild.Guilds
+  alias Wumpex.Guild.Coordinator
 
   require Logger
 
@@ -53,7 +53,7 @@ defmodule Wumpex.Gateway.EventHandler do
       ) do
     Logger.info("Guild became available: #{inspect(event)}")
 
-    {:ok, _guild} = Guilds.start_guild(guild_sup, event.id)
+    {:ok, _guild} = Coordinator.start_guild(guild_sup, event.id)
 
     %State{state | sequence: sequence}
   end
@@ -61,7 +61,7 @@ defmodule Wumpex.Gateway.EventHandler do
   def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, _websocket, state) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
-    Guilds.stop_guild(guild_id)
+    Coordinator.stop_guild(guild_id)
 
     %State{state | sequence: sequence}
   end
@@ -73,7 +73,7 @@ defmodule Wumpex.Gateway.EventHandler do
       ) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    Guilds.dispatch!(guild_id, {event_name, event, websocket})
+    Coordinator.dispatch!(guild_id, {event_name, event, websocket})
 
     %State{state | sequence: sequence}
   end

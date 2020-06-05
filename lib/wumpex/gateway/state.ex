@@ -11,7 +11,7 @@ defmodule Wumpex.Gateway.State do
     * `:ack` - Whether or not a heartbeat ACK has been received.
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
-    * `:guild_sup` - The `Wumpex.Guild.Guilds` supervisor.
+    * `:guild_sup` - The `Wumpex.Guild.Coordinator` supervisor.
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
   """
   @type t :: %__MODULE__{
