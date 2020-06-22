@@ -15,6 +15,8 @@ defmodule Wumpex.Guild.Client do
 
   use GenServer, restart: :transient
 
+  alias Wumpex.Guild.Coordinator
+
   require Logger
 
   @spec start_link(options :: keyword()) :: GenServer.on_start()
@@ -25,7 +27,7 @@ defmodule Wumpex.Guild.Client do
   @impl GenServer
   def init(guild_id: guild_id) do
     Logger.metadata(guild_id: guild_id)
-    Registry.register(Wumpex.Guild.Coordinator, guild_id, nil)
+    Coordinator.register(guild_id)
 
     {:ok, []}
   end

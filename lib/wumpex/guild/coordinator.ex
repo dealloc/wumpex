@@ -6,17 +6,7 @@ defmodule Wumpex.Guild.Coordinator do
   Doubles as a `Registry` and a `DynamicSupervisor`
   """
 
-  use DynamicSupervisor
-
-  @spec start_link(options :: keyword()) :: Supervisor.on_start()
-  def start_link(init_arg) do
-    DynamicSupervisor.start_link(__MODULE__, init_arg)
-  end
-
-  @impl DynamicSupervisor
-  def init(_init_arg) do
-    DynamicSupervisor.init(strategy: :one_for_one)
-  end
+  use Wumpex.Base.Coordinator
 
   @doc """
   Start a new `Wumpex.Guild.Client` instance which monitors the guild corresponding with `guild_id`.
@@ -46,11 +36,7 @@ defmodule Wumpex.Guild.Coordinator do
   """
   @spec stop_guild(guild_id :: String.t()) :: :ok
   def stop_guild(guild_id) do
-    for {guild, _} <- Registry.lookup(__MODULE__, guild_id) do
-      send(guild, {:close, :normal})
-    end
-
-    :ok
+    broadcast(guild_id, {:close, :normal})
   end
 
   @doc """
@@ -58,10 +44,6 @@ defmodule Wumpex.Guild.Coordinator do
   """
   @spec dispatch!(guild_id :: String.t(), event :: any()) :: :ok
   def dispatch!(guild_id, event) do
-    for {guild, _} <- Registry.lookup(__MODULE__, guild_id) do
-      send(guild, {:event, event})
-    end
-
-    :ok
+    broadcast(guild_id, {:event, event})
   end
 end
