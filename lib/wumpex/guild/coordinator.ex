@@ -2,8 +2,7 @@ defmodule Wumpex.Guild.Coordinator do
   @moduledoc """
   Tracks all active `Wumpex.Guild.Client` processes for a given `Wumpex.Shard`.
 
-  This module acts as both a `Registry`, allowing to look up clients by their Guild ID, and a `DynamicSupervisor` (by monitoring those client processes).
-  Doubles as a `Registry` and a `DynamicSupervisor`
+  This module implements the `Wumpex.Base.Coordinator` behaviour.
   """
 
   use Wumpex.Base.Coordinator

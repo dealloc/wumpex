@@ -6,6 +6,7 @@ defmodule Wumpex.MixProject do
   def project do
     [
       app: :wumpex,
+      source_url: "https://github.com/dealloc/wumpex",
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
@@ -14,8 +15,9 @@ defmodule Wumpex.MixProject do
       docs: [
         groups_for_modules: [
           Base: [
-            Wumpex.Base.Websocket,
-            Wumpex.Base.Distributed
+            Wumpex.Base.Coordinator,
+            Wumpex.Base.Distributed,
+            Wumpex.Base.Websocket
           ],
           Gateway: [
             Wumpex.Gateway,
