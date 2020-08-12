@@ -19,4 +19,5 @@ if File.exists?("config/.secret.exs") do
 else
   IO.warn("config/.secret.exs does not exist, empty configuration will probably fail!")
 end
+
 import_config "#{Mix.env()}.exs"

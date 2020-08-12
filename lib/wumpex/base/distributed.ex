@@ -46,7 +46,7 @@ defmodule Wumpex.Base.Distributed do
       :pg.get_members(group)
     end
 
-  # Fall back to :pg2 if :pg is not available
+    # Fall back to :pg2 if :pg is not available
   else
     defp pg_join(group, pid) do
       :ok = :pg2.create(group)
