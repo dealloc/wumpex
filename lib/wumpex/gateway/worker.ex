@@ -79,7 +79,7 @@ defmodule Wumpex.Gateway.Worker do
           Opcodes.identify(token, shard)
 
         session_id ->
-          Logger.info("Sending RESUME")
+          Logger.warn("Sending RESUME")
           Opcodes.resume(token, sequence, session_id)
       end
 

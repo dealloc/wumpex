@@ -46,6 +46,13 @@ defmodule Wumpex.Gateway.EventHandler do
     %State{state | sequence: sequence, session_id: session_id}
   end
 
+  # Handles RESUMED event
+  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, _websocket, state) do
+    Logger.info("Bot has finished resuming.")
+
+    %State{state | sequence: sequence}
+  end
+
   def dispatch(
         %{op: 0, s: sequence, t: :GUILD_CREATE, d: event},
         _websocket,
