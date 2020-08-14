@@ -63,7 +63,6 @@ defmodule Wumpex.Resource.Guild do
   """
   @type premium_tier :: 0 | 1 | 2 | 3
 
-
   @type t :: %__MODULE__{
           id: Resource.snowflake(),
           name: String.t(),

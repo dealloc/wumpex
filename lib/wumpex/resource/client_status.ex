@@ -7,10 +7,10 @@ defmodule Wumpex.Resource.ClientStatus do
   @type status :: String.t()
 
   @type t :: %__MODULE__{
-    desktop: status(),
-    mobile: status(),
-    web: status()
-  }
+          desktop: status(),
+          mobile: status(),
+          web: status()
+        }
 
   defstruct [
     :desktop,

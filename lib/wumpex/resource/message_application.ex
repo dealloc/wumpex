@@ -4,12 +4,12 @@ defmodule Wumpex.Resource.MessageApplication do
   alias Wumpex.Resource
 
   @type t :: %__MODULE__{
-    id: Resource.snowflake(),
-    cover_image: String.t(),
-    description: String.t(),
-    icon: String.t(),
-    name: String.t(),
-  }
+          id: Resource.snowflake(),
+          cover_image: String.t(),
+          description: String.t(),
+          icon: String.t(),
+          name: String.t()
+        }
 
   defstruct [
     :id,
@@ -21,8 +21,8 @@ defmodule Wumpex.Resource.MessageApplication do
 
   @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
-      data = to_atomized_map(data)
+    data = to_atomized_map(data)
 
-      struct!(__MODULE__, data)
+    struct!(__MODULE__, data)
   end
 end

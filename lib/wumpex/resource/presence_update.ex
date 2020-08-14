@@ -7,16 +7,16 @@ defmodule Wumpex.Resource.PresenceUpdate do
   alias Wumpex.Resource.User
 
   @type t :: %__MODULE__{
-    user: User.t(),
-    roles: [Resource.snowflake()],
-    game: Activity.t(),
-    guild_id: Resource.snowflake(),
-    status: ClientStatus.status(),
-    activities: [Activity.t()],
-    client_status: ClientStatus.t(),
-    premium_since: DateTime.t(),
-    nick: String.t()
-  }
+          user: User.t(),
+          roles: [Resource.snowflake()],
+          game: Activity.t(),
+          guild_id: Resource.snowflake(),
+          status: ClientStatus.status(),
+          activities: [Activity.t()],
+          client_status: ClientStatus.t(),
+          premium_since: DateTime.t(),
+          nick: String.t()
+        }
 
   defstruct [
     :user,

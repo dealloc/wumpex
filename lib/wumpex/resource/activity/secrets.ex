@@ -1,17 +1,18 @@
-defmodule Wumpex.Resource.MessageActivity do
+defmodule Wumpex.Resource.Activity.Secrets do
   import Wumpex.Resource
 
   @type t :: %__MODULE__{
-          type: non_neg_integer(),
-          party_id: String.t()
+          join: String.t(),
+          spectate: String.t(),
+          match: String.t()
         }
 
   defstruct [
-    :type,
-    :party_id
+    :join,
+    :spectate,
+    :match
   ]
 
-  @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
     data = to_atomized_map(data)
 

@@ -1,18 +1,14 @@
-defmodule Wumpex.Resource.MessageReaction do
+defmodule Wumpex.Resource.Activity.Timestamps do
   import Wumpex.Resource
 
-  alias Wumpex.Resource.Emoji
-
   @type t :: %__MODULE__{
-          count: non_neg_integer(),
-          me: boolean(),
-          emoji: Emoji.t()
+          start: DateTime.t(),
+          end: DateTime.t()
         }
 
   defstruct [
-    :count,
-    :me,
-    :emoji
+    :start,
+    :end
   ]
 
   @spec to_struct(data :: map()) :: t()
@@ -20,7 +16,8 @@ defmodule Wumpex.Resource.MessageReaction do
     data =
       data
       |> to_atomized_map()
-      |> Map.update(:emoji, nil, &Emoji.to_struct/1)
+      |> Map.update(:start, nil, &to_datetime/1)
+      |> Map.update(:end, nil, &to_datetime/1)
 
     struct!(__MODULE__, data)
   end

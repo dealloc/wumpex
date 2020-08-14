@@ -4,10 +4,10 @@ defmodule Wumpex.Resource.MessageReference do
   alias Wumpex.Resource
 
   @type t :: %__MODULE__{
-    message_id: Resource.snowflake(),
-    channel_id: Resource.snowflake(),
-    guild_id: Resource.snowflake()
-  }
+          message_id: Resource.snowflake(),
+          channel_id: Resource.snowflake(),
+          guild_id: Resource.snowflake()
+        }
 
   defstruct [
     :message_id,
@@ -17,8 +17,8 @@ defmodule Wumpex.Resource.MessageReference do
 
   @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
-      data = to_atomized_map(data)
+    data = to_atomized_map(data)
 
-      struct!(__MODULE__, data)
+    struct!(__MODULE__, data)
   end
 end

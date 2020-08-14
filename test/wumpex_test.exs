@@ -1,5 +1,6 @@
 defmodule WumpexTest do
   use ExUnit.Case
+
   doctest Wumpex
 
   describe "Wumpex.token/0 should" do
