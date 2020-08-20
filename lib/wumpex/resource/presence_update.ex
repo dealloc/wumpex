@@ -41,6 +41,6 @@ defmodule Wumpex.Resource.PresenceUpdate do
       |> Map.update(:client_status, nil, &ClientStatus.to_struct/1)
       |> Map.update(:premium_since, nil, &to_datetime/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

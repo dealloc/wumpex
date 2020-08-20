@@ -19,8 +19,9 @@ defmodule Wumpex.Resource do
   @doc """
   Attempts to convert a given string into a `t:DateTime.t/0` instance.
   """
-  @spec to_datetime(value :: DateTime.t() | String.t()) :: DateTime.t()
+  @spec to_datetime(value :: DateTime.t() | nil | String.t()) :: DateTime.t() | nil
   def to_datetime(%DateTime{} = value), do: value
+  def to_datetime(nil), do: nil
 
   def to_datetime(value) when is_number(value) do
     {:ok, result} = DateTime.from_unix(value, :millisecond)

@@ -4,6 +4,12 @@ defmodule Wumpex.Resource.ActivityTest do
   doctest Wumpex.Resource.Activity
 
   alias Wumpex.Resource.Activity
+  alias Wumpex.Resource.Activity.Timestamps
+  alias Wumpex.Resource.Activity.Emoji
+  alias Wumpex.Resource.Activity.Party
+  alias Wumpex.Resource.Activity.Assets
+  alias Wumpex.Resource.Activity.Secrets
+  alias Wumpex.Resource.Activity.Flags
 
   describe "to_struct/1 should" do
     test "parse 'game' structs" do
@@ -24,9 +30,19 @@ defmodule Wumpex.Resource.ActivityTest do
       }
 
       assert %Activity{
-        name: "emoji",
-        id: "308994132968210433",
-        animated: true
+        name: "Rocket League",
+        type: 0,
+        created_at: ~U[2015-04-26 06:26:56.936000Z],
+        timestamps: %Timestamps{},
+        application_id: "id",
+        details: "Details about the activity",
+        state: "Ongoing",
+        emoji: %Emoji{},
+        party: %Party{},
+        assets: %Assets{},
+        secrets: %Secrets{},
+        instance: true,
+        flags: %Flags{}
       } = Activity.to_struct(example)
     end
 
@@ -35,11 +51,40 @@ defmodule Wumpex.Resource.ActivityTest do
     end
 
     test "ignore missing fields" do
+      example = %{
+        "name" => "Rocket League",
+        "type" => 0, # Game
+        "created_at" => "2015-04-26T06:26:56.936000+00:00",
+        "timestamps" => %{},
+        "application_id" => "id",
+        "details" => "Details about the activity",
+        "state" => "Ongoing",
+        "emoji" => %{},
+        "party" => %{},
+        "assets" => %{},
+        "secrets" => %{},
+        "instance" => true,
+        "flags" => 0,
+        "random" => "testing random",
+        "missing" => "testing missing",
+        "fields" => "testing fields"
+      }
+
       assert %Activity{
-        name: nil,
-        id: nil,
-        animated: nil
-      } = Activity.to_struct(%{})
+        name: "Rocket League",
+        type: 0,
+        created_at: ~U[2015-04-26 06:26:56.936000Z],
+        timestamps: %Timestamps{},
+        application_id: "id",
+        details: "Details about the activity",
+        state: "Ongoing",
+        emoji: %Emoji{},
+        party: %Party{},
+        assets: %Assets{},
+        secrets: %Secrets{},
+        instance: true,
+        flags: %Flags{}
+      } = Activity.to_struct(example)
     end
   end
 end

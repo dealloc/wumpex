@@ -2,7 +2,7 @@ defmodule Wumpex.Resource.User do
   import Wumpex.Resource
 
   alias Wumpex.Resource
-  alias Wumpex.Resource.GuildMember
+  alias Wumpex.Resource.Guild.Member
   alias Wumpex.Resource.UserFlags
 
   @typedoc """
@@ -30,7 +30,7 @@ defmodule Wumpex.Resource.User do
           premium_type: non_neg_integer(),
           public_flags: UserFlags.t(),
           # See https://discord.com/developers/docs/resources/channel#message-object-message-structure
-          member: GuildMember.t()
+          member: Member.t()
         }
 
   defstruct [
@@ -57,8 +57,8 @@ defmodule Wumpex.Resource.User do
       |> to_atomized_map()
       |> Map.update(:flags, nil, &UserFlags.to_struct/1)
       |> Map.update(:public_flags, nil, &UserFlags.to_struct/1)
-      |> Map.update(:member, nil, &GuildMember.to_struct/1)
+      |> Map.update(:member, nil, &Member.to_struct/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

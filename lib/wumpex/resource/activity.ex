@@ -65,9 +65,9 @@ defmodule Wumpex.Resource.Activity do
       |> Map.update(:emoji, nil, &Emoji.to_struct/1)
       |> Map.update(:party, nil, &Party.to_struct/1)
       |> Map.update(:assets, nil, &Assets.to_struct/1)
-      |> Map.update(:secret, nil, &Secrets.to_struct/1)
+      |> Map.update(:secrets, nil, &Secrets.to_struct/1)
       |> Map.update(:flags, nil, &Flags.to_struct/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

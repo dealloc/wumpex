@@ -1,19 +1,20 @@
-defmodule Wumpex.Resource.EmbedProvider do
+defmodule Wumpex.Resource.Message.Activity do
   import Wumpex.Resource
 
   @type t :: %__MODULE__{
-          name: String.t(),
-          url: String.t()
+          type: non_neg_integer(),
+          party_id: String.t()
         }
 
   defstruct [
-    :name,
-    :url
+    :type,
+    :party_id
   ]
 
   @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
     data = to_atomized_map(data)
-    struct!(__MODULE__, data)
+
+    struct(__MODULE__, data)
   end
 end

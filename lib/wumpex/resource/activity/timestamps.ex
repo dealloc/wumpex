@@ -19,6 +19,6 @@ defmodule Wumpex.Resource.Activity.Timestamps do
       |> Map.update(:start, nil, &to_datetime/1)
       |> Map.update(:end, nil, &to_datetime/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

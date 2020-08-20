@@ -1,21 +1,19 @@
-defmodule Wumpex.Resource.EmbedVideo do
+defmodule Wumpex.Resource.Embed.Provider do
   import Wumpex.Resource
 
   @type t :: %__MODULE__{
-          url: String.t(),
-          height: non_neg_integer(),
-          width: non_neg_integer()
+          name: String.t(),
+          url: String.t()
         }
 
   defstruct [
-    :url,
-    :height,
-    :width
+    :name,
+    :url
   ]
 
   @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
     data = to_atomized_map(data)
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

@@ -5,7 +5,7 @@ defmodule Wumpex.Resource.Guild do
   alias Wumpex.Resource.Channel
   alias Wumpex.Resource.ChannelFlags
   alias Wumpex.Resource.Emoji
-  alias Wumpex.Resource.GuildMember
+  alias Wumpex.Resource.Guild.Member
   alias Wumpex.Resource.PresenceUpdate
   alias Wumpex.Resource.Role
   alias Wumpex.Resource.VoiceState
@@ -96,7 +96,7 @@ defmodule Wumpex.Resource.Guild do
           unavailable: boolean(),
           member_count: non_neg_integer(),
           voice_states: [VoiceState.t()],
-          members: [GuildMember.t()],
+          members: [Member.t()],
           channels: [Channel.t()],
           presences: [PresenceUpdate.t()],
           max_presences: non_neg_integer(),
@@ -168,15 +168,15 @@ defmodule Wumpex.Resource.Guild do
     data =
       data
       |> to_atomized_map()
-      |> Map.update(:roles, nil, fn roles -> to_structs(roles, Roles) end)
-      |> Map.update(:emojis, nil, fn emojis -> to_structs(emojis, Emoji) end)
+      |> Map.update(:roles, nil, &(to_structs(&1, Role)))
+      |> Map.update(:emojis, nil, &(to_structs(&1, Emoji)))
       |> Map.update(:system_channel_flags, nil, &ChannelFlags.to_struct/1)
       |> Map.update(:joined_at, nil, &to_datetime/1)
-      |> Map.update(:voice_states, nil, fn states -> to_structs(states, VoiceState) end)
-      |> Map.update(:members, nil, fn members -> to_structs(members, GuildMember) end)
-      |> Map.update(:channels, nil, fn channels -> to_structs(channels, Channel) end)
-      |> Map.update(:presences, nil, fn updates -> to_structs(updates, PresenceUpdate) end)
+      |> Map.update(:voice_states, nil, &(to_structs(&1, VoiceState)))
+      |> Map.update(:members, nil, &(to_structs(&1, Member)))
+      |> Map.update(:channels, nil, &(to_structs(&1, Channel)))
+      |> Map.update(:presences, nil, &(to_structs(&1, PresenceUpdate)))
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

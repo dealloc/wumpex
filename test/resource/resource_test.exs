@@ -31,6 +31,10 @@ defmodule Wumpex.ResourceTest do
       {:ok, result, _offset} = DateTime.from_iso8601("2015-04-26T06:26:56.936000+00:00")
       assert Resource.to_datetime(result) == result
     end
+
+    test "allow nil to be passed in, returns it" do
+      assert nil = Resource.to_datetime(nil)
+    end
   end
 
   describe "to_atomized_map/1 should" do

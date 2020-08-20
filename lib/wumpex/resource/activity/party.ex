@@ -17,6 +17,6 @@ defmodule Wumpex.Resource.Activity.Party do
       |> to_atomized_map()
       |> Map.update(:size, nil, fn [current, max] -> {current, max} end)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

@@ -54,6 +54,6 @@ defmodule Wumpex.Resource.Channel do
       |> Map.update(:recipients, nil, fn recipients -> to_structs(recipients, User) end)
       |> Map.update(:last_pin_timestamp, nil, &to_datetime/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

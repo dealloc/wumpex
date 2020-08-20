@@ -1,21 +1,14 @@
-defmodule Wumpex.Resource.Attachment do
+defmodule Wumpex.Resource.Embed.Image do
   import Wumpex.Resource
 
-  alias Wumpex.Resource
-
   @type t :: %__MODULE__{
-          id: Resource.snowflake(),
-          filename: String.t(),
-          size: non_neg_integer(),
           url: String.t(),
+          proxy_url: String.t(),
           height: non_neg_integer(),
           width: non_neg_integer()
         }
 
   defstruct [
-    :id,
-    :filename,
-    :size,
     :url,
     :proxy_url,
     :height,

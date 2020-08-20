@@ -1,14 +1,13 @@
 defmodule Wumpex.Resource.Embed do
   import Wumpex.Resource
 
-  alias Wumpex.Resource
-  alias Wumpex.Resource.EmbedFooter
-  alias Wumpex.Resource.EmbedImage
-  alias Wumpex.Resource.EmbedThumbnail
-  alias Wumpex.Resource.EmbedVideo
-  alias Wumpex.Resource.EmbedProvider
-  alias Wumpex.Resource.EmbedAuthor
-  alias Wumpex.Resource.EmbedField
+  alias Wumpex.Resource.Embed.Footer
+  alias Wumpex.Resource.Embed.Image
+  alias Wumpex.Resource.Embed.Thumbnail
+  alias Wumpex.Resource.Embed.Video
+  alias Wumpex.Resource.Embed.Provider
+  alias Wumpex.Resource.Embed.Author
+  alias Wumpex.Resource.Embed.Field
 
   @type t :: %__MODULE__{
           title: String.t(),
@@ -17,13 +16,13 @@ defmodule Wumpex.Resource.Embed do
           url: String.t(),
           timestamp: DateTime.t(),
           color: non_neg_integer(),
-          footer: EmbedFooter.t(),
-          image: EmbedImage.t(),
-          thumbnail: EmbedThumbnail.t(),
-          video: EmbedVideo.t(),
-          provider: EmbedProvider.t(),
-          author: EmbedAuthor.t(),
-          fields: [EmbedField.t()]
+          footer: Footer.t(),
+          image: Image.t(),
+          thumbnail: Thumbnail.t(),
+          video: Video.t(),
+          provider: Provider.t(),
+          author: Author.t(),
+          fields: [Field.t()]
         }
 
   @typedoc """
@@ -61,14 +60,14 @@ defmodule Wumpex.Resource.Embed do
       data
       |> to_atomized_map()
       |> Map.update(:timestamp, nil, &to_datetime/1)
-      |> Map.update(:footer, nil, &EmbedFooter.to_struct/1)
-      |> Map.update(:image, nil, &EmbedImage.to_struct/1)
-      |> Map.update(:thumbnail, nil, &EmbedThumbnail.to_struct/1)
-      |> Map.update(:video, nil, &EmbedVideo.to_struct/1)
-      |> Map.update(:provider, nil, &EmbedFooter.to_struct/1)
-      |> Map.update(:author, nil, &EmbedAuthor.to_struct/1)
-      |> Map.update(:fields, nil, fn fields -> to_structs(fields, EmbedField) end)
+      |> Map.update(:footer, nil, &Footer.to_struct/1)
+      |> Map.update(:image, nil, &Image.to_struct/1)
+      |> Map.update(:thumbnail, nil, &Thumbnail.to_struct/1)
+      |> Map.update(:video, nil, &Video.to_struct/1)
+      |> Map.update(:provider, nil, &Footer.to_struct/1)
+      |> Map.update(:author, nil, &Author.to_struct/1)
+      |> Map.update(:fields, nil, &(to_structs(&1, Field)))
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

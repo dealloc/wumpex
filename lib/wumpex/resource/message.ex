@@ -3,14 +3,14 @@ defmodule Wumpex.Resource.Message do
 
   alias Wumpex.Resource
   alias Wumpex.Resource.User
-  alias Wumpex.Resource.GuildMember
+  alias Wumpex.Resource.Guild.Member
   alias Wumpex.Resource.ChannelMention
   alias Wumpex.Resource.Attachment
   alias Wumpex.Resource.Embed
-  alias Wumpex.Resource.MessageReaction
-  alias Wumpex.Resource.MessageActivity
-  alias Wumpex.Resource.MessageApplication
-  alias Wumpex.Resource.MessageReference
+  alias Wumpex.Resource.Message.Reaction
+  alias Wumpex.Resource.Message.Activity
+  alias Wumpex.Resource.Message.Application
+  alias Wumpex.Resource.Message.Reference
 
   @type(
     t :: %__MODULE__{
@@ -18,7 +18,7 @@ defmodule Wumpex.Resource.Message do
       channel_id: Resource.snowflake(),
       guild_id: Resource.snowflake(),
       author: User.t(),
-      member: GuildMember.t(),
+      member: Member.t(),
       content: String.t(),
       timestamp: DateTime.t(),
       edited_timestamp: DateTime.t(),
@@ -29,17 +29,17 @@ defmodule Wumpex.Resource.Message do
       mention_channels: [ChannelMention.t()],
       attachments: [Attachment.t()],
       embeds: [Embed.t()],
-      reactions: [MessageReaction.t()],
+      reactions: [Reaction.t()],
       nonce: String.t(),
       pinned: boolean(),
       webhook_id: Resource.snowflake(),
       type: non_neg_integer(),
-      activity: MessageActivity.t(),
-      application: MessageApplication.t(),
-      message_reference: MessageReference.t(),
+      activity: Activity.t(),
+      application: Application.t(),
+      message_reference: Reference.t(),
       flags: non_neg_integer()
     },
-    reactions: [MessageReaction.t()]
+    reactions: [Reaction.t()]
   )
 
   defstruct [
@@ -75,25 +75,19 @@ defmodule Wumpex.Resource.Message do
       data
       |> to_atomized_map()
       |> Map.update(:author, nil, &User.to_struct/1)
-      |> Map.update(:member, nil, &GuildMember.to_struct/1)
+      |> Map.update(:member, nil, &Member.to_struct/1)
       |> Map.update(:timestamp, nil, &to_datetime/1)
       |> Map.update(:edited_timestamp, nil, &to_datetime/1)
-      |> Map.update(:mentions, nil, fn mentions -> to_structs(mentions, User) end)
-      |> Map.update(:mention_channels, nil, fn mention_channels ->
-        to_structs(mention_channels, ChannelMention)
-      end)
-      |> Map.update(:attachments, nil, fn attachments -> to_structs(attachments, Attachment) end)
-      |> Map.update(:embeds, nil, fn embeds -> to_structs(embeds, Embed) end)
-      |> Map.update(:reactions, nil, fn reactions -> to_structs(reactions, MessageReaction) end)
+      |> Map.update(:mentions, nil, &(to_structs(&1, User)))
+      |> Map.update(:mention_channels, nil, &(to_structs(&1, ChannelMention)))
+      |> Map.update(:attachments, nil, &(to_structs(&1, Attachment)))
+      |> Map.update(:embeds, nil, &(to_structs(&1, Embed)))
+      |> Map.update(:reactions, nil, &(to_structs(&1, Reaction)))
       |> Map.update(:nonce, nil, &to_string/1)
-      |> Map.update(:activity, nil, fn activity -> to_structs(activity, MessageActivity) end)
-      |> Map.update(:application, nil, fn application ->
-        to_structs(application, MessageApplication)
-      end)
-      |> Map.update(:message_references, nil, fn messages_references ->
-        to_structs(messages_references, MessageReaction)
-      end)
+      |> Map.update(:activity, nil, &(to_structs(&1, Activity)))
+      |> Map.update(:application, nil, &(to_structs(&1, Application)))
+      |> Map.update(:message_reference, nil, &Reference.to_struct/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

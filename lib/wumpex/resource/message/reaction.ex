@@ -1,4 +1,4 @@
-defmodule Wumpex.Resource.MessageReaction do
+defmodule Wumpex.Resource.Message.Reaction do
   import Wumpex.Resource
 
   alias Wumpex.Resource.Emoji
@@ -22,6 +22,6 @@ defmodule Wumpex.Resource.MessageReaction do
       |> to_atomized_map()
       |> Map.update(:emoji, nil, &Emoji.to_struct/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

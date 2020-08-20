@@ -1,4 +1,4 @@
-defmodule Wumpex.Resource.MessageApplication do
+defmodule Wumpex.Resource.Message.Application do
   import Wumpex.Resource
 
   alias Wumpex.Resource
@@ -23,6 +23,6 @@ defmodule Wumpex.Resource.MessageApplication do
   def to_struct(data) when is_map(data) do
     data = to_atomized_map(data)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

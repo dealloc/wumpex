@@ -1,4 +1,4 @@
-defmodule Wumpex.Resource.GuildMember do
+defmodule Wumpex.Resource.Guild.Member do
   import Wumpex.Resource
 
   alias Wumpex.Resource
@@ -32,6 +32,6 @@ defmodule Wumpex.Resource.GuildMember do
       |> Map.update(:joined_at, nil, &Resource.to_datetime/1)
       |> Map.update(:premium_since, nil, &Resource.to_datetime/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end

@@ -2,13 +2,13 @@ defmodule Wumpex.Resource.VoiceState do
   import Wumpex.Resource
 
   alias Wumpex.Resource
-  alias Wumpex.Resource.GuildMember
+  alias Wumpex.Resource.Guild.Member
 
   @type t :: %__MODULE__{
           guild_id: Resource.snowflake(),
           channel_id: Resource.snowflake(),
           user_id: Resource.snowflake(),
-          member: GuildMember.t(),
+          member: Member.t(),
           session_id: String.t(),
           deaf: boolean(),
           mute: boolean(),
@@ -39,8 +39,8 @@ defmodule Wumpex.Resource.VoiceState do
     data =
       data
       |> to_atomized_map()
-      |> Map.update(:member, nil, &GuildMember.to_struct/1)
+      |> Map.update(:member, nil, &Member.to_struct/1)
 
-    struct!(__MODULE__, data)
+    struct(__MODULE__, data)
   end
 end
