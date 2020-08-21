@@ -33,7 +33,7 @@ defmodule Wumpex.ResourceTest do
     end
 
     test "allow nil to be passed in, returns it" do
-      assert nil = Resource.to_datetime(nil)
+      assert nil == Resource.to_datetime(nil)
     end
   end
 
