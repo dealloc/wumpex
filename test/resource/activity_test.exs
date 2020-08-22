@@ -15,7 +15,8 @@ defmodule Wumpex.Resource.ActivityTest do
     test "parse 'game' structs" do
       example = %{
         "name" => "Rocket League",
-        "type" => 0, # Game
+        # Game
+        "type" => 0,
         "created_at" => "2015-04-26T06:26:56.936000+00:00",
         "timestamps" => %{},
         "application_id" => "id",
@@ -30,30 +31,30 @@ defmodule Wumpex.Resource.ActivityTest do
       }
 
       assert %Activity{
-        name: "Rocket League",
-        type: 0,
-        created_at: ~U[2015-04-26 06:26:56.936000Z],
-        timestamps: %Timestamps{},
-        application_id: "id",
-        details: "Details about the activity",
-        state: "Ongoing",
-        emoji: %Emoji{},
-        party: %Party{},
-        assets: %Assets{},
-        secrets: %Secrets{},
-        instance: true,
-        flags: %Flags{}
-      } = Activity.to_struct(example)
+               name: "Rocket League",
+               type: 0,
+               created_at: ~U[2015-04-26 06:26:56.936000Z],
+               timestamps: %Timestamps{},
+               application_id: "id",
+               details: "Details about the activity",
+               state: "Ongoing",
+               emoji: %Emoji{},
+               party: %Party{},
+               assets: %Assets{},
+               secrets: %Secrets{},
+               instance: true,
+               flags: %Flags{}
+             } = Activity.to_struct(example)
     end
 
     test "parse 'stream' structs" do
-
     end
 
     test "ignore missing fields" do
       example = %{
         "name" => "Rocket League",
-        "type" => 0, # Game
+        # Game
+        "type" => 0,
         "created_at" => "2015-04-26T06:26:56.936000+00:00",
         "timestamps" => %{},
         "application_id" => "id",
@@ -71,20 +72,20 @@ defmodule Wumpex.Resource.ActivityTest do
       }
 
       assert %Activity{
-        name: "Rocket League",
-        type: 0,
-        created_at: ~U[2015-04-26 06:26:56.936000Z],
-        timestamps: %Timestamps{},
-        application_id: "id",
-        details: "Details about the activity",
-        state: "Ongoing",
-        emoji: %Emoji{},
-        party: %Party{},
-        assets: %Assets{},
-        secrets: %Secrets{},
-        instance: true,
-        flags: %Flags{}
-      } = Activity.to_struct(example)
+               name: "Rocket League",
+               type: 0,
+               created_at: ~U[2015-04-26 06:26:56.936000Z],
+               timestamps: %Timestamps{},
+               application_id: "id",
+               details: "Details about the activity",
+               state: "Ongoing",
+               emoji: %Emoji{},
+               party: %Party{},
+               assets: %Assets{},
+               secrets: %Secrets{},
+               instance: true,
+               flags: %Flags{}
+             } = Activity.to_struct(example)
     end
   end
 end

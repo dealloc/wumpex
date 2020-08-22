@@ -13,16 +13,16 @@ defmodule Wumpex.Resource.Activity.TimestampsTest do
       }
 
       assert %Timestamps{
-        start: ~U[2020-08-14 12:30:37.567Z],
-        end: ~U[2020-08-14 12:30:57.097Z]
-      } = Timestamps.to_struct(example)
+               start: ~U[2020-08-14 12:30:37.567Z],
+               end: ~U[2020-08-14 12:30:57.097Z]
+             } = Timestamps.to_struct(example)
     end
 
     test "ignore missing fields" do
       assert %Timestamps{
-        start: nil,
-        end: nil
-      } = Timestamps.to_struct(%{})
+               start: nil,
+               end: nil
+             } = Timestamps.to_struct(%{})
     end
   end
 end

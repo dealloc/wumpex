@@ -14,18 +14,18 @@ defmodule Wumpex.Resource.Activity.SecretsTest do
       }
 
       assert %Secrets{
-        join: "join-value",
-        spectate: "spectate-value",
-        match: "match value"
-      } = Secrets.to_struct(example)
+               join: "join-value",
+               spectate: "spectate-value",
+               match: "match value"
+             } = Secrets.to_struct(example)
     end
 
     test "ignore missing fields" do
       assert %Secrets{
-        join: nil,
-        spectate: nil,
-        match: nil
-      } = Secrets.to_struct(%{})
+               join: nil,
+               spectate: nil,
+               match: nil
+             } = Secrets.to_struct(%{})
     end
   end
 end

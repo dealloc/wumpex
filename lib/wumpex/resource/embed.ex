@@ -127,7 +127,7 @@ defmodule Wumpex.Resource.Embed do
       |> Map.update(:video, nil, &Video.to_struct/1)
       |> Map.update(:provider, nil, &Footer.to_struct/1)
       |> Map.update(:author, nil, &Author.to_struct/1)
-      |> Map.update(:fields, nil, &(to_structs(&1, Field)))
+      |> Map.update(:fields, nil, &to_structs(&1, Field))
 
     struct(__MODULE__, data)
   end

@@ -11,15 +11,15 @@ defmodule Wumpex.Resource.Embed.ImageTest do
         "url" => "https://google.com",
         "proxy_url" => "https://google.se",
         "height" => 10,
-        "width" => 20,
+        "width" => 20
       }
 
       assert %Image{
-        url: "https://google.com",
-        proxy_url: "https://google.se",
-        height: 10,
-        width: 20
-      } = Image.to_struct(example)
+               url: "https://google.com",
+               proxy_url: "https://google.se",
+               height: 10,
+               width: 20
+             } = Image.to_struct(example)
     end
   end
 end

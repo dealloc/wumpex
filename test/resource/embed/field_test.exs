@@ -14,10 +14,10 @@ defmodule Wumpex.Resource.Embed.FieldTest do
       }
 
       assert %Field{
-        name: "dealloc",
-        value: "https://dealloc.dev",
-        inline: true
-      } = Field.to_struct(example)
+               name: "dealloc",
+               value: "https://dealloc.dev",
+               inline: true
+             } = Field.to_struct(example)
     end
   end
 end

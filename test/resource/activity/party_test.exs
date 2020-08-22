@@ -13,16 +13,16 @@ defmodule Wumpex.Resource.Activity.PartyTest do
       }
 
       assert %Party{
-        id: "308994132968210433",
-        size: {20, 30}
-      } = Party.to_struct(example)
+               id: "308994132968210433",
+               size: {20, 30}
+             } = Party.to_struct(example)
     end
 
     test "ignore missing fields" do
       assert %Party{
-        id: nil,
-        size: nil
-      } = Party.to_struct(%{})
+               id: nil,
+               size: nil
+             } = Party.to_struct(%{})
     end
   end
 end

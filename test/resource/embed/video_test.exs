@@ -14,10 +14,10 @@ defmodule Wumpex.Resource.Embed.VideoTest do
       }
 
       assert %Video{
-        url: "https://dealloc.dev",
-        height: 100,
-        width: 50
-      } = Video.to_struct(example)
+               url: "https://dealloc.dev",
+               height: 100,
+               width: 50
+             } = Video.to_struct(example)
     end
   end
 end

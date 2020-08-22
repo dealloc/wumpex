@@ -10,9 +10,9 @@ defmodule Wumpex.Resource.Embed.AuthorTest do
       example = %{"name" => "dealloc", "url" => "https://dealloc.dev"}
 
       assert %Author{
-        name: "dealloc",
-        url: "https://dealloc.dev"
-      } = Author.to_struct(example)
+               name: "dealloc",
+               url: "https://dealloc.dev"
+             } = Author.to_struct(example)
     end
   end
 end

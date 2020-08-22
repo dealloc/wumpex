@@ -168,14 +168,14 @@ defmodule Wumpex.Resource.Guild do
     data =
       data
       |> to_atomized_map()
-      |> Map.update(:roles, nil, &(to_structs(&1, Role)))
-      |> Map.update(:emojis, nil, &(to_structs(&1, Emoji)))
+      |> Map.update(:roles, nil, &to_structs(&1, Role))
+      |> Map.update(:emojis, nil, &to_structs(&1, Emoji))
       |> Map.update(:system_channel_flags, nil, &ChannelFlags.to_struct/1)
       |> Map.update(:joined_at, nil, &to_datetime/1)
-      |> Map.update(:voice_states, nil, &(to_structs(&1, VoiceState)))
-      |> Map.update(:members, nil, &(to_structs(&1, Member)))
-      |> Map.update(:channels, nil, &(to_structs(&1, Channel)))
-      |> Map.update(:presences, nil, &(to_structs(&1, PresenceUpdate)))
+      |> Map.update(:voice_states, nil, &to_structs(&1, VoiceState))
+      |> Map.update(:members, nil, &to_structs(&1, Member))
+      |> Map.update(:channels, nil, &to_structs(&1, Channel))
+      |> Map.update(:presences, nil, &to_structs(&1, PresenceUpdate))
 
     struct(__MODULE__, data)
   end

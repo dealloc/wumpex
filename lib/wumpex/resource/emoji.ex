@@ -29,10 +29,11 @@ defmodule Wumpex.Resource.Emoji do
 
   @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
-    data = data
-    |> to_atomized_map()
-    |> Map.update(:roles, nil, fn roles -> to_structs(roles, Role) end)
-    |> Map.update(:user, nil, &User.to_struct/1)
+    data =
+      data
+      |> to_atomized_map()
+      |> Map.update(:roles, nil, fn roles -> to_structs(roles, Role) end)
+      |> Map.update(:user, nil, &User.to_struct/1)
 
     struct(__MODULE__, data)
   end

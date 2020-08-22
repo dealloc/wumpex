@@ -13,9 +13,9 @@ defmodule Wumpex.Resource.Embed.ProviderTest do
       }
 
       assert %Provider{
-        name: "dealloc",
-        url: "https://dealloc.dev"
-      } = Provider.to_struct(example)
+               name: "dealloc",
+               url: "https://dealloc.dev"
+             } = Provider.to_struct(example)
     end
   end
 end

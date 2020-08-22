@@ -14,18 +14,18 @@ defmodule Wumpex.Resource.Activity.EmojiTest do
       }
 
       assert %Emoji{
-        name: "emoji",
-        id: "308994132968210433",
-        animated: true
-      } = Emoji.to_struct(example)
+               name: "emoji",
+               id: "308994132968210433",
+               animated: true
+             } = Emoji.to_struct(example)
     end
 
     test "ignore missing fields" do
       assert %Emoji{
-        name: nil,
-        id: nil,
-        animated: nil
-      } = Emoji.to_struct(%{})
+               name: nil,
+               id: nil,
+               animated: nil
+             } = Emoji.to_struct(%{})
     end
   end
 end

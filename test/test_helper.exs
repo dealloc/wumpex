@@ -7,7 +7,8 @@ defmodule WebsocketHelpers do
   def accept_one(client) do
     Task.async(fn ->
       server = Socket.Web.listen!(8080)
-      send(client, :ready) # Let the client know the server is ready to accept.
+      # Let the client know the server is ready to accept.
+      send(client, :ready)
       client = Socket.Web.accept!(server)
       Socket.Web.accept!(client)
 
@@ -21,7 +22,8 @@ defmodule WebsocketHelpers do
   def echo_one(client) do
     Task.async(fn ->
       server = Socket.Web.listen!(8080)
-      send(client, :ready) # Let the client know the server is ready to accept.
+      # Let the client know the server is ready to accept.
+      send(client, :ready)
       client = Socket.Web.accept!(server)
       Socket.Web.accept!(client)
 
