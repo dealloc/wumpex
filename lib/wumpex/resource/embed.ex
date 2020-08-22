@@ -9,6 +9,24 @@ defmodule Wumpex.Resource.Embed do
   alias Wumpex.Resource.Embed.Author
   alias Wumpex.Resource.Embed.Field
 
+  @typedoc """
+  Represents the struct form of this module.
+
+  Contains the following fields:
+  * `:title` - The title of the embed.
+  * `:type` - The `t:type/0` of embed (soft deprecated).
+  * `:description` - The description of the embed.
+  * `:url` The URL of the embed.
+  * `:timestamp` The `DateTime` of the embed.
+  * `:color` - The colour code of the embed.
+  * `:footer` - The `Wumpex.Resource.Embed.Footer` of the embed.
+  * `:image` - The image of the embed.
+  * `:thumbnail` - The thumbnail information of the embed.
+  * `:video` The video information of the embed.
+  * `:provider` - The provider information of the embed.
+  * `:author` - The author information of the embed.
+  * `:fields` - The custom fields information of the embed.
+  """
   @type t :: %__MODULE__{
           title: String.t(),
           type: String.t(),
@@ -54,6 +72,49 @@ defmodule Wumpex.Resource.Embed do
     :fields
   ]
 
+  @doc """
+  Maps the incoming data into struct form.
+
+  ## Example:
+
+  You can pass in invalid or missing data, it will ignore what doesn't match.
+
+      iex> Wumpex.Resource.Embed.to_struct(%{})
+      %Wumpex.Resource.Embed{
+        title: nil,
+        type: nil,
+        description: nil,
+        url: nil,
+        timestamp: nil,
+        color: nil,
+        footer: nil,
+        image: nil,
+        thumbnail: nil,
+        video: nil,
+        provider: nil,
+        author: nil,
+        fields: nil
+      }
+
+  If you pass in known properties, they'll be mapped.
+
+      iex> Wumpex.Resource.Embed.to_struct(%{"title" => "embed title"})
+      %Wumpex.Resource.Embed{
+        title: "embed title",
+        type: nil,
+        description: nil,
+        url: nil,
+        timestamp: nil,
+        color: nil,
+        footer: nil,
+        image: nil,
+        thumbnail: nil,
+        video: nil,
+        provider: nil,
+        author: nil,
+        fields: nil
+      }
+  """
   @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
     data =

@@ -1,6 +1,8 @@
 defmodule Wumpex.Resource.Embed.FooterTest do
 use ExUnit.Case
 
+doctest Wumpex.Resource.Embed.Footer
+
 alias Wumpex.Resource.Embed.Footer
 
   describe "to_struct/1 should" do

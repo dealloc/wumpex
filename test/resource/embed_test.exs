@@ -1,5 +1,6 @@
 defmodule Wumpex.Resource.EmbedTest do
   use ExUnit.Case
+
   alias Wumpex.Resource.Embed
   alias Wumpex.Resource.Embed.Footer
   alias Wumpex.Resource.Embed.Author

@@ -1,4 +1,10 @@
 defmodule Wumpex.Resource.Activity do
+  @moduledoc """
+  Represents the activity of a presence update in Discord.
+
+  See the official [Discord documentation](https://discord.com/developers/docs/topics/gateway#activity-object).
+  """
+
   import Wumpex.Resource
 
   alias Wumpex.Resource
@@ -13,6 +19,7 @@ defmodule Wumpex.Resource.Activity do
   Represents the type of activity.
 
   Can contain the following values:
+
   | ID | Name      | Format              | Example                   |
   |----|-----------|---------------------|---------------------------|
   | 0  | Game      | Playing {name}      | "Playing Rocket League"   |
@@ -22,6 +29,25 @@ defmodule Wumpex.Resource.Activity do
   """
   @type activity_type :: 0 | 1 | 2 | 4
 
+  @typedoc """
+  Represents the struct form of this module.
+
+  Contains the following fields:
+  * `:name` - the activity's name
+  * `:type` - the `t:activity_type/0` activity type.
+  * `:url` - stream URL, is validated when `:type` is `1`.
+  * `:created_at` - unix timestamp of when the activity was added to the user's session.
+  * `:timestamps` - unix `t:TWumpex.Resource.Timestamps.t/0` for start and end of the game.
+  * `:application_id` - application id for the game.
+  * `:details` - what the player is currently doing.
+  * `:state` - the user's current party status.
+  * `:emoji` - the emoji used for a custom status.
+  * `:party` - information for the current party of the player.
+  * `:assets` - images for the presence and their hover texts.
+  * `:secrets` - secrets for Rich Presence joining and spectating.
+  * `:instance` - whether or not the activity is an instance game session.
+  * `:flags` - `t:Wumpex.Resource.Activity.Flags.t/0` describes what the payload includes.
+  """
   @type t :: %__MODULE__{
           name: String.t(),
           type: activity_type(),
@@ -56,6 +82,39 @@ defmodule Wumpex.Resource.Activity do
     :flags
   ]
 
+  @doc """
+  Maps the incoming data into struct form.
+
+  ## Example:
+
+  You can pass in invalid or missing data, it will ignore what doesn't match.
+
+      iex> Wumpex.Resource.Activity.to_struct(%{})
+      %Wumpex.Resource.Activity{
+        application_id: nil,
+        assets: nil,
+        created_at: nil,
+        details: nil,
+        emoji: nil,
+        flags: nil,
+        instance: nil,
+        name: nil,
+        party: nil,
+        secrets: nil,
+        state: nil,
+        timestamps: nil,
+        type: nil,
+        url: nil
+      }
+
+  If you pass in known properties, they'll be mapped.
+
+      iex> Wumpex.Resource.Activity.to_struct(%{"name" => "the name of the activity"})
+      %Wumpex.Resource.Activity{
+        name: "the name of the activity"
+      }
+  """
+  @spec to_struct(data :: map()) :: t()
   def to_struct(data) when is_map(data) do
     data =
       data

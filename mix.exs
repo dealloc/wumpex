@@ -25,6 +25,36 @@ defmodule Wumpex.MixProject do
             Wumpex.Gateway.State,
             Wumpex.Gateway.Opcodes,
             Wumpex.Gateway.EventHandler
+          ],
+          Resources: [
+            Wumpex.Resource.Activity,
+            Wumpex.Resource.Activity.Assets,
+            Wumpex.Resource.Activity.Emoji,
+            Wumpex.Resource.Activity.Flags,
+            Wumpex.Resource.Activity.Party,
+            Wumpex.Resource.Activity.Secrets,
+            Wumpex.Resource.Activity.Timestamps,
+            Wumpex.Resource.Attachment,
+            Wumpex.Resource.Channel,
+            Wumpex.Resource.ChannelFlags,
+            Wumpex.Resource.ChannelMention,
+            Wumpex.Resource.ClientStatus,
+            Wumpex.Resource.Embed,
+            Wumpex.Resource.Embed.Author,
+            Wumpex.Resource.Embed.Field,
+            Wumpex.Resource.Embed.Footer,
+            Wumpex.Resource.Embed.Image,
+            Wumpex.Resource.Embed.Provider,
+            Wumpex.Resource.Embed.Thumbnail,
+            Wumpex.Resource.Embed.Video,
+            Wumpex.Resource.Emoji,
+            Wumpex.Resource.Guild,
+            Wumpex.Resource.Message,
+            Wumpex.Resource.PresenceUpdate,
+            Wumpex.Resource.Role,
+            Wumpex.Resource.User,
+            Wumpex.Resource.UserFlags,
+            Wumpex.Resource.VoiceState
           ]
         ]
       ]

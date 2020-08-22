@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Embed.Image do
+  # credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
   import Wumpex.Resource
 
   @type t :: %__MODULE__{

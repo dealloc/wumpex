@@ -1,6 +1,8 @@
 defmodule Wumpex.Resource.Embed.ImageTest do
   use ExUnit.Case
 
+  doctest Wumpex.Resource.Embed.Image
+
   alias Wumpex.Resource.Embed.Image
 
   describe "to_struct/1 should" do
