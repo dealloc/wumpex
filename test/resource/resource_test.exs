@@ -1,6 +1,8 @@
 defmodule Wumpex.ResourceTest do
   use ExUnit.Case
 
+  doctest Wumpex.Resource
+
   alias Wumpex.Resource
 
   describe "to_atom/1 should" do
