@@ -1,13 +1,19 @@
 defmodule Wumpex.Resource.Embed do
+  @moduledoc """
+  Represents embedded rich content.
+
+  See the official [Discord documentation](https://discord.com/developers/docs/resources/channel#embed-object).
+  """
+
   import Wumpex.Resource
 
-  alias Wumpex.Resource.Embed.Footer
-  alias Wumpex.Resource.Embed.Image
-  alias Wumpex.Resource.Embed.Thumbnail
-  alias Wumpex.Resource.Embed.Video
-  alias Wumpex.Resource.Embed.Provider
   alias Wumpex.Resource.Embed.Author
   alias Wumpex.Resource.Embed.Field
+  alias Wumpex.Resource.Embed.Footer
+  alias Wumpex.Resource.Embed.Image
+  alias Wumpex.Resource.Embed.Provider
+  alias Wumpex.Resource.Embed.Thumbnail
+  alias Wumpex.Resource.Embed.Video
 
   @typedoc """
   Represents the struct form of this module.

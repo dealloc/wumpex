@@ -1,4 +1,10 @@
-defmodule Wumpex.Resource.ChannelFlags do
+defmodule Wumpex.Resource.Guild.ChannelFlags do
+  @moduledoc """
+  Represents system channel flags for a guild.
+
+  See the official [Discord documentation](https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags).
+  """
+
   use Bitwise
 
   @type t :: %__MODULE__{

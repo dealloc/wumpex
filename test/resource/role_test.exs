@@ -1,6 +1,8 @@
 defmodule Wumpex.Resource.RoleTest do
   use ExUnit.Case
 
+  doctest Wumpex.Resource.Role
+
   alias Wumpex.Resource.Role
 
   describe "to_struct/1 should" do

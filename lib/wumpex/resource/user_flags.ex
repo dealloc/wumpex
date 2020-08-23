@@ -5,6 +5,25 @@ defmodule Wumpex.Resource.UserFlags do
 
   use Bitwise
 
+  @typedoc """
+  Represents the struct form of this module.
+
+  Contains the following fields:
+  * `:none` - Indicates no flags are set.
+  * `:discord_employee` - Indicates this user is a Discord employee.
+  * `:discord_partner` - Indicates that this user is a Discord partner.
+  * `:hypesquad_events` - Hypesquad events.
+  * `:bug_hunter_level_1` - This user is bug hunter level 1.
+  * `:house_bravery` - This user is sorted into the house Bravery.
+  * `:house_brilliance` - This user is sorted into the house Brilliance.
+  * `:house_balance` - This user is sorted into the house Balance.
+  * `:early_supporter` - This user is an early supporter.
+  * `:team_user` - Team user.
+  * `:system` - Indicates the user is a system user.
+  * `:bug_hunter_level_2` - This user is bug hunter level 2.
+  * `:verified_bot` - This user is a verified bot.
+  * `:verified_bot_developer` - This user is a verified bot developer.
+  """
   @type t :: %__MODULE__{
           none: boolean(),
           discord_employee: boolean(),
@@ -39,6 +58,29 @@ defmodule Wumpex.Resource.UserFlags do
     :verified_bot_developer
   ]
 
+  @doc """
+  Maps the incoming data into struct form.
+
+  ## Example:
+
+      iex> Wumpex.Resource.UserFlags.to_struct(0)
+      %Wumpex.Resource.UserFlags{
+        bug_hunter_level_1: false,
+        bug_hunter_level_2: false,
+        discord_employee: false,
+        discord_partner: false,
+        early_supporter: false,
+        house_balance: false,
+        house_bravery: false,
+        house_brilliance: false,
+        hypesquad_events: false,
+        none: true,
+        system: false,
+        team_user: false,
+        verified_bot: false,
+        verified_bot_developer: false
+      }
+  """
   @spec to_struct(data :: non_neg_integer()) :: t()
   def to_struct(data) when is_number(data) do
     %__MODULE__{

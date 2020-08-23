@@ -1,5 +1,8 @@
 defmodule Wumpex.Resource.MessageTest do
   use ExUnit.Case
+
+  doctest Wumpex.Resource.Message
+
   alias Wumpex.Resource.Message
   alias Wumpex.Resource.User
   alias Wumpex.Resource.Message.Reaction

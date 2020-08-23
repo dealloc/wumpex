@@ -1,6 +1,8 @@
 defmodule Wumpex.Resource.ChannelTest do
   use ExUnit.Case
 
+  doctest Wumpex.Resource.Channel
+
   alias Wumpex.Resource.Channel
   alias Wumpex.Resource.User
 

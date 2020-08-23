@@ -1,8 +1,8 @@
 defmodule Wumpex.Resource.GuildTest do
   use ExUnit.Case
 
-  alias Wumpex.Resource.ChannelFlags
   alias Wumpex.Resource.Guild
+  alias Wumpex.Resource.Guild.ChannelFlags
 
   describe "to_struct/1 should" do
     test "parse the official example for guild" do
