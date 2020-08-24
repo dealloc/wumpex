@@ -7,7 +7,7 @@ defmodule Wumpex.Application do
   def start(_type, _args) do
     children = [
       {Registry,
-       keys: :duplicate, name: Wumpex.Guild.Coordinator, partitions: System.schedulers_online()},
+       keys: :duplicate, name: Wumpex.Gateway.Guild.Coordinator, partitions: System.schedulers_online()},
       # Normally the shard configuration comes from the Discord API, we're taking shortcuts here
       {Wumpex.Shard, [shard: {0, 1}, gateway: "wss://gateway.discord.gg"]}
     ]

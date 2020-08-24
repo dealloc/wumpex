@@ -1,6 +1,6 @@
-defmodule Wumpex.Guild.Coordinator do
+defmodule Wumpex.Gateway.Guild.Coordinator do
   @moduledoc """
-  Tracks all active `Wumpex.Guild.Client` processes for a given `Wumpex.Shard`.
+  Tracks all active `Wumpex.Gateway.Guild.Client` processes for a given `Wumpex.Shard`.
 
   This module implements the `Wumpex.Base.Coordinator` behaviour.
   """
@@ -8,13 +8,13 @@ defmodule Wumpex.Guild.Coordinator do
   use Wumpex.Base.Coordinator
 
   @doc """
-  Start a new `Wumpex.Guild.Client` instance which monitors the guild corresponding with `guild_id`.
+  Start a new `Wumpex.Gateway.Guild.Client` instance which monitors the guild corresponding with `guild_id`.
 
   This is called when a guild becomes available (eg. the bot is added to it, or on startup).
   """
   @spec start_guild(guild_sup :: pid(), guild_id :: String.t()) :: Supervisor.on_start_child()
   def start_guild(guild_sup, guild_id) do
-    DynamicSupervisor.start_child(guild_sup, {Wumpex.Guild.Client, guild_id: guild_id})
+    DynamicSupervisor.start_child(guild_sup, {Wumpex.Gateway.Guild.Client, guild_id: guild_id})
   end
 
   @doc """
@@ -29,7 +29,7 @@ defmodule Wumpex.Guild.Coordinator do
   end
 
   @doc """
-  Requests the `Wumpex.Guild.Client` instance for the given `guild_id` to exit.
+  Requests the `Wumpex.Gateway.Guild.Client` instance for the given `guild_id` to exit.
 
   This is called whenever a guild is no longer available (eg. the bot was removed from that guild).
   """
@@ -39,7 +39,7 @@ defmodule Wumpex.Guild.Coordinator do
   end
 
   @doc """
-  Dispatch a given `event` to the `Wumpex.Guild.Client` process for the guild corresponding with `guild_id`.
+  Dispatch a given `event` to the `Wumpex.Gateway.Guild.Client` process for the guild corresponding with `guild_id`.
   """
   @spec dispatch!(guild_id :: String.t(), event :: any()) :: :ok
   def dispatch!(guild_id, event) do

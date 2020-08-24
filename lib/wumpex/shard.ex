@@ -19,7 +19,7 @@ defmodule Wumpex.Shard do
 
   use GenServer
 
-  alias Wumpex.Guild.Coordinator
+  alias Wumpex.Gateway.Guild.Coordinator
 
   require Logger
 

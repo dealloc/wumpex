@@ -5,12 +5,12 @@ defmodule Wumpex.Gateway.EventHandler do
   This module contains the `dispatch/3` method which the `Wumpex.Gateway.Worker` calls after decoding an incoming message.
   Events that do not affect a specific guild directly (HELLO, READY, RESUMED, ...) are handled here.
 
-  Events that are for a specific guild (MESSAGE_CREATE, PRESENCE_UPDATE, ...) are dispatched to the approperiate `Wumpex.Guild.Client` using the `Wumpex.Guild.Coordinator` module.
+  Events that are for a specific guild (MESSAGE_CREATE, PRESENCE_UPDATE, ...) are dispatched to the approperiate `Wumpex.Gateway.Guild.Client` using the `Wumpex.Gateway.Guild.Coordinator` module.
   """
 
   alias Wumpex.Base.Websocket
   alias Wumpex.Gateway.State
-  alias Wumpex.Guild.Coordinator
+  alias Wumpex.Gateway.Guild.Coordinator
 
   require Logger
 

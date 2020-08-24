@@ -22,7 +22,7 @@ defmodule Wumpex.Base.Coordinator do
       defmodule ExampleChild do
         use GenServer
 
-        alias Wumpex.Guild.Coordinator
+        alias Wumpex.Gateway.Guild.Coordinator
 
         @spec start_link(options :: keyword()) :: GenServer.on_start()
         def start_link(key: key) do

@@ -24,7 +24,7 @@ defmodule Wumpex.Gateway.Worker do
     * `:token` - The bot token
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
     * `:gateway` - The URL this shard should connect to.
-    * `:guild_sup` - The `Wumpex.Guild.Coordinator`, which acts as a guild supervisor.
+    * `:guild_sup` - The `Wumpex.Gateway.Guild.Coordinator`, which acts as a guild supervisor.
   """
   @type options :: [
           token: String.t(),
