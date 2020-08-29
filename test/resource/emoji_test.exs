@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.EmojiTest do
+  @moduledoc false
   use ExUnit.Case
 
   alias Wumpex.Resource.Emoji

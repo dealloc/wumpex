@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Embed.FooterTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Embed.Footer

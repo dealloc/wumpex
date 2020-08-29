@@ -1,4 +1,5 @@
 defmodule Wumpex.Base.DistributedTest do
+  @moduledoc false
   use ExUnit.Case, async: false
 
   alias Wumpex.Base.Distributed

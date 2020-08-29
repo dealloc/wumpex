@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Activity.PartyTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Activity.Party

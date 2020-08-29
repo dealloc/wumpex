@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.ChannelTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Channel

@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.GuildTest do
+  @moduledoc false
   use ExUnit.Case
 
   alias Wumpex.Resource.Guild

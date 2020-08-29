@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Activity.AssetsTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Activity.Assets

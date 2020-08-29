@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Message.ReferenceTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Message.Reference

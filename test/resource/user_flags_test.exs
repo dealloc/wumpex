@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.UserFlagsTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.UserFlags

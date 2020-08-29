@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Activity.FlagsTest do
+  @moduledoc false
   use ExUnit.Case
   use Bitwise
 

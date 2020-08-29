@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.RoleTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Role

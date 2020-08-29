@@ -1,4 +1,5 @@
 defmodule Wumpex.ResourceTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource

@@ -1,4 +1,5 @@
 defmodule Wumpex.GatewayTest do
+  @moduledoc false
   use ExUnit.Case
   doctest Wumpex.Gateway
   doctest Wumpex.Gateway.EventHandler

@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.ChannelMentionTest do
+  @moduledoc false
   use ExUnit.Case
 
   alias Wumpex.Resource.ChannelMention

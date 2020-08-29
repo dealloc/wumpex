@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.UserTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.User

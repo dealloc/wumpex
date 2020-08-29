@@ -1,4 +1,5 @@
 defmodule WumpexTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex

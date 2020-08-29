@@ -1,4 +1,5 @@
 defmodule Wumpex.Base.WebsocketTest do
+  @moduledoc false
   use ExUnit.Case, async: false
 
   @moduletag :integration

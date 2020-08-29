@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Message.ApplicationTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Message.Application

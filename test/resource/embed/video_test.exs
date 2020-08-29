@@ -1,4 +1,5 @@
 defmodule Wumpex.Resource.Embed.VideoTest do
+  @moduledoc false
   use ExUnit.Case
 
   doctest Wumpex.Resource.Embed.Video

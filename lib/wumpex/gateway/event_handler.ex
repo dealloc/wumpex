@@ -9,8 +9,8 @@ defmodule Wumpex.Gateway.EventHandler do
   """
 
   alias Wumpex.Base.Websocket
-  alias Wumpex.Gateway.State
   alias Wumpex.Gateway.Guild.Coordinator
+  alias Wumpex.Gateway.State
 
   require Logger
 
