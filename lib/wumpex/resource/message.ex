@@ -48,31 +48,31 @@ defmodule Wumpex.Resource.Message do
   * `:flags` - Message flags, describes extra features of the message.
   """
   @type t :: %__MODULE__{
-    id: Resource.snowflake(),
-    channel_id: Resource.snowflake(),
-    guild_id: Resource.snowflake(),
-    author: User.t(),
-    member: Member.t(),
-    content: String.t(),
-    timestamp: DateTime.t(),
-    edited_timestamp: DateTime.t(),
-    tts: boolean(),
-    mention_everyone: boolean(),
-    mentions: [User.t()],
-    mention_roles: [String.t()],
-    mention_channels: [ChannelMention.t()],
-    attachments: [Attachment.t()],
-    embeds: [Embed.t()],
-    reactions: [Reaction.t()],
-    nonce: String.t(),
-    pinned: boolean(),
-    webhook_id: Resource.snowflake(),
-    type: message_type(),
-    activity: Activity.t(),
-    application: Application.t(),
-    message_reference: Reference.t(),
-    flags: non_neg_integer()
-  }
+          id: Resource.snowflake(),
+          channel_id: Resource.snowflake(),
+          guild_id: Resource.snowflake(),
+          author: User.t(),
+          member: Member.t(),
+          content: String.t(),
+          timestamp: DateTime.t(),
+          edited_timestamp: DateTime.t(),
+          tts: boolean(),
+          mention_everyone: boolean(),
+          mentions: [User.t()],
+          mention_roles: [String.t()],
+          mention_channels: [ChannelMention.t()],
+          attachments: [Attachment.t()],
+          embeds: [Embed.t()],
+          reactions: [Reaction.t()],
+          nonce: String.t(),
+          pinned: boolean(),
+          webhook_id: Resource.snowflake(),
+          type: message_type(),
+          activity: Activity.t(),
+          application: Application.t(),
+          message_reference: Reference.t(),
+          flags: non_neg_integer()
+        }
 
   @typedoc """
   The type of message.

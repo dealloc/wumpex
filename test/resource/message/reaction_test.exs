@@ -16,10 +16,10 @@ defmodule Wumpex.Resource.Message.ReactionTest do
       }
 
       assert %Reaction{
-        count: 1,
-        me: false,
-        emoji: %Emoji{}
-      } = Reaction.to_struct(example)
+               count: 1,
+               me: false,
+               emoji: %Emoji{}
+             } = Reaction.to_struct(example)
     end
   end
 end

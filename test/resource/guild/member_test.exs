@@ -19,13 +19,13 @@ defmodule Wumpex.Resource.Guild.MemberTest do
       }
 
       assert %Member{
-        user: %User{},
-        nick: "NOT API SUPPORT",
-        roles: [],
-        joined_at: ~U[2015-04-26 06:26:56.936000Z],
-        deaf: false,
-        mute: false
-      } = Member.to_struct(example)
+               user: %User{},
+               nick: "NOT API SUPPORT",
+               roles: [],
+               joined_at: ~U[2015-04-26 06:26:56.936000Z],
+               deaf: false,
+               mute: false
+             } = Member.to_struct(example)
     end
   end
 end

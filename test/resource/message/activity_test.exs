@@ -14,9 +14,9 @@ defmodule Wumpex.Resource.Message.ActivityTest do
       }
 
       assert %Activity{
-        type: 1,
-        party_id: "12345"
-      } = Activity.to_struct(example)
+               type: 1,
+               party_id: "12345"
+             } = Activity.to_struct(example)
     end
   end
 end

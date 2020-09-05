@@ -15,10 +15,10 @@ defmodule Wumpex.Resource.Message.ReferenceTest do
       }
 
       assert %Reference{
-        message_id: "73193882359173120",
-        channel_id: "73193882359173121",
-        guild_id: "73193882359173122"
-      } = Reference.to_struct(example)
+               message_id: "73193882359173120",
+               channel_id: "73193882359173121",
+               guild_id: "73193882359173122"
+             } = Reference.to_struct(example)
     end
   end
 end
