@@ -4,6 +4,14 @@ defmodule WumpexTest do
 
   doctest Wumpex
 
+  setup do
+    key = Wumpex.token()
+
+    on_exit(fn ->
+      Application.put_env(:wumpex, :key, key)
+    end)
+  end
+
   describe "Wumpex.token/0 should" do
     test "return the configured token when it's a string" do
       Application.put_env(:wumpex, :key, "some-string")
