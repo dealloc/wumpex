@@ -7,4 +7,5 @@ config :logger,
   ]
 
 config :wumpex,
-  key: ""
+  key: "DUMMY-TEST-TOKEN",
+  endpoint: "http://localhost:8081"

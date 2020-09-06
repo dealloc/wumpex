@@ -8,7 +8,7 @@ defmodule Wumpex.Api do
   use HTTPoison.Base
 
   @impl HTTPoison.Base
-  def process_url(path), do: "https://discord.com/api/v6" <> path
+  def process_url(path), do: Application.get_env(:wumpex, :endpoint, "https://discord.com/api/v6") <> path
 
   @impl HTTPoison.Base
   def process_request_body(""), do: ""
