@@ -82,7 +82,7 @@ defmodule Wumpex.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.22", only: :dev, runtime: false},
       {:socket, "~> 0.3", only: [:test]},
-      {:cauldron, "~> 0.1", only: [:test]},
+      {:fake_server, "~> 2.1", only: [:test]},
       {:websocket_client, "~> 1.4"},
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"}
