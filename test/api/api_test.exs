@@ -12,49 +12,55 @@ defmodule Wumpex.ApiTest do
 
   describe "Wumpex.Api parse ratelimit headers" do
     test_with_server "if absent in response" do
-      route "/no-ratelimit", Response.ok("")
+      route("/no-ratelimit", Response.ok(""))
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/no-ratelimit")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/no-ratelimit")
 
       assert %{
-        "retry-after" => nil,
-        "x-ratelimit-remaining" => nil,
-        "x-ratelimit-reset" => nil
-      } = response.headers
+               "retry-after" => nil,
+               "x-ratelimit-remaining" => nil,
+               "x-ratelimit-reset" => nil
+             } = response.headers
     end
 
     test_with_server "if present response" do
-      route "/passing-ratelimit", Response.ok("", %{
-        "retry-after" => "0",
-        "x-ratelimit-remaining" => "5",
-        "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
-      })
+      route(
+        "/passing-ratelimit",
+        Response.ok("", %{
+          "retry-after" => "0",
+          "x-ratelimit-remaining" => "5",
+          "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
+        })
+      )
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/passing-ratelimit")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/passing-ratelimit")
 
       assert %{
-        "retry-after" => 0,
-        "x-ratelimit-remaining" => 5,
-        "x-ratelimit-reset" => reset
-      } = response.headers
+               "retry-after" => 0,
+               "x-ratelimit-remaining" => 5,
+               "x-ratelimit-reset" => reset
+             } = response.headers
 
       assert is_number(reset)
     end
 
     test_with_server "from a 429 response" do
-      route "/failing-ratelimit", Response.too_many_requests("", %{
-        "retry-after" => "1000",
-        "x-ratelimit-remaining" => "0",
-        "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
-      })
+      route(
+        "/failing-ratelimit",
+        Response.too_many_requests("", %{
+          "retry-after" => "1000",
+          "x-ratelimit-remaining" => "0",
+          "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
+        })
+      )
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/failing-ratelimit")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/failing-ratelimit")
 
       assert %{
-        "retry-after" => 1_000,
-        "x-ratelimit-remaining" => 0,
-        "x-ratelimit-reset" => reset
-      } = response.headers
+               "retry-after" => 1_000,
+               "x-ratelimit-remaining" => 0,
+               "x-ratelimit-reset" => reset
+             } = response.headers
 
       assert is_number(reset)
     end
@@ -62,17 +68,17 @@ defmodule Wumpex.ApiTest do
 
   describe "Wumpex.Api should parse JSON body" do
     test_with_server "if present" do
-      route "/json-body", Response.ok(%{"hello" => "world"})
+      route("/json-body", Response.ok(%{"hello" => "world"}))
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/json-body")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/json-body")
 
       assert %{"hello" => "world"} = response.body
     end
 
     test_with_server "ONLY if present" do
-      route "/empty-body", Response.ok("")
+      route("/empty-body", Response.ok(""))
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/empty-body")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/empty-body")
 
       assert "" = response.body
     end
@@ -80,56 +86,58 @@ defmodule Wumpex.ApiTest do
 
   describe "Wumpex.Api should send" do
     test_with_server "User-Agent header" do
-      route "/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end
+      route("/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end)
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/echo-headers")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/echo-headers")
 
       assert %{
-        "user-agent" => _
-      } = response.headers
+               "user-agent" => _
+             } = response.headers
     end
 
     test_with_server "Content-Type header" do
-      route "/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end
+      route("/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end)
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/echo-headers")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/echo-headers")
 
       assert %{
-        "content-type" => _
-      } = response.headers
+               "content-type" => _
+             } = response.headers
     end
 
     test_with_server "Authorization header" do
-      route "/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end
+      route("/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end)
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/echo-headers")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/echo-headers")
 
       header = "Bot #{Wumpex.token()}"
+
       assert %{
-        "authorization" => ^header
-      } = response.headers
+               "authorization" => ^header
+             } = response.headers
     end
 
     test_with_server "X-Ratelimit-Precision header" do
-      route "/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end
+      route("/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end)
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/echo-headers")
+      {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/echo-headers")
 
       assert %{
-        "x-ratelimit-precision" => "millisecond"
-      } = response.headers
+               "x-ratelimit-precision" => "millisecond"
+             } = response.headers
     end
 
     test_with_server "Optional custom headers" do
-      route "/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end
+      route("/echo-headers", fn %{headers: headers} -> Response.ok("", headers) end)
 
-      {:ok, response} = Api.get("http://localhost:#{FakeServer.port}/echo-headers", [
-        "X-Wumpex-Test-Header": "passed"
-      ])
+      {:ok, response} =
+        Api.get("http://localhost:#{FakeServer.port()}/echo-headers",
+          "X-Wumpex-Test-Header": "passed"
+        )
 
       assert %{
-        "x-wumpex-test-header" => "passed"
-      } = response.headers
+               "x-wumpex-test-header" => "passed"
+             } = response.headers
     end
   end
 end
