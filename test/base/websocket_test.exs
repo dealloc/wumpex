@@ -2,10 +2,10 @@ defmodule Wumpex.Base.WebsocketTest do
   @moduledoc false
   use ExUnit.Case, async: false
 
+  alias Wumpex.Base.Websocket
+
   @moduletag :integration
   doctest Wumpex.Base.Websocket
-
-  alias Wumpex.Base.Websocket
 
   describe "Wumpex.Base.Websocket should" do
     test "connect to websocket servers" do

@@ -173,6 +173,15 @@ defmodule Wumpex.Base.Websocket do
     {:reply, frame, state}
   end
 
+  # Handles incoming message notifying that the SSL connection is closed, so the websocket should shut down.
+  @doc false
+  @impl :websocket_client
+  def websocket_info({:ssl_closed, _socket}, _conn, state) do
+    Logger.debug("Received a ssl_closed frame, shutting down socket.")
+
+    {:close, :ssl_closed, state}
+  end
+
   # Unknown erlang messages!
   @doc false
   @impl :websocket_client

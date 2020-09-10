@@ -18,7 +18,7 @@ defmodule Wumpex.GatewayTest do
     {:ok, guild_sup} = DynamicSupervisor.start_link(strategy: :one_for_one)
 
     {:ok, gateway} =
-      Wumpex.Gateway.Worker.start_link(
+      Worker.start_link(
         token: @test_token,
         shard: @test_shard,
         gateway: @test_gateway,

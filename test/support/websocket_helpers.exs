@@ -1,4 +1,7 @@
 defmodule WebsocketHelpers do
+  @moduledoc false
+  # credo:disable-for-this-file Credo.Check.Readability.Specs
+
   @doc """
   Accepts a single websocket connection and closes after 100ms.
   """
@@ -35,7 +38,7 @@ defmodule WebsocketHelpers do
   @doc """
   Wait for the websocket server (see above methods) to indicate being ready to accept connections.
   """
-  def wait_for_server() do
+  def wait_for_server do
     require ExUnit.Assertions
     import ExUnit.Assertions
 

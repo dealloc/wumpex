@@ -24,7 +24,7 @@
         included: [
           "lib/",
           "src/",
-          # "test/",
+          "test/",
           "web/",
           "apps/*/lib/",
           "apps/*/src/",

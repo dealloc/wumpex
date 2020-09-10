@@ -1,16 +1,17 @@
 defmodule Wumpex.Resource.ActivityTest do
   @moduledoc false
+  # credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
   use ExUnit.Case
 
   doctest Wumpex.Resource.Activity
 
   alias Wumpex.Resource.Activity
-  alias Wumpex.Resource.Activity.Timestamps
-  alias Wumpex.Resource.Activity.Emoji
-  alias Wumpex.Resource.Activity.Party
   alias Wumpex.Resource.Activity.Assets
-  alias Wumpex.Resource.Activity.Secrets
+  alias Wumpex.Resource.Activity.Emoji
   alias Wumpex.Resource.Activity.Flags
+  alias Wumpex.Resource.Activity.Party
+  alias Wumpex.Resource.Activity.Secrets
+  alias Wumpex.Resource.Activity.Timestamps
 
   describe "to_struct/1 should" do
     test "parse 'game' structs" do

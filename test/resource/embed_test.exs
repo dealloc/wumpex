@@ -3,8 +3,8 @@ defmodule Wumpex.Resource.EmbedTest do
   use ExUnit.Case
 
   alias Wumpex.Resource.Embed
-  alias Wumpex.Resource.Embed.Footer
   alias Wumpex.Resource.Embed.Author
+  alias Wumpex.Resource.Embed.Footer
 
   describe "to_struct/1 should" do
     test "parse an example for embed" do

@@ -4,12 +4,12 @@ defmodule Wumpex.Resource.MessageTest do
 
   doctest Wumpex.Resource.Message
 
-  alias Wumpex.Resource.Message
-  alias Wumpex.Resource.User
-  alias Wumpex.Resource.Message.Reaction
-  alias Wumpex.Resource.Emoji
   alias Wumpex.Resource.ChannelMention
+  alias Wumpex.Resource.Emoji
+  alias Wumpex.Resource.Message
+  alias Wumpex.Resource.Message.Reaction
   alias Wumpex.Resource.Message.Reference
+  alias Wumpex.Resource.User
 
   describe "to_struct/1 should" do
     test "parse the official example for message" do
