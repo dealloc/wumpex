@@ -5,6 +5,9 @@ defmodule Wumpex do
 
   @doc """
   Fetch the bot key from configuration.
+
+      iex> Wumpex.token()
+      "DUMMY-TEST-TOKEN"
   """
   @spec token() :: String.t() | nil
   def token do

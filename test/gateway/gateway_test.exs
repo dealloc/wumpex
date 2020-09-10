@@ -6,6 +6,8 @@ defmodule Wumpex.GatewayTest do
   doctest Wumpex.Gateway.State
   doctest Wumpex.Gateway.Worker
 
+  alias Wumpex.Gateway.Worker
+
   @test_token "MYSECRETTESTTOKEN"
   @test_shard {0, 1}
   @test_gateway "ws://example.gateway"
