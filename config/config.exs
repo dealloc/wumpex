@@ -3,7 +3,7 @@ import Config
 # While testing, only show warnings.
 config :logger,
   console: [
-    metadata: [:shard, :guild_id]
+    metadata: [:shard, :guild_id, :bucket]
   ],
   compile_time_purge_matching: [
     [module: Wumpex.Base.Websocket, level_lower_than: :warn],
