@@ -1,4 +1,10 @@
 defmodule Wumpex.Api.Ratelimit.Bucket do
+  @moduledoc """
+  Represents a single "bucket" in the rate limit system of Discord as described in the [official documentation](https://discord.com/developers/docs/topics/rate-limits#rate-limits).
+
+  Buckets are responsible for checking whether the given request is allowed to execute, and if not queue or bounce the request according to the given configuration.
+  """
+
   use GenServer
 
   alias HTTPoison.Request
@@ -24,12 +30,28 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
           reset_at: non_neg_integer() | nil
         ]
 
+  @typedoc """
+  The state of the process.
+
+  Contains the following fields:
+  * `:remaining` - The amount of remaining requests, or `nil` if it's unknown (initial value, or after a reset by `maybe_reset_remaining/1`).
+  * `:reset_at` - The unix timestamp when the `:remaining` field expires (and can be reset), or `nil` when it's unknown.
+  * `:queue` - An erlang `t::queue.queue/1` that represents all queued calls (see also `t:queued_call/0`).
+  * `:dequeue_pending` - Whether a dequeue has already been scheduled (this flag prevents scheduling more than one dequeue at a time, preventing flooding the mailbox in higher traffic), see `handle_info/3` for the dequeue being executed.
+  """
   @type state :: %{
           remaining: non_neg_integer() | nil,
           reset_at: non_neg_integer() | nil,
           queue: :queue.queue(queued_call()),
           dequeue_pending: boolean()
         }
+
+  @typedoc """
+  Represents a timestamp that indicates the expiration (usually of the `:remaining` field), or `:infinity` if no expiration is applicable.
+
+  This is merely a semantic distinction from the default `t:timeout/0` type, where `t:timeout/0` indicates a relative timestamp, where `t:expiration/0` is used to indicate an absolute timestamp.
+  """
+  @type expiration :: timeout()
 
   @typedoc """
   Contains all the information required for making a HTTP call.
@@ -39,18 +61,15 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
   @type http_call ::
           {Request.method(), Request.url(), Request.body(), Request.headers(), Request.options()}
 
-  @type queued_call :: {http_call(), GenServer.from()}
+  @typedoc """
+  Represents a `t:http_call/0` as it's represented in the queue.
 
-  def test do
-    {:ok, bucket} =
-      __MODULE__.start_link(
-        name: "test-bucket",
-        remaining: 0,
-        reset_at: :os.system_time(:millisecond) + 10_000
-      )
-
-    GenServer.call(bucket, {:get, "/", "", [], []})
-  end
+  Contains the following values:
+  * A `t:http_call/0` which represents the call that's queued.
+  * A `t:GenServer.from/0` if the call came from `handle_call/3` and we need to answer or `nil`, which indicates that no one is waiting for the response of this call.
+  * A `t:expiration/0` which is either a unix timestamp (in milliseconds) when the call "expires", or `:infinity` if it never expires.
+  """
+  @type queued_call :: {http_call(), GenServer.from() | nil, expiration()}
 
   @spec start_link(options :: options()) :: GenServer.on_start()
   def start_link(options \\ []) do
@@ -73,13 +92,11 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
      }}
   end
 
-  # TODO: allow the client to let us know how long we want to wait before the timeout.
-  # If the client waits max 5_000ms and the resource would take more, we shouldn't execute this at all, it'd fail anyway.
   @impl GenServer
-  @spec handle_call(http_call :: http_call(), from :: GenServer.from(), state :: state()) ::
+  @spec handle_call({http_call(), timeout()}, GenServer.from(), state()) ::
           {:reply, any(), state()} | {:noreply, state()}
-  def handle_call(http_call, from, state) do
-    case execute_or_queue(http_call, from, state) do
+  def handle_call({http_call, timeout}, from, state) do
+    case execute_or_queue(http_call, timeout, from, state) do
       {:queued, state} ->
         {:noreply, state}
 
@@ -106,31 +123,37 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
   @impl GenServer
   def handle_info(:timeout, state), do: {:noreply, state, :hibernate}
 
-  @spec execute_or_queue(http_call(), GenServer.from(), state()) ::
+  @spec execute_or_queue(http_call(), timeout(), GenServer.from(), state()) ::
           {:queued, state}
           | {{:ok, Response.t()}, state()}
           | {{:ok, Response.t()}, state()}
-          | {{:error, HTTPoison.Error.t() | Response.t()}, state()}
-  defp execute_or_queue(http_call, from, state) do
-    case can_execute?(state) do
-      false ->
-        {:queued, queue_call(http_call, from, state)}
+          | {{:error, HTTPoison.Error.t() | Response.t() | :bounced}, state()}
+  defp execute_or_queue(http_call, timeout, from, state) do
+    result =
+      case can_execute_in(state) do
+        0 ->
+          {execute(http_call), state}
 
-      true ->
-        {execute(http_call), state}
-    end
+        delay when delay >= timeout ->
+          {{:error, :bounced}, state}
+
+        _delay ->
+          {:queued, queue_call(http_call, from, state)}
+      end
+
+    update_rates(result)
   end
 
-  # Check if a request can execute according to the current state.
-  @spec can_execute?(state()) :: boolean()
-  defp can_execute?(%{remaining: remaining, reset_at: reset_at}) do
+  # Returns how many milliseconds until a request can be made, returns 0 if one can be made immediately.
+  @spec can_execute_in(state()) :: non_neg_integer()
+  defp can_execute_in(%{remaining: remaining, reset_at: reset_at}) do
     case remaining do
       0 ->
         # Check that the "reset_at" has passed, because then the remaining has been invalidated.
-        :os.system_time(:millisecond) >= reset_at
+        max(reset_at - :os.system_time(:millisecond), 0)
 
       _remaining ->
-        true
+        0
     end
   end
 
@@ -139,8 +162,8 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
   defp queue_call(http_call, from, state) do
     state = maybe_schedule_dequeue(state)
 
-    Logger.debug("Queue #{inspect(http_call)}")
-    %{state | queue: :queue.in({http_call, from}, state.queue)}
+    Logger.debug("Queueing #{inspect(http_call)}")
+    %{state | queue: :queue.in({http_call, from, :infinity}, state.queue)}
   end
 
   # Execute the given HTTP call.
@@ -183,33 +206,69 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
     %{state | dequeue_pending: true}
   end
 
-  # Checks if we can execute requests (aka there's remaining or the reset_at has expired) and resets the remaining to nil.
+  # Checks if we can execute requests (aka there's remaining or the reset_at has expired)
+  # and resets the remaining to nil.
   @spec maybe_reset_remaining(state()) :: state()
   defp maybe_reset_remaining(state) do
-    case can_execute?(state) do
-      false ->
-        state
-
-      true ->
+    case can_execute_in(state) do
+      0 ->
         %{state | remaining: nil}
+
+      _delay ->
+        state
     end
   end
 
-  # If there's calls left on the queue, attempt to execute them until remaining is 0
+  # If there's no remaining, stop dequeueing and optionally schedule a dequeue.
   @spec dequeue(state()) :: state()
   defp dequeue(%{remaining: 0} = state), do: maybe_schedule_dequeue(state)
 
+  # If there's calls left on the queue, attempt to execute them until remaining is 0
   defp dequeue(%{queue: queue} = state) do
     case :queue.out(queue) do
       {:empty, queue} ->
         # Queue is empty, we're done here!
         %{state | queue: queue}
 
-      {{:value, {http_call, from}}, queue} ->
-        {response, state} = execute_or_queue(http_call, from, %{state | queue: queue})
+      {{:value, {http_call, from, expiration}}, queue} ->
+        waiting_time = max(expiration, :os.system_time(:millisecond))
+
+        {response, state} =
+          execute_or_queue(http_call, waiting_time, from, %{state | queue: queue})
+
         # Let the waiting client know about the response.
         GenServer.reply(from, response)
         dequeue(state)
     end
   end
+
+  # Update the remaining and reset_at according to the information of the response.
+  @spec update_rates(
+          {:queued, state}
+          | {{:ok, Response.t()}, state()}
+          | {{:ok, Response.t()}, state()}
+          | {{:error, HTTPoison.Error.t() | Response.t() | :bounced}, state()}
+        ) ::
+          {:queued, state}
+          | {{:ok, Response.t()}, state()}
+          | {{:ok, Response.t()}, state()}
+          | {{:error, HTTPoison.Error.t() | Response.t() | :bounced}, state()}
+  defp update_rates(
+         {{_,
+           %{headers: %{"x-ratelimit-reset" => reset_at, "x-ratelimit-remaining" => remaining}}} =
+            response, state}
+       ) do
+    reset_at = case reset_at do
+      nil ->
+        nil
+      _ when is_number(reset_at) ->
+        round(reset_at)
+    end
+
+    # We call round/1 since reset_at is parsed as a float, but used as an integer internally.
+    {response, %{state | remaining: remaining, reset_at: reset_at}}
+  end
+
+  # No headers were passed in the response, either queue, dequeue or error.
+  defp update_rates({response, state}), do: {response, state}
 end
