@@ -85,7 +85,8 @@ defmodule Wumpex.MixProject do
       {:fake_server, "~> 2.1", only: [:test]},
       {:websocket_client, "~> 1.4"},
       {:httpoison, "~> 1.7"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+      {:poolboy, "~> 1.5"}
     ]
   end
 

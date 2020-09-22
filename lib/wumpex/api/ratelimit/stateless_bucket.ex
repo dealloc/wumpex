@@ -1,6 +1,16 @@
 defmodule Wumpex.Api.Ratelimit.StatelessBucket do
+  @moduledoc """
+  Represents a single "bucket" in the rate limit system of Discord as described in the [official documentation](https://discord.com/developers/docs/topics/rate-limits#rate-limits).
+
+  Buckets are responsible for checking whether the given request is allowed to execute, and if not queue or bounce the request according to the given configuration.
+  The StatelessBucket module gets an ETS table passed in on every request that contains the state for that specific bucket.
+  This allows executing multiple requests on the same Discord bucket (but spread across multiple processes) and having a worker pool of buckets (using `:poolboy`).
+  """
+
   use GenServer
 
+  alias HTTPoison.Request
+  alias HTTPoison.Response
   alias Wumpex.Api
 
   require Logger
@@ -53,12 +63,14 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucket do
     GenServer.start_link(__MODULE__, options)
   end
 
+  @doc false
   @impl GenServer
   @spec init(any()) :: {:ok, state()}
   def init(_options) do
     {:ok, nil}
   end
 
+  @doc false
   @impl GenServer
   @spec handle_call(command(), GenServer.from(), state()) ::
           {:reply, http_response() | {:error, :bounced}, state()}
