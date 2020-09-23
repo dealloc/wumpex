@@ -55,7 +55,7 @@ defmodule Wumpex.Base.Distributed do
 
     defp pg_members(group) do
       case :pg2.get_members(group) do
-        {:error, {:no_such_group, group}} ->
+        {:error, {:no_such_group, _group}} ->
           []
 
         members when is_list(members) ->
