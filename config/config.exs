@@ -12,7 +12,8 @@ config :logger,
   ]
 
 config :wumpex,
-  key: ""
+  key: "",
+  buckets: 4
 
 if File.exists?("config/.secret.exs") do
   import_config(".secret.exs")

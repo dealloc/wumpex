@@ -170,9 +170,9 @@ defmodule Wumpex.Api.Ratelimit do
   end
 
   @doc false
-  @spec start_link() :: GenServer.on_start()
-  def start_link do
-    GenServer.start_link(__MODULE__, [], name: __MODULE__)
+  @spec start_link(any()) :: GenServer.on_start()
+  def start_link(options) do
+    GenServer.start_link(__MODULE__, options, name: __MODULE__)
   end
 
   @doc false
