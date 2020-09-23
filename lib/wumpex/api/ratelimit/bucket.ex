@@ -258,12 +258,14 @@ defmodule Wumpex.Api.Ratelimit.Bucket do
            %{headers: %{"x-ratelimit-reset" => reset_at, "x-ratelimit-remaining" => remaining}}} =
             response, state}
        ) do
-    reset_at = case reset_at do
-      nil ->
-        nil
-      _ when is_number(reset_at) ->
-        round(reset_at)
-    end
+    reset_at =
+      case reset_at do
+        nil ->
+          nil
+
+        _ when is_number(reset_at) ->
+          round(reset_at)
+      end
 
     # We call round/1 since reset_at is parsed as a float, but used as an integer internally.
     {response, %{state | remaining: remaining, reset_at: reset_at}}

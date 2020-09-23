@@ -45,11 +45,14 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucketTest do
     end
 
     test_with_server "update the ETS table with information from the response" do
-      route("/test", Response.ok("", %{
-        "retry-after" => "1000",
-        "x-ratelimit-remaining" => "10",
-        "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
-      }))
+      route(
+        "/test",
+        Response.ok("", %{
+          "retry-after" => "1000",
+          "x-ratelimit-remaining" => "10",
+          "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
+        })
+      )
 
       {:ok, bucket} = StatelessBucket.start_link([])
       table = :ets.new(:wumpex_buckets_test, [:public])
@@ -70,11 +73,14 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucketTest do
     end
 
     test_with_server "return {:ok, response} when the http call succeeds" do
-      route("/test", Response.ok("", %{
-        "retry-after" => "1000",
-        "x-ratelimit-remaining" => "10",
-        "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
-      }))
+      route(
+        "/test",
+        Response.ok("", %{
+          "retry-after" => "1000",
+          "x-ratelimit-remaining" => "10",
+          "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
+        })
+      )
 
       {:ok, bucket} = StatelessBucket.start_link([])
       table = :ets.new(:wumpex_buckets_test, [:public])
@@ -84,20 +90,24 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucketTest do
         {"test-bucket", %{remaining: 1, reset_at: :os.system_time(:millisecond) + 10_000}}
       )
 
-      {:ok, %HTTPoison.Response{}} = GenServer.call(bucket, %{
-        http: {:get, "http://localhost:#{FakeServer.port()}/test", "", [], []},
-        timeout: 1_000,
-        state: table,
-        bucket: "test-bucket"
-      })
+      {:ok, %HTTPoison.Response{}} =
+        GenServer.call(bucket, %{
+          http: {:get, "http://localhost:#{FakeServer.port()}/test", "", [], []},
+          timeout: 1_000,
+          state: table,
+          bucket: "test-bucket"
+        })
     end
 
     test_with_server "return {:error, response} when the http call succeeds with a non 2XX status code" do
-      route("/test", Response.unauthorized("", %{
-        "retry-after" => "1000",
-        "x-ratelimit-remaining" => "10",
-        "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
-      }))
+      route(
+        "/test",
+        Response.unauthorized("", %{
+          "retry-after" => "1000",
+          "x-ratelimit-remaining" => "10",
+          "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
+        })
+      )
 
       {:ok, bucket} = StatelessBucket.start_link([])
       table = :ets.new(:wumpex_buckets_test, [:public])
@@ -107,12 +117,13 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucketTest do
         {"test-bucket", %{remaining: 1, reset_at: :os.system_time(:millisecond) + 10_000}}
       )
 
-      {:error, %HTTPoison.Response{}} = GenServer.call(bucket, %{
-        http: {:get, "http://localhost:#{FakeServer.port()}/test", "", [], []},
-        timeout: 1_000,
-        state: table,
-        bucket: "test-bucket"
-      })
+      {:error, %HTTPoison.Response{}} =
+        GenServer.call(bucket, %{
+          http: {:get, "http://localhost:#{FakeServer.port()}/test", "", [], []},
+          timeout: 1_000,
+          state: table,
+          bucket: "test-bucket"
+        })
     end
 
     test_with_server "return {:error, error} when the http call fails" do
@@ -124,12 +135,13 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucketTest do
         {"test-bucket", %{remaining: 1, reset_at: :os.system_time(:millisecond) + 10_000}}
       )
 
-      {:error, %HTTPoison.Error{}} = GenServer.call(bucket, %{
-        http: {:get, "http://localhost/test", "", [], []},
-        timeout: 1_000,
-        state: table,
-        bucket: "test-bucket"
-      })
+      {:error, %HTTPoison.Error{}} =
+        GenServer.call(bucket, %{
+          http: {:get, "http://localhost/test", "", [], []},
+          timeout: 1_000,
+          state: table,
+          bucket: "test-bucket"
+        })
     end
   end
 end

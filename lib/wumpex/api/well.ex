@@ -16,10 +16,10 @@ defmodule Wumpex.Api.Ratelimit.Well do
   @type state :: nil
 
   @type command :: %{
-    http: Bucket.http_call(),
-    tag: Ratelimit.bucket_tag(),
-    buckets: :ets.tid()
-  }
+          http: Bucket.http_call(),
+          tag: Ratelimit.bucket_tag(),
+          buckets: :ets.tid()
+        }
 
   @doc false
   @spec start_link() :: GenServer.on_start()
@@ -36,9 +36,10 @@ defmodule Wumpex.Api.Ratelimit.Well do
   @impl GenServer
   @spec handle_call(command(), GenServer.from(), state()) :: {:reply, any(), state()}
   def handle_call(%{http: http_call} = command, _from, state) do
-    response = http_call
-    |> Bucket.execute()
-    |> associate_bucket(command)
+    response =
+      http_call
+      |> Bucket.execute()
+      |> associate_bucket(command)
 
     {:reply, response, state}
   end
@@ -47,9 +48,10 @@ defmodule Wumpex.Api.Ratelimit.Well do
   # and associate with the bucket tag if possible.
   @spec associate_bucket(Bucket.http_response(), command()) :: Bucket.http_response()
   defp associate_bucket({_status, %{headers: headers}} = response, %{buckets: buckets, tag: tag}) do
-    bucket = headers
-    |> Map.new()
-    |> Map.get("x-ratelimit-bucket", nil)
+    bucket =
+      headers
+      |> Map.new()
+      |> Map.get("x-ratelimit-bucket", nil)
 
     if bucket != nil do
       :ets.insert(buckets, {tag, bucket})

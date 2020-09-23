@@ -14,6 +14,13 @@ defmodule Wumpex.MixProject do
       aliases: aliases(),
       docs: [
         groups_for_modules: [
+          Api: [
+            Wumpex.Api,
+            Wumpex.Api.Ratelimit,
+            Wumpex.Api.Ratelimit.Bucket,
+            Wumpex.Api.Ratelimit.StatelessBucket,
+            Wumpex.Api.Ratelimit.Well,
+          ],
           Base: [
             Wumpex.Base.Coordinator,
             Wumpex.Base.Distributed,
@@ -27,6 +34,7 @@ defmodule Wumpex.MixProject do
             Wumpex.Gateway.EventHandler
           ],
           Resources: [
+            Wumpex.Resource,
             Wumpex.Resource.Activity,
             Wumpex.Resource.Activity.Assets,
             Wumpex.Resource.Activity.Emoji,
