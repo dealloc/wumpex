@@ -17,7 +17,6 @@ defmodule Wumpex.ApiTest do
       {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/no-ratelimit")
 
       assert %{
-               "retry-after" => nil,
                "x-ratelimit-remaining" => nil,
                "x-ratelimit-reset" => nil
              } = response.headers
@@ -27,7 +26,6 @@ defmodule Wumpex.ApiTest do
       route(
         "/passing-ratelimit",
         Response.ok("", %{
-          "retry-after" => "0",
           "x-ratelimit-remaining" => "5",
           "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
         })
@@ -36,7 +34,6 @@ defmodule Wumpex.ApiTest do
       {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/passing-ratelimit")
 
       assert %{
-               "retry-after" => 0,
                "x-ratelimit-remaining" => 5,
                "x-ratelimit-reset" => reset
              } = response.headers
@@ -48,7 +45,6 @@ defmodule Wumpex.ApiTest do
       route(
         "/failing-ratelimit",
         Response.too_many_requests("", %{
-          "retry-after" => "1000",
           "x-ratelimit-remaining" => "0",
           "x-ratelimit-reset" => "#{:os.system_time(:millisecond)}.0"
         })
@@ -57,7 +53,6 @@ defmodule Wumpex.ApiTest do
       {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/failing-ratelimit")
 
       assert %{
-               "retry-after" => 1_000,
                "x-ratelimit-remaining" => 0,
                "x-ratelimit-reset" => reset
              } = response.headers

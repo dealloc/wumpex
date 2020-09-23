@@ -90,7 +90,8 @@ defmodule Wumpex.Api.Ratelimit do
           %{
             http: http_call,
             tag: bucket_tag,
-            buckets: state.buckets
+            buckets: state.buckets,
+            bucket_states: state.bucket_states
           },
           from
         )

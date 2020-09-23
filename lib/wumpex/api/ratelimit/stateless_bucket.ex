@@ -83,6 +83,7 @@ defmodule Wumpex.Api.Ratelimit.StatelessBucket do
           |> update_ratelimits(command)
 
         delay when delay <= timeout ->
+          Logger.debug("Delaying #{inspect(http_call)} with #{delay}ms")
           Process.sleep(delay)
 
           http_call

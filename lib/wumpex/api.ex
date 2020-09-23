@@ -39,8 +39,8 @@ defmodule Wumpex.Api do
   def process_response_headers(headers) do
     headers
     |> Map.new(fn {key, value} -> {String.downcase(key), value} end)
-    |> Map.update("retry-after", nil, &String.to_integer/1)
     |> Map.update("x-ratelimit-remaining", nil, &String.to_integer/1)
-    |> Map.update("x-ratelimit-reset", nil, &String.to_float/1)
+    # Transforms seconds with floating milliseconds to milliseconds (without floating).
+    |> Map.update("x-ratelimit-reset", nil, &(round(String.to_float(&1) * 1000)))
   end
 end
