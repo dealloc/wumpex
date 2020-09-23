@@ -30,143 +30,25 @@ defmodule Wumpex.Api.Ratelimit do
         }
 
   @doc """
-  Executes a GET request to the given `url`.
+  Executes a given request using `Wumpex.Api.request/5` using ratelimits.
 
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.get("http://localhost/test")
-        {:ok, response}
+  This means that if a rate limit would be encountered the request will either be bounced or delayed, depending on the configured timeout and when the resource will become available.
+
+  For example, imagine the URL `"/test"` can be called once per 10 seconds:
+      iex> Wumpex.Api.Ratelimit.request({:get, "http://localhost/test", "", [], []}, {"ratelimit", "demo"})
+        {:ok, %HTTPoison.Response{}}
+      iex> Wumpex.Api.Ratelimit.request({:get, "http://localhost/test", "", [], []}, {"ratelimit", "demo"})
+        {:error, :bounced}
+
+  The first request executes and returns the response (an instance of `t:HTTPoison.Response.t/0`), but the second request gets `{:error, :bounced}`.
+  This is because after the first request we'd have to wait 10s, while we specified we only want to wait up to 5s (default, can be overriden by passing in a third parameter).
+  If we'd have passed in 11s for example, the request would have been delayed 10s before executing, after which the response would be returned.
+
+  You can choose to *always* execute the request, regardless of how long it would take until it can execute by passing `:infinity` as the third parameter.
   """
-  @spec get(url :: String.t(), options :: HTTPoison.options()) :: Bucket.http_response()
-  def get(url, options \\ []) do
-    GenServer.call(__MODULE__, {:get, url, "", options}, 5_000)
-  end
-
-  @doc """
-  Executes a GET request to the given `url` while waiting for a given `t:timeout/0`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.get("http://localhost/test", 5_000)
-        {:ok, response}
-  """
-  @spec get(url :: String.t(), options :: HTTPoison.options(), timeout :: timeout()) ::
-          Bucket.http_response()
-  def get(url, options, timeout) do
-    GenServer.call(__MODULE__, {:get, url, "", options}, timeout)
-  end
-
-  @doc """
-  Executes a POST request to the given `url` with a given `body`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.post("http://localhost/test", %{"hello" => "world"})
-        {:ok, response}
-  """
-  @spec post(url :: HTTPoison.url(), body :: HTTPoison.body(), options :: HTTPoison.options()) ::
-          Bucket.http_response()
-  def post(url, body, options \\ []) do
-    GenServer.call(__MODULE__, {:post, url, body, options}, 5_000)
-  end
-
-  @doc """
-  Executes a POST request to the given `url` with a given `body`, while waiting for a given `t:timeout/0`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.post("http://localhost/test", %{"hello" => "world"}, 5_000)
-        {:ok, response}
-  """
-  @spec post(
-          url :: HTTPoison.url(),
-          body :: HTTPoison.body(),
-          options :: HTTPoison.options(),
-          timeout :: timeout()
-        ) :: Bucket.http_response()
-  def post(url, body, options, timeout) do
-    GenServer.call(__MODULE__, {:post, url, body, options}, timeout)
-  end
-
-  @doc """
-  Executes a PUT request to the given `url` with a given `body`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.put("http://localhost/test", %{"hello" => "world"})
-        {:ok, response}
-  """
-  @spec put(url :: HTTPoison.url(), body :: HTTPoison.body(), options :: HTTPoison.options()) ::
-          Bucket.http_response()
-  def put(url, body, options \\ []) do
-    GenServer.call(__MODULE__, {:put, url, body, options}, 5_000)
-  end
-
-  @doc """
-  Executes a PUT request to the given `url` with a given `body`, while waiting for a given `t:timeout/0`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.put("http://localhost/test", %{"hello" => "world"}, 5_000)
-        {:ok, response}
-  """
-  @spec put(
-          url :: HTTPoison.url(),
-          body :: HTTPoison.body(),
-          options :: HTTPoison.options(),
-          timeout :: timeout()
-        ) :: Bucket.http_response()
-  def put(url, body, options, timeout) do
-    GenServer.call(__MODULE__, {:put, url, body, options}, timeout)
-  end
-
-  @doc """
-  Executes a PATCH request to the given `url` with a given `body`.
-
-  ## Examples
-      iex> Wumpex.Api.Ratelimit.patch("http://localhost/test", %{"hello" => "world"})
-      {:ok, response}
-  """
-  @spec patch(url :: HTTPoison.url(), body :: HTTPoison.body(), options :: HTTPoison.options()) ::
-          Bucket.http_response()
-  def patch(url, body, options \\ []) do
-    GenServer.call(__MODULE__, {:patch, url, body, options}, 5_000)
-  end
-
-  @doc """
-  Executes a PATCH request to the given `url` with a given `body`, while waiting for a given `t:timeout/0`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.patch("http://localhost/test", %{"hello" => "world"}, 5_000)
-        {:ok, response}
-  """
-  @spec patch(
-          url :: HTTPoison.url(),
-          body :: HTTPoison.body(),
-          options :: HTTPoison.options(),
-          timeout :: timeout()
-        ) :: Bucket.http_response()
-  def patch(url, body, options, timeout) do
-    GenServer.call(__MODULE__, {:patch, url, body, options}, timeout)
-  end
-
-  @doc """
-  Executes a DELETE request to the given `url`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.delete("http://localhost/test")
-        {:ok, response}
-  """
-  @spec delete(url :: String.t(), options :: HTTPoison.options()) :: Bucket.http_response()
-  def delete(url, options \\ []) do
-    GenServer.call(__MODULE__, {:delete, url, "", options}, 5_000)
-  end
-
-  @doc """
-  Executes a DELETE request to the given `url` while waiting for a given `t:timeout/0`.
-
-  ## Examples
-        iex> Wumpex.Api.Ratelimit.delete("http://localhost/test", 5_000)
-        {:ok, response}
-  """
-  @spec delete(url :: String.t(), options :: HTTPoison.options(), timeout :: timeout()) ::
-          Bucket.http_response()
-  def delete(url, options, timeout) do
-    GenServer.call(__MODULE__, {:delete, url, "", options}, timeout)
+  @spec request(Bucket.http_call(), bucket_tag(), timeout()) :: Bucket.http_response() | {:error, :bounced}
+  def request(http_call, tag, timeout \\ 5_000) do
+    GenServer.call(__MODULE__, {http_call, tag, timeout}, :infinity)
   end
 
   @doc false

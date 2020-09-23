@@ -18,7 +18,8 @@ defmodule Wumpex.Api.Ratelimit.Well do
   @type command :: %{
           http: Bucket.http_call(),
           tag: Ratelimit.bucket_tag(),
-          buckets: :ets.tid()
+          buckets: :ets.tid(),
+          bucket_states: :ets.tid()
         }
 
   @doc false
@@ -47,14 +48,15 @@ defmodule Wumpex.Api.Ratelimit.Well do
   # Attempt to extract the bucket name from the response,
   # and associate with the bucket tag if possible.
   @spec associate_bucket(Bucket.http_response(), command()) :: Bucket.http_response()
-  defp associate_bucket({_status, %{headers: headers}} = response, %{buckets: buckets, tag: tag}) do
-    bucket =
-      headers
-      |> Map.new()
-      |> Map.get("x-ratelimit-bucket", nil)
+  defp associate_bucket({_status, %{headers: headers}} = response, %{buckets: buckets, bucket_states: bucket_states, tag: tag}) do
+    headers = Map.new(headers)
+    bucket = Map.get(headers, "x-ratelimit-bucket", nil)
+    remaining = Map.get(headers, "x-ratelimit-remaining", 0)
+    reset_at = Map.get(headers, "x-ratelimit-reset", 0) + :os.system_time(:millisecond)
 
     if bucket != nil do
       :ets.insert(buckets, {tag, bucket})
+      :ets.insert(bucket_states, {bucket, %{remaining: remaining, reset_at: reset_at}})
     end
 
     response
