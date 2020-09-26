@@ -94,7 +94,8 @@ defmodule Wumpex.MixProject do
       {:websocket_client, "~> 1.4"},
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"},
-      {:poolboy, "~> 1.5"}
+      {:poolboy, "~> 1.5"},
+      {:syn, "~> 2.1", optional: true}
     ]
   end
 
