@@ -29,6 +29,8 @@ defmodule Wumpex.Api.Ratelimit do
           well: GenServer.server()
         }
 
+  @worker_pool __MODULE__.BucketPool
+
   @doc """
   Executes a given request using `Wumpex.Api.request/5` using ratelimits.
 
@@ -62,6 +64,13 @@ defmodule Wumpex.Api.Ratelimit do
   @spec init(any()) :: {:ok, state()}
   def init(_options) do
     {:ok, well} = Well.start_link()
+    # Start the bucket worker pool as part of the ratelimit supervision tree.
+    {:ok, _pool} = :poolboy.start_link([
+      name: {:local, @worker_pool},
+      worker_module: Wumpex.Api.Ratelimit.StatelessBucket,
+      size: Application.get_env(:wumpex, :buckets, 4),
+      max_overflow: Application.get_env(:wumpex, :buckets, 4)
+    ], [])
     buckets = :ets.new(:wumpex_buckets, [:public])
 
     bucket_states =
@@ -98,7 +107,7 @@ defmodule Wumpex.Api.Ratelimit do
 
       bucket ->
         :poolboy.transaction(
-          :wumpex_buckets,
+          @worker_pool,
           fn pid ->
             forward_call(
               pid,
