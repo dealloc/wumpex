@@ -107,6 +107,7 @@ defmodule Wumpex.Base.Ledger do
       end
     end
   end
+
   # Generate the child_spec function for distributed Ledger.
   # Call start_link which does nothing.
   defp generate_child_spec(distributed?) when distributed? do

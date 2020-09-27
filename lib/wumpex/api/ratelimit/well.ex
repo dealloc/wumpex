@@ -48,7 +48,11 @@ defmodule Wumpex.Api.Ratelimit.Well do
   # Attempt to extract the bucket name from the response,
   # and associate with the bucket tag if possible.
   @spec associate_bucket(Bucket.http_response(), command()) :: Bucket.http_response()
-  defp associate_bucket({_status, %{headers: headers}} = response, %{buckets: buckets, bucket_states: bucket_states, tag: tag}) do
+  defp associate_bucket({_status, %{headers: headers}} = response, %{
+         buckets: buckets,
+         bucket_states: bucket_states,
+         tag: tag
+       }) do
     headers = Map.new(headers)
     bucket = Map.get(headers, "x-ratelimit-bucket", nil)
     remaining = Map.get(headers, "x-ratelimit-remaining", 0)

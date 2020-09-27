@@ -7,8 +7,7 @@ config :logger,
   ],
   compile_time_purge_matching: [
     [module: Wumpex.Base.Websocket, level_lower_than: :warn],
-    [module: Wumpex.Gateway.Worker, level_lower_than: :warn],
-    [module: Wumpex.Gateway.EventHandler, level_lower_than: :warn]
+    [module: Wumpex.Gateway.Worker, level_lower_than: :warn]
   ]
 
 config :wumpex,

@@ -48,7 +48,8 @@ defmodule Wumpex.Api.Ratelimit do
 
   You can choose to *always* execute the request, regardless of how long it would take until it can execute by passing `:infinity` as the third parameter.
   """
-  @spec request(Bucket.http_call(), bucket_tag(), timeout()) :: Bucket.http_response() | {:error, :bounced}
+  @spec request(Bucket.http_call(), bucket_tag(), timeout()) ::
+          Bucket.http_response() | {:error, :bounced}
   def request(http_call, tag, timeout \\ 5_000) do
     GenServer.call(__MODULE__, {http_call, tag, timeout}, :infinity)
   end
@@ -65,12 +66,17 @@ defmodule Wumpex.Api.Ratelimit do
   def init(_options) do
     {:ok, well} = Well.start_link()
     # Start the bucket worker pool as part of the ratelimit supervision tree.
-    {:ok, _pool} = :poolboy.start_link([
-      name: {:local, @worker_pool},
-      worker_module: Wumpex.Api.Ratelimit.StatelessBucket,
-      size: Application.get_env(:wumpex, :buckets, 4),
-      max_overflow: Application.get_env(:wumpex, :buckets, 4)
-    ], [])
+    {:ok, _pool} =
+      :poolboy.start_link(
+        [
+          name: {:local, @worker_pool},
+          worker_module: Wumpex.Api.Ratelimit.StatelessBucket,
+          size: Application.get_env(:wumpex, :buckets, 4),
+          max_overflow: Application.get_env(:wumpex, :buckets, 4)
+        ],
+        []
+      )
+
     buckets = :ets.new(:wumpex_buckets, [:public])
 
     bucket_states =

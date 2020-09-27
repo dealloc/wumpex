@@ -41,6 +41,6 @@ defmodule Wumpex.Api do
     |> Map.new(fn {key, value} -> {String.downcase(key), value} end)
     |> Map.update("x-ratelimit-remaining", nil, &String.to_integer/1)
     # Transforms seconds with floating milliseconds to milliseconds (without floating).
-    |> Map.update("x-ratelimit-reset", nil, &(round(String.to_float(&1) * 1000)))
+    |> Map.update("x-ratelimit-reset", nil, &round(String.to_float(&1) * 1000))
   end
 end

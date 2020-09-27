@@ -19,7 +19,7 @@ defmodule Wumpex.MixProject do
             Wumpex.Api.Ratelimit,
             Wumpex.Api.Ratelimit.Bucket,
             Wumpex.Api.Ratelimit.StatelessBucket,
-            Wumpex.Api.Ratelimit.Well,
+            Wumpex.Api.Ratelimit.Well
           ],
           Base: [
             Wumpex.Base.Coordinator,
@@ -30,9 +30,7 @@ defmodule Wumpex.MixProject do
           Gateway: [
             Wumpex.Gateway,
             Wumpex.Gateway.Worker,
-            Wumpex.Gateway.State,
-            Wumpex.Gateway.Opcodes,
-            Wumpex.Gateway.EventHandler
+            Wumpex.Gateway.Opcodes
           ],
           Resources: [
             Wumpex.Resource,
