@@ -24,6 +24,7 @@ defmodule Wumpex.MixProject do
           Base: [
             Wumpex.Base.Coordinator,
             Wumpex.Base.Distributed,
+            Wumpex.Base.Ledger,
             Wumpex.Base.Websocket
           ],
           Gateway: [
