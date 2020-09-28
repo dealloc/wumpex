@@ -1,4 +1,5 @@
 # Wumpex
+![Elixir CI](https://github.com/dealloc/wumpex/workflows/CI/badge.svg?branch=master)
 
 **TODO: Add description**
 
