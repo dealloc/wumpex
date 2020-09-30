@@ -41,7 +41,10 @@ defmodule Wumpex.Base.Ledger do
 
   defmacro __using__(options) when is_list(options) do
     # Get whether we're compiling a distributed or local Ledger.
-    distributed? = Keyword.fetch!(options, :global)
+    distributed? =
+      Keyword.get_lazy(options, :global, fn ->
+        Application.get_env(:wumpex, :distributed, false)
+      end)
 
     # Ensure that :syn is loaded when we're compiling Ledger for distributed usage.
     if distributed? and Code.ensure_loaded?(:syn) == false do
