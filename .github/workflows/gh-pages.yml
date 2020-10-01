@@ -1,0 +1,43 @@
+name: Github Pages
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    name: Generate and publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Elixir
+      uses: actions/setup-elixir@v1
+      with:
+        elixir-version: '1.10.4'
+        otp-version: '23.0.3'
+
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+
+    - name: Install dependencies
+      run: mix deps.get
+    - name: Compile dependencies
+      run: mix compile
+    - name: Generate documentation
+      run: mix docs
+
+    - name: Publish website
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v2.1.2
+      with:
+          target_branch: gh-pages
+          build_dir: doc
+          fqdn: "wumpex.dealloc.dev"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
