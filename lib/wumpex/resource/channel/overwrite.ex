@@ -12,8 +12,8 @@ defmodule Wumpex.Resource.Channel.Overwrite do
   @type t :: %__MODULE__{
           id: Resource.snowflake(),
           type: type(),
-          allow: non_neg_integer(),
-          deny: non_neg_integer()
+          allow: String.t(),
+          deny: String.t()
         }
 
   @typedoc """
@@ -45,12 +45,12 @@ defmodule Wumpex.Resource.Channel.Overwrite do
 
   If you pass in known properties, they'll be mapped.
 
-      iex> Wumpex.Resource.Channel.Overwrite.to_struct(%{"id" => "155117677105512449", "type" => "role", "allow" => 0, "deny" => 0})
+      iex> Wumpex.Resource.Channel.Overwrite.to_struct(%{"id" => "155117677105512449", "type" => "role", "allow" => "0", "deny" => "0"})
       %Wumpex.Resource.Channel.Overwrite{
         id: "155117677105512449",
         type: "role",
-        allow: 0,
-        deny: 0
+        allow: "0",
+        deny: "0"
       }
   """
   @spec to_struct(data :: map()) :: t()

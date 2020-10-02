@@ -18,8 +18,7 @@ defmodule Wumpex.Resource.Role do
   * `:color` - The color of the role, represented as a hex number.
   * `:hoist` Whether this role is pinned in the user filtering.
   * `:position` - The position of the role in the UI.
-  * `:permissions` - (legacy) permission bit set.
-  * `:permissions_new` - Permission bit set.
+  * `:permissions` - Permission bit set.
   * `:managed` - Whether this role is managed by an integration.
   * `:mentionable` - Whether this role is mentionable.
   """
@@ -29,8 +28,7 @@ defmodule Wumpex.Resource.Role do
           color: non_neg_integer(),
           hoist: boolean(),
           position: non_neg_integer(),
-          permissions: non_neg_integer(),
-          permissions_new: String.t(),
+          permissions: String.t(),
           managed: boolean(),
           mentionable: boolean()
         }
@@ -42,7 +40,6 @@ defmodule Wumpex.Resource.Role do
     :hoist,
     :position,
     :permissions,
-    :permissions_new,
     :managed,
     :mentionable
   ]

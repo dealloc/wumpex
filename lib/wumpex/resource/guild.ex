@@ -84,8 +84,7 @@ defmodule Wumpex.Resource.Guild do
   * `:discovery_splash` - The discovery splash hash (only present for guilds with the `"DISCOVERABLE"` feature).
   * `:owner` - true if the user is the owner of the guild.
   * `:owner_id` - The ID of the owner.
-  * `:permissions` - (legacy) total permissions of the user in the guild (excluding overrides).
-  * `:permissions_new` - Total permissions of the user in the guild (excluding overrides).
+  * `:permissions` - Total permissions of the user in the guild (excluding overrides).
   * `:region` - The voice region (ID) of the guild.
   * `:afk_channel_id` - The ID of the AFk channel.
   * `:afk_timeout` - The AFK timeout (in seconds).
@@ -133,8 +132,7 @@ defmodule Wumpex.Resource.Guild do
           discovery_splash: String.t(),
           owner: boolean(),
           owner_id: Resource.snowflake(),
-          permissions: non_neg_integer(),
-          permissions_new: non_neg_integer(),
+          permissions: String.t(),
           region: String.t(),
           afk_channel_id: Resource.snowflake(),
           afk_timeout: non_neg_integer(),
@@ -184,7 +182,6 @@ defmodule Wumpex.Resource.Guild do
     :owner,
     :owner_id,
     :permissions,
-    :permissions_new,
     :region,
     :afk_channel_id,
     :afk_timeout,

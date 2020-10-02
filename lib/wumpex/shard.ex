@@ -78,7 +78,7 @@ defmodule Wumpex.Shard do
     {:ok, _websocket} =
       DynamicSupervisor.start_child(
         supervisor,
-        {Wumpex.Base.Websocket, url: "#{gateway}?v=6&encoding=etf", worker: worker}
+        {Wumpex.Base.Websocket, url: "#{gateway}?v=8&encoding=etf", worker: worker}
       )
 
     {:noreply, state}
