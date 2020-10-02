@@ -33,12 +33,16 @@ defmodule Wumpex.Gateway.Opcodes do
   @doc """
   Generate an IDENTIFY opcode.
 
-      iex> Wumpex.Gateway.Opcodes.identify("test")
+  If you don't specify which intents you wish to use it will use `32767` by default, which uses **ALL** intents.
+  Since version 8 this requires you to enable privileged gateway intents in the settings of your bot.
+
+      iex> Wumpex.Gateway.Opcodes.identify("test", {0, 1})
       %{
         "op" => 2,
         "d" => %{
           "token" => "test",
           "shard" => [0, 1],
+          "intents" => 32_767,
           "properties" => %{
             "$os" => :linux,
             "$browser" => "wumpex",
@@ -47,12 +51,13 @@ defmodule Wumpex.Gateway.Opcodes do
         }
       }
 
-      iex> Wumpex.Gateway.Opcodes.identify("test", {1, 2})
+      iex> Wumpex.Gateway.Opcodes.identify("test", {1, 2}, 513)
       %{
         "op" => 2,
         "d" => %{
           "token" => "test",
           "shard" => [1, 2],
+          "intents" => 513,
           "properties" => %{
             "$os" => :linux,
             "$browser" => "wumpex",
@@ -63,8 +68,12 @@ defmodule Wumpex.Gateway.Opcodes do
 
   See the [official documentation](https://discord.com/developers/docs/topics/gateway#identify)
   """
-  @spec identify(token :: String.t(), shard :: {non_neg_integer(), non_neg_integer()}) :: opcode()
-  def identify(token, shard \\ {0, 1}) do
+  @spec identify(
+          token :: String.t(),
+          shard :: {non_neg_integer(), non_neg_integer()},
+          intents :: non_neg_integer()
+        ) :: opcode()
+  def identify(token, shard, intents \\ 32_767) do
     {_, os} = :os.type()
 
     %{
@@ -72,7 +81,7 @@ defmodule Wumpex.Gateway.Opcodes do
       "d" => %{
         "token" => token,
         "shard" => Tuple.to_list(shard),
-        # "intents" => 512,
+        "intents" => intents,
         "properties" => %{
           "$os" => os,
           "$browser" => "wumpex",
