@@ -46,7 +46,7 @@ defmodule Wumpex.Gateway.OpcodesTest do
         "d" => %{
           "token" => @test_token
         }
-      } = Opcodes.identify(@test_token)
+      } = Opcodes.identify(@test_token, {0, 1})
     end
 
     test "contain the properties" do
@@ -58,7 +58,7 @@ defmodule Wumpex.Gateway.OpcodesTest do
             "$device" => _
           }
         }
-      } = Opcodes.identify(@test_token)
+      } = Opcodes.identify(@test_token, {0, 1})
     end
   end
 
