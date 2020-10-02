@@ -11,15 +11,15 @@ defmodule Wumpex.Resource.Channel.OverwriteTest do
       example = %{
         "id" => "155117677105512449",
         "type" => "role",
-        "allow" => 0,
-        "deny" => 0
+        "allow" => "0",
+        "deny" => "0"
       }
 
       assert %Overwrite{
                id: "155117677105512449",
                type: "role",
-               allow: 0,
-               deny: 0
+               allow: "0",
+               deny: "0"
              } = Overwrite.to_struct(example)
     end
   end

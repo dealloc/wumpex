@@ -14,8 +14,7 @@ defmodule Wumpex.Resource.RoleTest do
         "color" => 3_447_003,
         "hoist" => true,
         "position" => 1,
-        "permissions" => 66_321_471,
-        "permissions_new" => "66321471",
+        "permissions" => "66321471",
         "managed" => false,
         "mentionable" => false
       }
@@ -26,8 +25,7 @@ defmodule Wumpex.Resource.RoleTest do
                color: 3_447_003,
                hoist: true,
                position: 1,
-               permissions: 66_321_471,
-               permissions_new: "66321471",
+               permissions: "66321471",
                managed: false,
                mentionable: false
              }
