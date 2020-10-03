@@ -17,6 +17,6 @@ defmodule Wumpex.Gateway do
   def dispatch(gateway, opcode) when is_pid(gateway) and is_map(opcode) do
     encoded = :erlang.term_to_binary(opcode)
 
-    Websocket.send(gateway, encoded, mode: :binary)
+    Websocket.send(gateway, {:binary, encoded})
   end
 end

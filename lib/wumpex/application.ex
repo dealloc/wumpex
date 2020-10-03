@@ -12,7 +12,7 @@ defmodule Wumpex.Application do
        partitions: System.schedulers_online()},
       {Wumpex.Api.Ratelimit, []},
       # Normally the shard configuration comes from the Discord API, we're taking shortcuts here
-      {Wumpex.Shard, [shard: {0, 1}, gateway: "wss://gateway.discord.gg"]}
+      # {Wumpex.Shard, [shard: {0, 1}, gateway: "wss://gateway.discord.gg"]}
     ]
 
     Supervisor.start_link(children,

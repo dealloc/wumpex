@@ -1,202 +1,265 @@
 defmodule Wumpex.Base.Websocket do
   @moduledoc """
-  Provides a generic component for opening a websocket connection and interacting with it.
+  A behaviour module for implementing the client of a websocket connection.
 
-  This module is designed to be used as part of a supervision tree:
+  A Websocket is a process like a common `GenServer` but handles the opening of the websocket transparently for you.
+  All extensions made to the regular `GenServer` have been designed to closely match the behaviour of a regular `GenServer`.
 
-      {Wumpex.Base.Websocket, url: "wss://some.server", worker: MyApplication.WebsocketHandler}
-
-  This will start a websocket connection (secured with SSL) to *some.server* and send incoming events to a module called `MyApplication.WebsocketHandler`.
+  For example the `handle_frame` callback has very similiar return values to the `handle_call` callback of the GenServer.
 
   ## Options
-  The websocket supports the following options (also see `t:options/0`):
-    * `:url` - The URL to which the websocket should connect.
-    * `:worker` - The worker to which incoming events will be dispatched (see `t:GenServer.server/0` for more information).
+  The Websocket requires a few options to be passed in the `start_link` method:
+  * `:host` - the hostname (ex: `"gateway.discord.gg"`).
+  * `:port` - the port to connect to (usually `80` for unencrypted and `443` for encrypted connections).
+  * `:path` - the path to which the websocket will connect (ex: `"/?v=8"`) and can (but doesn't have to) contain a query string.
+  * `:timeout` is a `t:timeout/0` used to determine how long to wait for connecting and upgrading.
 
-  ## Workers
-  The websocket module dispatches all of it's incoming events (internally called *frames*) to the worker module for processing using `GenServer.cast/2`.
+  ## Example
 
-  Since this module is designed to be entirely generic in terms of incoming data, it passes it's frames on without any transformation.
-  The library used under the hood (`:websocket_client`) defines 2 possible incoming data formats (see `t:worker_event/0`):
-    * `{:text, content}` - Passed when the incoming frame contains textual data.
-    * `{:binary, content}` - Passed when the incoming frame contains aribtrary binary data.
+  A module implementing the behaviour will be able to respond to incoming messages by implementing `handle_frame`:
 
-  An example worker could look like this:
-
-      defmodule MyHandler do
-        use GenServer
+      defmodule ExampleWebsocket do
+        use Wumpex.Base.Websocket
 
         require Logger
 
-        def start_link(_) do
-          GenServer.start_link(__MODULE__, [])
+        def on_connected(_headers, state) do
+          Logger.info("Connected!")
         end
 
-        def init(_) do
-          {:ok, []}
-        end
-
-        def handle_cast({{:text, _payload}, websocket}, state) do
-          send(websocket, {:send, {:text, "Reply"}})
+        def handle_frame({:text, message}, state) do
+          Logger.info("Received message")
 
           {:noreply, state}
         end
       end
   """
 
-  @behaviour :websocket_client
-
   require Logger
 
   @typedoc """
-  The options that can be passed into the `child_spec/1` and `start_link/1` method.
-    * `:url` - The URL to which the websocket should connect.
-    * `:worker` - The worker to which incoming events will be dispatched (see `t:GenServer.server/0` for more information).
+  Represents a single websocket frame that can be sent or received over the websocket.
+
+  There's three supported frames:
+  * `{:text, message}` - Used to send/receive textual data.
+  * `{:binary, message}` - Used to send/receive binary data (like [ETF](https://erlang.org/doc/apps/erts/erl_ext_dist.html)).
+  * `:close` or `{:close, status, reason}` - Signals that the websocket will be closed (to the receiving side), optionall you can pass in a status code and a reason.
+
+  `:ping` and `:pong` frames are handled internally and not exposed.
+  """
+  @type frame ::
+          {:text, String.t()}
+          | {:binary, iodata()}
+          | {:close, non_neg_integer(), iodata()}
+          | :close
+
+  @typedoc """
+  The options that are required to be passed to the websocket on startup.
+
+  `host` is the hostname (ex: `"gateway.discord.gg"`),
+  `port` is the port to connect to (usually `80` for unencrypted and `443` for encrypted connections),
+  `path` is the path to which the websocket will connect (ex: `"/?v=8"`) and can (but doesn't have to) contain a query string
+  and finally `timeout` is a `t:timeout/0` used to determine how long to wait for connecting and upgrading.
+
+  All options are required to be passed in.
   """
   @type options :: [
-          # The URL to which the websocket should connect.
-          url: String.t() | binary(),
-          # The worker which handles incoming events.
-          worker: GenServer.server()
+          host: String.t(),
+          port: non_neg_integer(),
+          path: String.t(),
+          timeout: timeout()
         ]
 
-  @typedoc """
-  The state of the websocket process.
-    * `:worker` - The worker to which to send incoming events using `GenServer.cast/2`.
-    * `:url` - The URL to which the websocket is connected (this is mainly for diagnostics).
-  """
-  @type state :: %{
-          # See options().worker
-          worker: GenServer.server(),
-          # The URL to which we're connected
-          url: String.t()
-        }
+  @doc """
+  Invoked when the websocket connects to the server.
 
-  @typedoc """
-  The type of events that are sent to the worker.
+  This method is invoked *every* time the websocket connects.
+  So when the connection is severed and the websocket reconnects this method will be invoked again.
+  This method can be compared with the `init/1` method of the `GenServer`, and is used to set the state of the process.
+
+  The first parameter passed are the headers received when upgrading the connection to a websocket connection,
+  the second parameter is the current state of the process (when reconnecting) or `nil` (on first connect).
+
+  The returned value will be used as the process state.
   """
-  @type worker_event :: {{:text | :binary, binary()}, pid()}
+  @callback on_connected(headers :: keyword(), state :: term() | nil) :: term()
 
   @doc """
-  Instructs the Websocket to close itself with the given `reason`.
+  Invoked to handle incoming frames from the websocket connection.
 
-      Websocket.close(socket, :error)
+  `frame` is the `t:frame/0` send by the server this websocket is connected to and `state` is the current state of the process.
+
+  Returning `{:reply, frame, new_state}` will dispatch `frame` on the websocket and set `new_state` as the state of the process,
+  while returning `{:noreply, new_state}` will not send any frames and set `new_state` as the new state of the process.
+
+  You can also use the `:reply` and `:noreply` returns with an additional `t:timeout/0` parameter,
+  which behaves the same but will also set a timeout (See [GenServer timeout](https://hexdocs.pm/elixir/GenServer.html#module-timeouts) section for more information).
+
+  You can also reply with `{:stop, new_state}` to gracefully close the connection (after sending a close frame to the server) and terminate the process,
+  or `{:stop, close_reason, new_state}` to send a status and reason along in the close frame that's being sent to the server.
+
+  This callback and it's return types have intentionally been designed to be similiar to those of [`GenServer.handle_call/3`](https://hexdocs.pm/elixir/GenServer.html#c:handle_call/3),
+  with the exception of the hibernate options, which is intentional.
   """
-  @spec close(websocket :: pid(), reason :: term()) :: term()
-  def close(websocket, reason) when is_pid(websocket) and is_atom(reason) do
-    send(websocket, {:close, reason})
+  @callback handle_frame(frame :: frame(), state :: term()) ::
+              {:reply, reply, new_state}
+              | {:reply, reply, new_state, timeout()}
+              | {:noreply, new_state}
+              | {:noreply, new_state, timeout()}
+              | {:stop, new_state}
+              | {:stop, close_reason, new_state}
+            when reply: frame(), new_state: term(), close_reason: {non_neg_integer(), iodata()}
+
+  @doc false
+  defmacro __using__(options) do
+    quote location: :keep, bind_quoted: [options: options] do
+      use GenServer, restart: :transient
+
+      alias Wumpex.Base.Websocket
+
+      @behaviour Websocket
+      @before_compile Websocket
+
+      @type frame_or_frames :: Websocket.frame() | [Websocket.frame()]
+
+      @spec start_link(options :: Websocket.options() | keyword()) ::
+              GenServer.on_start()
+      def start_link(options) do
+        Websocket.start_link(__MODULE__, options)
+      end
+
+      defoverridable start_link: 1
+
+      @doc false
+      @impl GenServer
+      defdelegate init(_options), to: Websocket
+
+      @doc false
+      @impl GenServer
+      # Handles incoming messages from the Gun websocket and dispatch them to the worker.
+      def handle_info({:gun_ws, _conn, _stream, frame}, state) do
+        case handle_frame(frame, state) do
+          {:reply, reply, new_state} ->
+            send_frame(reply)
+            {:noreply, new_state}
+
+          {:reply, reply, new_state, timeout} ->
+            send_frame(reply)
+            {:noreply, new_state, timeout}
+
+          {:noreply, new_state} ->
+            {:noreply, new_state}
+
+          {:noreply, new_state, timeout} ->
+            {:noreply, new_state, timeout}
+
+          {:stop, new_state} ->
+            send_frame(:close)
+            {:noreply, new_state}
+
+          {:stop, {code, reason}, new_state} ->
+            send_frame({:close, code, reason})
+            {:noreply, new_state}
+        end
+      end
+
+      @doc false
+      @impl GenServer
+      def handle_call({:send, frame_or_frames}, _from, state) do
+        {:reply, send_frame(frame_or_frames), state}
+      end
+
+      @spec send_frame(frame_or_frames()) :: :ok
+      defp send_frame(frame_or_frames) do
+        conn = Process.get(:"$websocket", nil)
+
+        :gun.ws_send(conn, frame_or_frames)
+      end
+    end
+  end
+
+  defmacro __before_compile__(env) do
+    unless Module.defines?(env.module, {:handle_frame, 2}) do
+      IO.warn("""
+      The function handle_frame/2 is required by the Websocket behaviour but not implemented in #{inspect(env.module)}.
+
+      A dummy implementation will be injected:
+
+        @impl Websocket
+        def handle_frame(_frame, state) do
+          {:noreply, state}
+        end
+
+      You can copy the implementation above in your module and modify it to suit your needs.
+      """, Macro.Env.stacktrace(env))
+
+      quote do
+        @doc false
+        @impl Wumpex.Base.Websocket
+        def handle_frame(_frame, state) do
+          {:noreply, state}
+        end
+
+        unless Module.defines_type?(__MODULE__, {:state, 0}) do
+          @type state :: term()
+        end
+
+        defoverridable handle_frame: 2
+      end
+    end
   end
 
   @doc """
-  Instructs the Websocket to send a given `message`.
+  Send one or more frames over the given websocket.
 
-  You can pass whether to use binary or text mode using the `options`:
-      # Will use text mode
-      Websocket.send(socket, "Hello world", mode: :text)
-
-      # Will use binary mode
-      Websocket.send(socket, "Hello world", mode: :binary)
+  `websocket` is the pid of the websocket, `frame_or_frames` is one (or a list of) `t:frame/0`.
   """
-  @spec send(websocket :: pid(), message :: any(), options :: keyword(atom())) :: term()
-  def send(websocket, message, mode: mode)
-      when is_pid(websocket) and is_binary(message) and is_atom(mode) do
-    send(websocket, {:send, {mode, message}})
+  @spec send(websocket :: pid(), frame_or_frames :: frame() | [frame()]) :: :ok
+  def send(websocket, frame_or_frames) do
+    GenServer.call(websocket, {:send, frame_or_frames})
   end
 
-  # Allows using this module as child of a supervisor.
-  # See https://hexdocs.pm/elixir/Supervisor.html#module-child_spec-1 for more information.
+  defdelegate start_link(module, init_args, options), to: GenServer
+
+  defdelegate start_link(module, init_args), to: GenServer
+
+  # Called as init/1 of the GenServer.
+  # When a module "use"s this module the init/1 is a defdelegate to this method.
   @doc false
-  @spec child_spec(options()) :: Supervisor.child_spec()
-  def child_spec(init_args) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [init_args]},
-      type: :worker
-    }
-  end
+  @spec init(options :: options()) :: {:ok, term()}
+  def init(host: host, port: port, path: path, timeout: timeout) do
+    Logger.metadata(url: "#{host}:#{port}#{path}")
 
-  # Start the websocket connection as a linked process.
-  @doc false
-  @spec start_link(options()) :: :ignore | {:error, any()} | {:ok, pid}
-  def start_link(options) do
-    url = Keyword.fetch!(options, :url)
+    Logger.debug("Connecting to #{host}:#{port}#{path}...")
+    # We should probably pass in :retry_fun, allowing to tweak the reconnect policy.
+    {:ok, conn} = :gun.open(:binary.bin_to_list(host), port, %{protocols: [:http]})
+    {:ok, :http} = :gun.await_up(conn, timeout)
+    stream = :gun.ws_upgrade(conn, path)
 
-    Logger.debug("Connecting to #{url}")
-    :websocket_client.start_link(url, __MODULE__, options, [])
-  end
+    # :gun.wait does not support :gun_upgrade etc.
+    state =
+      receive do
+        {:gun_upgrade, ^conn, ^stream, [<<"websocket">>], _headers} ->
+          Logger.info("Connected to #{host}!")
 
-  # Initialize the state and re-connection strategy of the websocket.
-  @doc false
-  @impl :websocket_client
-  @spec init(options()) :: {:once, state()}
-  def init(options) do
-    url = Keyword.get(options, :url)
-    worker = Keyword.fetch!(options, :worker)
+        {:gun_response, ^conn, _undocumented, _another_undocumented, status, headers} ->
+          Logger.error("Failed to connect to #{host}: Received #{inspect(status)}")
+          exit({:error, status, headers})
 
-    {:once, %{worker: worker, url: url}}
-  end
+        {:gun_error, ^conn, ^stream, reason} ->
+          Logger.error("Failed to connect to #{host}: #{inspect(reason)}")
+          exit({:error, reason})
+      after
+        timeout ->
+          Logger.error("Failed to connect to #{host}: Did not connect within #{inspect(timeout)}")
+          exit({:error, :timeout})
+      end
 
-  # Callback for when the websocket connects.
-  @doc false
-  @impl :websocket_client
-  def onconnect(_conn, %{url: url} = state) do
-    Logger.debug("Connected to #{url}!")
+    # If the Gun process dies we want to die as well.
+    Process.link(conn)
 
+    # Since the implementing module controls state, we put the conn in the process dictionary (I'm open to suggestions).
+    Process.put(:"$websocket", conn)
     {:ok, state}
-  end
-
-  # Callback for then the websocket disconnects.
-  # This doesn't seem to properly get called unfortunately.
-  @doc false
-  @impl :websocket_client
-  def ondisconnect(_conn, %{url: url} = state) do
-    Logger.warn("Disconnected from #{url}, attempting to reconnect!")
-
-    {:reconnect, state}
-  end
-
-  # Called when we receive incoming frames.
-  @doc false
-  @impl :websocket_client
-  def websocket_handle(frame, _conn, %{worker: worker} = state) do
-    GenServer.cast(worker, {frame, self()})
-
-    {:ok, state}
-  end
-
-  # Handles incoming erlang message requesting to send a frame on the websocket.
-  @doc false
-  @impl :websocket_client
-  @spec websocket_info({:send, :websocket_client.frame()}, :websocket_req.req(), state()) ::
-          {:reply, :websocket_client.frame(), state()}
-  def websocket_info({:send, frame}, _conn, state) do
-    {:reply, frame, state}
-  end
-
-  # Handles incoming message notifying that the SSL connection is closed, so the websocket should shut down.
-  @doc false
-  @impl :websocket_client
-  def websocket_info({:ssl_closed, _socket}, _conn, state) do
-    Logger.debug("Received a ssl_closed frame, shutting down socket.")
-
-    {:close, :ssl_closed, state}
-  end
-
-  # Unknown erlang messages!
-  @doc false
-  @impl :websocket_client
-  def websocket_info(msg, _conn, state) do
-    Logger.warn("Unknown command received on Websocket: #{inspect(msg)}")
-
-    {:ok, state}
-  end
-
-  # Called when the process terminates.
-  @doc false
-  @impl :websocket_client
-  def websocket_terminate(reason, _conn, _state) do
-    Logger.error("Socket terminating: #{inspect(reason)}")
-
-    :ok
   end
 end
