@@ -149,7 +149,7 @@ defmodule Wumpex.Gateway.Worker do
   # Handles INVALID_SESSION
   # https://discord.com/developers/docs/topics/gateway#invalid-session
   def dispatch(%{"op" => 9}, websocket, state) do
-    Websocket.close(websocket, :invalid_session)
+    Websocket.send(websocket, :close)
 
     Logger.warn("Received INVALID_SESSION, Websocket will be closed!")
     state

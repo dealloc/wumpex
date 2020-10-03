@@ -90,11 +90,13 @@ defmodule Wumpex.MixProject do
       {:ex_doc, "~> 0.22", only: :dev, runtime: false},
       {:socket, "~> 0.3", only: [:test]},
       {:fake_server, "~> 2.1", only: [:test]},
-      {:websocket_client, "~> 1.4"},
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"},
       {:poolboy, "~> 1.5"},
-      {:syn, "~> 2.1", optional: true}
+      {:syn, "~> 2.1", optional: true},
+      {:gun, "~> 1.3"},
+      # Both Gun and FakeServer require cowlib, so we have to override it to keep Mix happy.
+      {:cowlib, "~> 2.7.0", override: true}
     ]
   end
 
