@@ -7,10 +7,9 @@ defmodule Wumpex.Gateway.Worker do
   Events specific to a guild (MESSAGE_CREATE, ...) are passed on to the process group for that guild.
   """
 
-  use GenServer
+  use Wumpex.Base.Websocket
 
   alias Wumpex.Base.Websocket
-  alias Wumpex.Gateway
   alias Wumpex.Gateway.Guild.Coordinator
   alias Wumpex.Gateway.Opcodes
 
@@ -56,32 +55,31 @@ defmodule Wumpex.Gateway.Worker do
     GenServer.start_link(__MODULE__, options)
   end
 
-  @impl GenServer
-  @spec init(options :: options()) :: {:ok, state()}
-  def init(options) do
+  @impl Websocket
+  @spec on_connected(options :: options(), old_state :: term()) :: state()
+  def on_connected(options, _state) do
     token = Keyword.fetch!(options, :token)
     guild_sup = Keyword.fetch!(options, :guild_sup)
     shard = Keyword.fetch!(options, :shard)
 
     Logger.metadata(shard: inspect(shard))
 
-    {:ok,
-     %{
-       token: token,
-       ack: false,
-       sequence: nil,
-       session_id: nil,
-       guild_sup: guild_sup,
-       shard: shard
-     }}
+    %{
+      token: token,
+      ack: false,
+      sequence: nil,
+      session_id: nil,
+      guild_sup: guild_sup,
+      shard: shard
+    }
   end
 
-  @impl GenServer
-  def handle_cast({{:binary, etf}, websocket}, state) do
+  @impl Websocket
+  def handle_frame({:binary, etf}, state) do
     state =
       etf
       |> :erlang.binary_to_term()
-      |> dispatch(websocket, state)
+      |> dispatch(state)
 
     {:noreply, state}
   end
@@ -89,7 +87,7 @@ defmodule Wumpex.Gateway.Worker do
   # Handles incoming requests to send out an IDENTIFY
   @impl GenServer
   def handle_info(
-        {:identify, websocket},
+        :identify,
         %{token: token, sequence: sequence, session_id: session_id, shard: shard} = state
       ) do
     message =
@@ -103,44 +101,41 @@ defmodule Wumpex.Gateway.Worker do
           Opcodes.resume(token, sequence, session_id)
       end
 
-    Gateway.dispatch(websocket, message)
+    send_frame({:binary, :erlang.term_to_binary(message)})
     {:noreply, state}
   end
 
   # Handles heartbeats
   @impl GenServer
-  def handle_info(
-        {:heartbeat, interval, websocket},
-        %{sequence: sequence, ack: true} = state
-      ) do
+  def handle_info({:heartbeat, interval}, %{sequence: sequence, ack: true} = state) do
     message = Opcodes.heartbeat(sequence)
-    Gateway.dispatch(websocket, message)
+    send_frame({:binary, :erlang.term_to_binary(message)})
 
     Logger.info("Sent heartbeat ##{sequence}")
-    Process.send_after(self(), {:heartbeat, interval, websocket}, interval)
+    Process.send_after(self(), {:heartbeat, interval}, interval)
     {:noreply, %{state | ack: false}}
   end
 
   # Got a heartbeat without receiving an ACK for the previous heartbeat.
   # According to the docs, we need to close the connection and resume.
   @impl GenServer
-  def handle_info({:heartbeat, _interval, _websocket}, state) do
+  def handle_info({:heartbeat, _interval}, state) do
     Logger.warn("No heartbeat ack was received between heartbeats!")
 
     {:noreply, %{state | ack: false}}
   end
 
   # Handles HELLO
-  def dispatch(%{op: 10, d: %{heartbeat_interval: interval}}, websocket, state) do
-    send(self(), {:heartbeat, interval, websocket})
-    send(self(), {:identify, websocket})
+  def dispatch(%{op: 10, d: %{heartbeat_interval: interval}}, state) do
+    send(self(), {:heartbeat, interval})
+    send(self(), :identify)
 
     Logger.debug("Received HELLO!")
     %{state | ack: true}
   end
 
   # Handles HEARTBEAT_ACK
-  def dispatch(%{op: 11}, _websocket, state) do
+  def dispatch(%{op: 11}, state) do
     Logger.debug("Received heartbeat ack!")
 
     %{state | ack: true}
@@ -148,32 +143,28 @@ defmodule Wumpex.Gateway.Worker do
 
   # Handles INVALID_SESSION
   # https://discord.com/developers/docs/topics/gateway#invalid-session
-  def dispatch(%{"op" => 9}, websocket, state) do
-    Websocket.send(websocket, :close)
+  def dispatch(%{"op" => 9}, state) do
+    send_frame(:close)
 
     Logger.warn("Received INVALID_SESSION, Websocket will be closed!")
     state
   end
 
   # Handles READY event
-  def dispatch(%{op: 0, s: sequence, t: :READY, d: %{session_id: session_id}}, _websocket, state) do
+  def dispatch(%{op: 0, s: sequence, t: :READY, d: %{session_id: session_id}}, state) do
     Logger.info("Bot is now READY")
 
     %{state | sequence: sequence, session_id: session_id}
   end
 
   # Handles RESUMED event
-  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, _websocket, state) do
+  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, state) do
     Logger.info("Bot has finished resuming.")
 
     %{state | sequence: sequence}
   end
 
-  def dispatch(
-        %{op: 0, s: sequence, t: :GUILD_CREATE, d: event},
-        _websocket,
-        %{guild_sup: guild_sup} = state
-      ) do
+  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, %{guild_sup: guild_sup} = state) do
     Logger.info("Guild became available: #{inspect(event)}")
 
     {:ok, _guild} = Coordinator.start_guild(guild_sup, event.id)
@@ -181,7 +172,7 @@ defmodule Wumpex.Gateway.Worker do
     %{state | sequence: sequence}
   end
 
-  def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, _websocket, state) do
+  def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, state) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
     Coordinator.stop_guild(guild_id)
@@ -189,14 +180,10 @@ defmodule Wumpex.Gateway.Worker do
     %{state | sequence: sequence}
   end
 
-  def dispatch(
-        %{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event},
-        websocket,
-        state
-      ) do
+  def dispatch(%{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event}, state) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    Coordinator.dispatch!(guild_id, {event_name, event, websocket})
+    # Coordinator.dispatch!(guild_id, {event_name, event, websocket})
 
     %{state | sequence: sequence}
   end
@@ -207,8 +194,8 @@ defmodule Wumpex.Gateway.Worker do
   The `Wumpex.Gateway.Worker` tries to handle any non-specific event inline, maintains the sequence state and handles resumes.
   Unknown events are simply discarded and a warning is logged.
   """
-  @spec dispatch(event :: state(), websocket :: pid(), state :: state()) :: state()
-  def dispatch(event, _websocket, state) do
+  @spec dispatch(event :: state(), state :: state()) :: state()
+  def dispatch(event, state) do
     Logger.warn("Received an unhandled event: #{inspect(event)}")
 
     state
