@@ -70,6 +70,19 @@ defmodule Wumpex.Base.Websocket do
           timeout: timeout()
         ]
 
+  @typedoc """
+  Reconnection strategy to use when calling `on_disconnected/1`.
+
+  There are currently 3 reconnection strategies supported:
+  * `:stop` - No reconnection, this will gracefully shut down the server.
+  * `:retry` - Immediately attempt to reconnect.
+  * `{:retry, delay}` - Wait for `delay` milliseconds, then attempt to reconnect.
+
+  Note that when using the delayed reconnect, the server will block and not process any messages until reconnection is complete.
+  This is done to prevent receiving messages in the server when it is in a disconnected state.
+  """
+  @type reconnect_strategy :: :stop | :retry | {:retry, non_neg_integer()}
+
   @doc """
   Invoked when the websocket connects to the server.
 
@@ -83,6 +96,16 @@ defmodule Wumpex.Base.Websocket do
   The returned value will be used as the process state.
   """
   @callback on_connected(options :: keyword(), state :: term() | nil) :: term()
+
+  @doc """
+  Called when the socket connection closes.
+
+  `state` is the current process state,
+  and the return value if this function is a tuple with the first element being the new process state and the second the `t:reconnect_strategy/0` to use.
+
+  See `t:reconnect_strategy/0` for more information.
+  """
+  @callback on_disconnected(state :: term()) :: {term(), reconnect_strategy()}
 
   @doc """
   Invoked to handle incoming frames from the websocket connection.
@@ -110,6 +133,8 @@ defmodule Wumpex.Base.Websocket do
               | {:stop, close_reason, new_state}
             when reply: frame(), new_state: term(), close_reason: {non_neg_integer(), iodata()}
 
+  @optional_callbacks on_disconnected: 1
+
   @doc false
   defmacro __using__(_options) do
     quote location: :keep, generated: true do
@@ -124,12 +149,6 @@ defmodule Wumpex.Base.Websocket do
 
       @type frame_or_frames :: Websocket.frame() | [Websocket.frame()]
 
-      def start_link(options) do
-        Websocket.start_link(__MODULE__, options)
-      end
-
-      defoverridable start_link: 1
-
       @doc false
       @impl GenServer
       @spec init(options :: keyword()) :: {:ok, term()}
@@ -139,38 +158,9 @@ defmodule Wumpex.Base.Websocket do
         path = Keyword.fetch!(options, :path)
         timeout = Keyword.fetch!(options, :timeout)
         Logger.metadata(url: "#{host}:#{port}#{path}")
+        conn = connect_websocket(host, port, path, timeout)
 
-        Logger.debug("Connecting to #{host}:#{port}#{path}...")
-        # We should probably pass in :retry_fun, allowing to tweak the reconnect policy.
-        {:ok, conn} = :gun.open(:binary.bin_to_list(host), port, %{protocols: [:http]})
-        {:ok, :http} = :gun.await_up(conn, timeout)
-        stream = :gun.ws_upgrade(conn, path)
-
-        # :gun.wait does not support :gun_upgrade etc.
-        state =
-          receive do
-            {:gun_upgrade, ^conn, ^stream, [<<"websocket">>], _headers} ->
-              Logger.info("Connected to #{host}!")
-              on_connected(options, nil)
-
-            {:gun_response, ^conn, _undocumented, _another_undocumented, status, headers} ->
-              Logger.error("Failed to connect to #{host}: Received #{inspect(status)}")
-              exit({:error, status, headers})
-
-            {:gun_error, ^conn, ^stream, reason} ->
-              Logger.error("Failed to connect to #{host}: #{inspect(reason)}")
-              exit({:error, reason})
-          after
-            timeout ->
-              Logger.error("Failed to connect to #{host}: Did not connect within #{inspect(timeout)}")
-              exit({:error, :timeout})
-          end
-
-        # If the Gun process dies we want to die as well.
-        Process.link(conn)
-
-        # Since the implementing module controls state, we put the conn in the process dictionary (I'm open to suggestions).
-        Process.put(:"$websocket", conn)
+        state = on_connected(options, nil)
         {:ok, state}
       end
 
@@ -205,8 +195,84 @@ defmodule Wumpex.Base.Websocket do
 
       @doc false
       @impl GenServer
+      def handle_info({:gun_down, _conn, _protcol, reason, _streams, _more_streams}, state) do
+        Logger.debug("Connection lost, reason: #{inspect(reason)}")
+
+        if Kernel.function_exported?(__MODULE__, :on_disconnected, 1) do
+          # We use apply/3 since otherwise my IDE complains.
+          case apply(__MODULE__, :on_disconnected, [state]) do
+            {:stop, state} ->
+              {:stop, :normal, state}
+
+            {:retry, state} ->
+              [host: host, port: port, path: path, timeout: timeout] =
+                Process.get(:"$websocket_metadata")
+
+              connect_websocket(host, port, path, timeout)
+              {:noreply, state}
+
+            {{:retry, delay}, state} ->
+              Process.sleep(delay)
+
+              [host: host, port: port, path: path, timeout: timeout] =
+                Process.get(:"$websocket_metadata")
+
+              connect_websocket(host, port, path, timeout)
+              {:noreply, state}
+          end
+        else
+          {:stop, reason, state}
+        end
+      end
+
+      @doc false
+      @impl GenServer
       def handle_call({:send, frame_or_frames}, _from, state) do
         {:reply, send_frame(frame_or_frames), state}
+      end
+
+      defp connect_websocket(host, port, path, timeout) do
+        Logger.debug("Connecting to #{host}:#{port}#{path}...")
+        # We should probably pass in :retry_fun, allowing to tweak the reconnect policy.
+        {:ok, conn} = :gun.open(:binary.bin_to_list(host), port, %{protocols: [:http]})
+        {:ok, :http} = :gun.await_up(conn, timeout)
+        stream = :gun.ws_upgrade(conn, path)
+
+        # :gun.wait does not support :gun_upgrade etc.
+        receive do
+          {:gun_upgrade, ^conn, ^stream, [<<"websocket">>], _headers} ->
+            Logger.info("Connected to #{host}!")
+
+          {:gun_response, ^conn, _undocumented, _another_undocumented, status, headers} ->
+            Logger.error("Failed to connect to #{host}: Received #{inspect(status)}")
+            exit({:error, status, headers})
+
+          {:gun_error, ^conn, ^stream, reason} ->
+            Logger.error("Failed to connect to #{host}: #{inspect(reason)}")
+            exit({:error, reason})
+        after
+          timeout ->
+            Logger.error(
+              "Failed to connect to #{host}: Did not connect within #{inspect(timeout)}"
+            )
+
+            exit({:error, :timeout})
+        end
+
+        # Since the implementing module controls state, we put the information in the process dictionary.
+        # I'm open to suggestions on how to improve this.
+
+        # metadata used for reconnecting
+        Process.put(:"$websocket_metadata",
+          host: host,
+          port: port,
+          path: path,
+          timeout: timeout
+        )
+
+        # metadata used for dispatching messages to the websocket
+        Process.put(:"$websocket", conn)
+        conn
       end
 
       @spec send_frame(frame_or_frames()) :: :ok
@@ -220,25 +286,27 @@ defmodule Wumpex.Base.Websocket do
 
   defmacro __before_compile__(env) do
     unless Module.defines?(env.module, {:handle_frame, 2}) do
-      raise CompileError, description: """
-      The module #{env.module} does not implement the handle_frame/2 method!
+      raise CompileError,
+        description: """
+        The module #{env.module} does not implement the handle_frame/2 method!
 
-      You can copy paste a default implementation below:
-        def handle_frame(_frame, state) do
-          {:noreply, state}
-        end
-      """
+        You can copy paste a default implementation below:
+          def handle_frame(_frame, state) do
+            {:noreply, state}
+          end
+        """
     end
 
     unless Module.defines?(env.module, {:on_connected, 2}) do
-      raise CompileError, description: """
-      The module #{env.module} does not implement the on_connected/2 method!
+      raise CompileError,
+        description: """
+        The module #{env.module} does not implement the on_connected/2 method!
 
-      You can copy paste a default implementation below:
-        def on_connected(_options, state) do
-          state
-        end
-      """
+        You can copy paste a default implementation below:
+          def on_connected(_options, state) do
+            state
+          end
+        """
     end
   end
 

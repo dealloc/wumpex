@@ -75,6 +75,13 @@ defmodule Wumpex.Gateway.Worker do
   end
 
   @impl Websocket
+  def on_disconnected(state) do
+    Logger.info("Disconnected...")
+
+    {{:retry, 1_000}, state}
+  end
+
+  @impl Websocket
   def handle_frame({:binary, etf}, state) do
     state =
       etf
@@ -121,6 +128,7 @@ defmodule Wumpex.Gateway.Worker do
   @impl GenServer
   def handle_info({:heartbeat, _interval}, state) do
     Logger.warn("No heartbeat ack was received between heartbeats!")
+    send_frame(:close)
 
     {:noreply, %{state | ack: false}}
   end
