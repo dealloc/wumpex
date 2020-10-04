@@ -23,7 +23,7 @@ defmodule Wumpex.Base.Websocket do
 
         require Logger
 
-        def on_connected(_headers, state) do
+        def on_connected(_options, state) do
           Logger.info("Connected!")
         end
 
@@ -77,12 +77,12 @@ defmodule Wumpex.Base.Websocket do
   So when the connection is severed and the websocket reconnects this method will be invoked again.
   This method can be compared with the `init/1` method of the `GenServer`, and is used to set the state of the process.
 
-  The first parameter passed are the headers received when upgrading the connection to a websocket connection,
+  The first parameter passed are the options passed to `start_link`,
   the second parameter is the current state of the process (when reconnecting) or `nil` (on first connect).
 
   The returned value will be used as the process state.
   """
-  @callback on_connected(headers :: keyword(), state :: term() | nil) :: term()
+  @callback on_connected(options :: keyword(), state :: term() | nil) :: term()
 
   @doc """
   Invoked to handle incoming frames from the websocket connection.
@@ -111,19 +111,19 @@ defmodule Wumpex.Base.Websocket do
             when reply: frame(), new_state: term(), close_reason: {non_neg_integer(), iodata()}
 
   @doc false
-  defmacro __using__(options) do
-    quote location: :keep, bind_quoted: [options: options] do
+  defmacro __using__(_options) do
+    quote location: :keep, generated: true do
       use GenServer, restart: :transient
 
       alias Wumpex.Base.Websocket
+
+      require Logger
 
       @behaviour Websocket
       @before_compile Websocket
 
       @type frame_or_frames :: Websocket.frame() | [Websocket.frame()]
 
-      @spec start_link(options :: Websocket.options() | keyword()) ::
-              GenServer.on_start()
       def start_link(options) do
         Websocket.start_link(__MODULE__, options)
       end
@@ -132,7 +132,47 @@ defmodule Wumpex.Base.Websocket do
 
       @doc false
       @impl GenServer
-      defdelegate init(_options), to: Websocket
+      @spec init(options :: keyword()) :: {:ok, term()}
+      def init(options) do
+        host = Keyword.fetch!(options, :host)
+        port = Keyword.fetch!(options, :port)
+        path = Keyword.fetch!(options, :path)
+        timeout = Keyword.fetch!(options, :timeout)
+        Logger.metadata(url: "#{host}:#{port}#{path}")
+
+        Logger.debug("Connecting to #{host}:#{port}#{path}...")
+        # We should probably pass in :retry_fun, allowing to tweak the reconnect policy.
+        {:ok, conn} = :gun.open(:binary.bin_to_list(host), port, %{protocols: [:http]})
+        {:ok, :http} = :gun.await_up(conn, timeout)
+        stream = :gun.ws_upgrade(conn, path)
+
+        # :gun.wait does not support :gun_upgrade etc.
+        state =
+          receive do
+            {:gun_upgrade, ^conn, ^stream, [<<"websocket">>], _headers} ->
+              Logger.info("Connected to #{host}!")
+              on_connected(options, nil)
+
+            {:gun_response, ^conn, _undocumented, _another_undocumented, status, headers} ->
+              Logger.error("Failed to connect to #{host}: Received #{inspect(status)}")
+              exit({:error, status, headers})
+
+            {:gun_error, ^conn, ^stream, reason} ->
+              Logger.error("Failed to connect to #{host}: #{inspect(reason)}")
+              exit({:error, reason})
+          after
+            timeout ->
+              Logger.error("Failed to connect to #{host}: Did not connect within #{inspect(timeout)}")
+              exit({:error, :timeout})
+          end
+
+        # If the Gun process dies we want to die as well.
+        Process.link(conn)
+
+        # Since the implementing module controls state, we put the conn in the process dictionary (I'm open to suggestions).
+        Process.put(:"$websocket", conn)
+        {:ok, state}
+      end
 
       @doc false
       @impl GenServer
@@ -180,32 +220,25 @@ defmodule Wumpex.Base.Websocket do
 
   defmacro __before_compile__(env) do
     unless Module.defines?(env.module, {:handle_frame, 2}) do
-      IO.warn("""
-      The function handle_frame/2 is required by the Websocket behaviour but not implemented in #{inspect(env.module)}.
+      raise CompileError, description: """
+      The module #{env.module} does not implement the handle_frame/2 method!
 
-      A dummy implementation will be injected:
-
-        @impl Websocket
+      You can copy paste a default implementation below:
         def handle_frame(_frame, state) do
           {:noreply, state}
         end
+      """
+    end
 
-      You can copy the implementation above in your module and modify it to suit your needs.
-      """, Macro.Env.stacktrace(env))
+    unless Module.defines?(env.module, {:on_connected, 2}) do
+      raise CompileError, description: """
+      The module #{env.module} does not implement the on_connected/2 method!
 
-      quote do
-        @doc false
-        @impl Wumpex.Base.Websocket
-        def handle_frame(_frame, state) do
-          {:noreply, state}
+      You can copy paste a default implementation below:
+        def on_connected(_options, state) do
+          state
         end
-
-        unless Module.defines_type?(__MODULE__, {:state, 0}) do
-          @type state :: term()
-        end
-
-        defoverridable handle_frame: 2
-      end
+      """
     end
   end
 
@@ -222,44 +255,4 @@ defmodule Wumpex.Base.Websocket do
   defdelegate start_link(module, init_args, options), to: GenServer
 
   defdelegate start_link(module, init_args), to: GenServer
-
-  # Called as init/1 of the GenServer.
-  # When a module "use"s this module the init/1 is a defdelegate to this method.
-  @doc false
-  @spec init(options :: options()) :: {:ok, term()}
-  def init(host: host, port: port, path: path, timeout: timeout) do
-    Logger.metadata(url: "#{host}:#{port}#{path}")
-
-    Logger.debug("Connecting to #{host}:#{port}#{path}...")
-    # We should probably pass in :retry_fun, allowing to tweak the reconnect policy.
-    {:ok, conn} = :gun.open(:binary.bin_to_list(host), port, %{protocols: [:http]})
-    {:ok, :http} = :gun.await_up(conn, timeout)
-    stream = :gun.ws_upgrade(conn, path)
-
-    # :gun.wait does not support :gun_upgrade etc.
-    state =
-      receive do
-        {:gun_upgrade, ^conn, ^stream, [<<"websocket">>], _headers} ->
-          Logger.info("Connected to #{host}!")
-
-        {:gun_response, ^conn, _undocumented, _another_undocumented, status, headers} ->
-          Logger.error("Failed to connect to #{host}: Received #{inspect(status)}")
-          exit({:error, status, headers})
-
-        {:gun_error, ^conn, ^stream, reason} ->
-          Logger.error("Failed to connect to #{host}: #{inspect(reason)}")
-          exit({:error, reason})
-      after
-        timeout ->
-          Logger.error("Failed to connect to #{host}: Did not connect within #{inspect(timeout)}")
-          exit({:error, :timeout})
-      end
-
-    # If the Gun process dies we want to die as well.
-    Process.link(conn)
-
-    # Since the implementing module controls state, we put the conn in the process dictionary (I'm open to suggestions).
-    Process.put(:"$websocket", conn)
-    {:ok, state}
-  end
 end

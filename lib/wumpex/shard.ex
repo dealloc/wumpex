@@ -68,17 +68,20 @@ defmodule Wumpex.Shard do
 
     {:ok, guild_sup} = DynamicSupervisor.start_child(supervisor, Coordinator)
 
-    {:ok, worker} =
-      DynamicSupervisor.start_child(
-        supervisor,
-        {Wumpex.Gateway.Worker,
-         shard: shard, gateway: gateway, token: Wumpex.token(), guild_sup: guild_sup}
-      )
+    # {:ok, worker} =
+    #   DynamicSupervisor.start_child(
+    #     supervisor,
+    #     {Wumpex.Gateway.Worker,
+    #      shard: shard, gateway: gateway, token: Wumpex.token(), guild_sup: guild_sup}
+    #   )
 
     {:ok, _websocket} =
       DynamicSupervisor.start_child(
         supervisor,
-        {Wumpex.Base.Websocket, url: "#{gateway}?v=8&encoding=etf", worker: worker}
+        {Wumpex.Gateway.Worker, [
+          host: gateway, port: 443, path: "/?v=8&encoding=etf", timeout: 5_000,
+          shard: shard, gateway: gateway, token: Wumpex.token(), guild_sup: guild_sup
+        ]}
       )
 
     {:noreply, state}
