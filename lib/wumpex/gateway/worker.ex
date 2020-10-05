@@ -56,8 +56,7 @@ defmodule Wumpex.Gateway.Worker do
   end
 
   @impl Websocket
-  @spec on_connected(options :: options(), old_state :: term()) :: state()
-  def on_connected(options, _state) do
+  def on_connected(options) do
     token = Keyword.fetch!(options, :token)
     guild_sup = Keyword.fetch!(options, :guild_sup)
     shard = Keyword.fetch!(options, :shard)
@@ -79,6 +78,13 @@ defmodule Wumpex.Gateway.Worker do
     Logger.info("Disconnected...")
 
     {{:retry, 1_000}, state}
+  end
+
+  @impl Websocket
+  def on_reconnected(state) do
+    Logger.info("Reconnected!")
+
+    state
   end
 
   @impl Websocket

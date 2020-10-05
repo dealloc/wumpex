@@ -86,16 +86,14 @@ defmodule Wumpex.Base.Websocket do
   @doc """
   Invoked when the websocket connects to the server.
 
-  This method is invoked *every* time the websocket connects.
-  So when the connection is severed and the websocket reconnects this method will be invoked again.
+  This method is invoked the first time the websocket connects.
   This method can be compared with the `init/1` method of the `GenServer`, and is used to set the state of the process.
 
-  The first parameter passed are the options passed to `start_link`,
-  the second parameter is the current state of the process (when reconnecting) or `nil` (on first connect).
+  It receives the options passed to `start_link`
 
   The returned value will be used as the process state.
   """
-  @callback on_connected(options :: keyword(), state :: term() | nil) :: term()
+  @callback on_connected(options :: keyword()) :: term()
 
   @doc """
   Called when the socket connection closes.
@@ -106,6 +104,13 @@ defmodule Wumpex.Base.Websocket do
   See `t:reconnect_strategy/0` for more information.
   """
   @callback on_disconnected(state :: term()) :: {term(), reconnect_strategy()}
+
+  @doc """
+  Called when the socket is reconnected.
+
+  This funcion takes the current state and returns the new state for the process.
+  """
+  @callback on_reconnected(state :: term()) :: term()
 
   @doc """
   Invoked to handle incoming frames from the websocket connection.
@@ -133,7 +138,7 @@ defmodule Wumpex.Base.Websocket do
               | {:stop, close_reason, new_state}
             when reply: frame(), new_state: term(), close_reason: {non_neg_integer(), iodata()}
 
-  @optional_callbacks on_disconnected: 1
+  @optional_callbacks on_disconnected: 1, on_reconnected: 1
 
   @doc false
   defmacro __using__(_options) do
@@ -160,7 +165,7 @@ defmodule Wumpex.Base.Websocket do
         Logger.metadata(url: "#{host}:#{port}#{path}")
         conn = connect_websocket(host, port, path, timeout)
 
-        state = on_connected(options, nil)
+        state = on_connected(options)
         {:ok, state}
       end
 
@@ -209,6 +214,15 @@ defmodule Wumpex.Base.Websocket do
                 Process.get(:"$websocket_metadata")
 
               connect_websocket(host, port, path, timeout)
+
+              # TODO: refactor conditional function call.
+              state =
+                if Kernel.function_exported?(__MODULE__, :on_reconnected, 1) do
+                  apply(__MODULE__, :on_reconnected, [state])
+                else
+                  state
+                end
+
               {:noreply, state}
 
             {{:retry, delay}, state} ->
@@ -218,6 +232,15 @@ defmodule Wumpex.Base.Websocket do
                 Process.get(:"$websocket_metadata")
 
               connect_websocket(host, port, path, timeout)
+
+              # TODO: refactor conditional function call.
+              state =
+                if Kernel.function_exported?(__MODULE__, :on_reconnected, 1) do
+                  apply(__MODULE__, :on_reconnected, [state])
+                else
+                  state
+                end
+
               {:noreply, state}
           end
         else
@@ -297,7 +320,7 @@ defmodule Wumpex.Base.Websocket do
         """
     end
 
-    unless Module.defines?(env.module, {:on_connected, 2}) do
+    unless Module.defines?(env.module, {:on_connected, 1}) do
       raise CompileError,
         description: """
         The module #{env.module} does not implement the on_connected/2 method!
