@@ -12,7 +12,7 @@ defmodule Wumpex.Base.WebsocketTest do
       server = WebsocketHelpers.accept_one(self())
       WebsocketHelpers.wait_for_server()
 
-      {:ok, client} = Websocket.start_link(url: "ws://localhost:8080", worker: self())
+      {:ok, client} = Websocket.start_link(WebsocketClient, host: "localhost", port: 8080, path: "/", timeout: 100, worker: self())
       assert Process.alive?(client)
 
       Task.await(server, 1_000)
@@ -22,9 +22,9 @@ defmodule Wumpex.Base.WebsocketTest do
       server = WebsocketHelpers.echo_one(self())
       WebsocketHelpers.wait_for_server()
 
-      {:ok, client} = Websocket.start_link(url: "ws://localhost:8080", worker: self())
-      Websocket.send(client, "Hello world", mode: :text)
-      assert_receive {:"$gen_cast", {{:text, "Hello world"}, _pid}}
+      {:ok, client} = Websocket.start_link(WebsocketClient, host: "localhost", port: 8080, path: "/", timeout: 100, worker: self())
+      Websocket.send(client, {:text, "Hello world"})
+      assert_receive {:text, "Hello world"}
 
       Task.await(server, 1_000)
     end
@@ -33,9 +33,9 @@ defmodule Wumpex.Base.WebsocketTest do
       server = WebsocketHelpers.echo_one(self())
       WebsocketHelpers.wait_for_server()
 
-      {:ok, client} = Websocket.start_link(url: "ws://localhost:8080", worker: self())
-      Websocket.send(client, "Hello world", mode: :binary)
-      assert_receive {:"$gen_cast", {{:binary, "Hello world"}, _pid}}
+      {:ok, client} = Websocket.start_link(WebsocketClient, host: "localhost", port: 8080, path: "/", timeout: 100, worker: self())
+      Websocket.send(client, {:binary, "Hello world"})
+      assert_receive {:binary, "Hello world"}
 
       Task.await(server, 1_000)
     end
