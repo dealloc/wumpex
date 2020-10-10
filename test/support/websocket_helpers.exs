@@ -45,3 +45,18 @@ defmodule WebsocketHelpers do
     assert_receive :ready
   end
 end
+
+defmodule WebsocketClient do
+  @moduledoc false
+  use Wumpex.Base.Websocket
+
+  def on_connected(options) do
+    Keyword.fetch!(options, :worker)
+  end
+
+  def handle_frame(frame, state) do
+    send(state, frame)
+
+    {:noreply, state}
+  end
+end
