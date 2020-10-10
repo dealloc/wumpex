@@ -1,4 +1,5 @@
 defmodule Wumpex.Base.Websocket do
+  # credo:disable-for-this-file Credo.Check.Refactor.LongQuoteBlocks
   @moduledoc """
   A behaviour module for implementing the client of a websocket connection.
 
@@ -203,48 +204,31 @@ defmodule Wumpex.Base.Websocket do
       def handle_info({:gun_down, _conn, _protcol, reason, _streams, _more_streams}, state) do
         Logger.debug("Connection lost, reason: #{inspect(reason)}")
 
-        if Kernel.function_exported?(__MODULE__, :on_disconnected, 1) do
-          # We use apply/3 since otherwise my IDE complains.
-          case apply(__MODULE__, :on_disconnected, [state]) do
-            {:stop, state} ->
-              {:stop, :normal, state}
+        case on_disconnected(state) do
+          {:stop, state} ->
+            {:stop, :normal, state}
 
-            {:retry, state} ->
-              [host: host, port: port, path: path, timeout: timeout] =
-                Process.get(:"$websocket_metadata")
+          {:retry, state} ->
+            [host: host, port: port, path: path, timeout: timeout] =
+              Process.get(:"$websocket_metadata")
 
-              connect_websocket(host, port, path, timeout)
+            connect_websocket(host, port, path, timeout)
 
-              # TODO: refactor conditional function call.
-              state =
-                if Kernel.function_exported?(__MODULE__, :on_reconnected, 1) do
-                  apply(__MODULE__, :on_reconnected, [state])
-                else
-                  state
-                end
+            state = on_reconnected(state)
 
-              {:noreply, state}
+            {:noreply, state}
 
-            {{:retry, delay}, state} ->
-              Process.sleep(delay)
+          {{:retry, delay}, state} ->
+            Process.sleep(delay)
 
-              [host: host, port: port, path: path, timeout: timeout] =
-                Process.get(:"$websocket_metadata")
+            [host: host, port: port, path: path, timeout: timeout] =
+              Process.get(:"$websocket_metadata")
 
-              connect_websocket(host, port, path, timeout)
+            connect_websocket(host, port, path, timeout)
 
-              # TODO: refactor conditional function call.
-              state =
-                if Kernel.function_exported?(__MODULE__, :on_reconnected, 1) do
-                  apply(__MODULE__, :on_reconnected, [state])
-                else
-                  state
-                end
+            state = on_reconnected(state)
 
-              {:noreply, state}
-          end
-        else
-          {:stop, reason, state}
+            {:noreply, state}
         end
       end
 
@@ -298,12 +282,24 @@ defmodule Wumpex.Base.Websocket do
         conn
       end
 
+      @impl Wumpex.Base.Websocket
+      def on_disconnected(state) do
+        {:stop, state}
+      end
+
+      @impl Wumpex.Base.Websocket
+      def on_reconnected(state) do
+        state
+      end
+
       @spec send_frame(frame_or_frames()) :: :ok
       defp send_frame(frame_or_frames) do
         conn = Process.get(:"$websocket", nil)
 
         :gun.ws_send(conn, frame_or_frames)
       end
+
+      defoverridable on_disconnected: 1, on_reconnected: 1
     end
   end
 
