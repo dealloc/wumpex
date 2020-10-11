@@ -50,10 +50,12 @@ defmodule WebsocketClient do
   @moduledoc false
   use Wumpex.Base.Websocket
 
+  @impl Wumpex.Base.Websocket
   def on_connected(options) do
     Keyword.fetch!(options, :worker)
   end
 
+  @impl Wumpex.Base.Websocket
   def handle_frame(frame, state) do
     send(state, frame)
 

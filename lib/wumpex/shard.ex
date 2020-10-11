@@ -78,10 +78,17 @@ defmodule Wumpex.Shard do
     {:ok, _websocket} =
       DynamicSupervisor.start_child(
         supervisor,
-        {Wumpex.Gateway, [
-          host: gateway, port: 443, path: "/?v=8&encoding=etf", timeout: 5_000,
-          shard: shard, gateway: gateway, token: Wumpex.token(), guild_sup: guild_sup
-        ]}
+        {Wumpex.Gateway,
+         [
+           host: gateway,
+           port: 443,
+           path: "/?v=8&encoding=etf",
+           timeout: 5_000,
+           shard: shard,
+           gateway: gateway,
+           token: Wumpex.token(),
+           guild_sup: guild_sup
+         ]}
       )
 
     {:noreply, state}

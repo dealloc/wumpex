@@ -109,7 +109,7 @@ defmodule Wumpex.Base.Websocket do
   @doc """
   Called when the socket is reconnected.
 
-  This funcion takes the current state and returns the new state for the process.
+  This function takes the current state and returns the new state for the process.
   """
   @callback on_reconnected(state :: term()) :: term()
 
