@@ -229,6 +229,18 @@ defmodule Wumpex.Gateway do
     %{state | sequence: sequence}
   end
 
+  # Handles all events that are sent to a specific guild.
+  # Sometimes events are sent with the guild_id as a string rather than an atom.
+  # https://discord.com/developers/docs/topics/gateway#commands-and-events
+  def dispatch(%{op: 0, s: sequence, t: event_name, d: %{"guild_id" => guild_id} = event}, state) do
+    Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
+
+    # Temporary disabled, pending refactor.
+    # Coordinator.dispatch!(guild_id, {event_name, event, websocket})
+
+    %{state | sequence: sequence}
+  end
+
   @doc """
   The dispatch event is called for all incoming events from the Discord gateway.
 
