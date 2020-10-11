@@ -157,6 +157,7 @@ defmodule Wumpex.Gateway do
   end
 
   # Handles HELLO
+  # https://discord.com/developers/docs/topics/gateway#hello
   def dispatch(%{op: 10, d: %{heartbeat_interval: interval}}, state) do
     send(self(), {:heartbeat, interval})
     send(self(), :identify)
@@ -166,6 +167,7 @@ defmodule Wumpex.Gateway do
   end
 
   # Handles HEARTBEAT_ACK
+  # https://discord.com/developers/docs/topics/gateway#heartbeating
   def dispatch(%{op: 11}, state) do
     Logger.debug("Received heartbeat ack!")
 
@@ -182,6 +184,7 @@ defmodule Wumpex.Gateway do
   end
 
   # Handles READY event
+  # https://discord.com/developers/docs/topics/gateway#ready
   def dispatch(%{op: 0, s: sequence, t: :READY, d: %{session_id: session_id}}, state) do
     Logger.info("Bot is now READY")
 
@@ -189,12 +192,15 @@ defmodule Wumpex.Gateway do
   end
 
   # Handles RESUMED event
+  # https://discord.com/developers/docs/topics/gateway#resumed
   def dispatch(%{op: 0, s: sequence, t: :RESUMED}, state) do
     Logger.info("Bot has finished resuming.")
 
     %{state | sequence: sequence}
   end
 
+  # Handles GUILD_CREATE event
+  # https://discord.com/developers/docs/topics/gateway#guild-create
   def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, %{guild_sup: guild_sup} = state) do
     Logger.info("Guild became available: #{inspect(event)}")
 
@@ -203,6 +209,8 @@ defmodule Wumpex.Gateway do
     %{state | sequence: sequence}
   end
 
+  # Handles GUILD_DELETE
+  # https://discord.com/developers/docs/topics/gateway#guild-delete
   def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, state) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
@@ -211,9 +219,12 @@ defmodule Wumpex.Gateway do
     %{state | sequence: sequence}
   end
 
+  # Handles all events that are sent to a specific guild.
+  # https://discord.com/developers/docs/topics/gateway#commands-and-events
   def dispatch(%{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event}, state) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
+    # Temporary disabled, pending refactor.
     # Coordinator.dispatch!(guild_id, {event_name, event, websocket})
 
     %{state | sequence: sequence}
