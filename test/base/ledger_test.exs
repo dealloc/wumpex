@@ -51,8 +51,9 @@ defmodule Wumpex.Base.LedgerTest do
       assert :ignore = __MODULE__.GlobalRegistry.start_link()
     end
 
-    test "return :ignore in local mode" do
-      assert :ignore = __MODULE__.LocalRegistry.start_link()
+    test "return call Registry.start_link/1 in local mode" do
+      # Setup already starts the LocalRegistry, so this should return already started.
+      assert {:error, {:already_started, _pid}} = __MODULE__.LocalRegistry.start_link()
     end
   end
 

@@ -62,9 +62,9 @@ defmodule Wumpex.Base.Ledger do
       end
 
       @doc false
-      @spec start_link(opts :: any()) :: :ignore
+      @spec start_link(opts :: any()) :: term()
       def start_link(_opts \\ []) do
-        :ignore
+        unquote(generate_start_link(distributed?))
       end
 
       @doc """
@@ -131,6 +131,21 @@ defmodule Wumpex.Base.Ledger do
         keys: :unique,
         partitions: System.schedulers_online()
       )
+    end
+  end
+
+  # Generate the start_link method for distributed ledger.
+  defp generate_start_link(distributed?) when distributed? do
+    quote do
+      Application.ensure_started(:syn)
+      :ignore
+    end
+  end
+
+  # Generate the start_link method for local ledger.
+  defp generate_start_link(_distributed?) do
+    quote do
+      Registry.start_link(keys: :unique, name: __MODULE__, partitions: System.schedulers_online())
     end
   end
 

@@ -10,7 +10,6 @@ defmodule Wumpex.Gateway do
   use Wumpex.Base.Websocket
 
   alias Wumpex.Base.Websocket
-  alias Wumpex.Gateway.Guild.Coordinator
   alias Wumpex.Gateway.Opcodes
 
   require Logger
@@ -21,13 +20,11 @@ defmodule Wumpex.Gateway do
   Contains the following fields:
     * `:token` - The bot token
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
-    * `:gateway` - The URL this shard should connect to.
     * `:guild_sup` - The `Wumpex.Gateway.Guild.Coordinator`, which acts as a guild supervisor.
   """
   @type options :: [
           token: String.t(),
           shard: {non_neg_integer(), non_neg_integer()},
-          gateway: String.t(),
           guild_sup: pid()
         ]
 
@@ -53,7 +50,9 @@ defmodule Wumpex.Gateway do
   @doc false
   @spec start_link(options :: options()) :: GenServer.on_start()
   def start_link(options) do
-    GenServer.start_link(__MODULE__, options)
+    shard = Keyword.fetch!(options, :shard)
+
+    GenServer.start_link(__MODULE__, options, name: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)})
   end
 
   @doc """
@@ -201,10 +200,10 @@ defmodule Wumpex.Gateway do
 
   # Handles GUILD_CREATE event
   # https://discord.com/developers/docs/topics/gateway#guild-create
-  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, %{guild_sup: guild_sup} = state) do
+  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, state) do
     Logger.info("Guild became available: #{inspect(event)}")
 
-    {:ok, _guild} = Coordinator.start_guild(guild_sup, event.id)
+    # Start new guild
 
     %{state | sequence: sequence}
   end
@@ -214,7 +213,7 @@ defmodule Wumpex.Gateway do
   def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, state) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
-    Coordinator.stop_guild(guild_id)
+    # Stop existing guild.
 
     %{state | sequence: sequence}
   end
