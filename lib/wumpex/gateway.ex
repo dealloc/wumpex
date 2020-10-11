@@ -52,7 +52,9 @@ defmodule Wumpex.Gateway do
   def start_link(options) do
     shard = Keyword.fetch!(options, :shard)
 
-    GenServer.start_link(__MODULE__, options, name: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)})
+    GenServer.start_link(__MODULE__, options,
+      name: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)}
+    )
   end
 
   @doc """
