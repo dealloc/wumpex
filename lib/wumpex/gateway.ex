@@ -20,12 +20,10 @@ defmodule Wumpex.Gateway do
   Contains the following fields:
     * `:token` - The bot token
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
-    * `:guild_sup` - The `Wumpex.Gateway.Guild.Coordinator`, which acts as a guild supervisor.
   """
   @type options :: [
           token: String.t(),
-          shard: {non_neg_integer(), non_neg_integer()},
-          guild_sup: pid()
+          shard: {non_neg_integer(), non_neg_integer()}
         ]
 
   @typedoc """
@@ -35,7 +33,6 @@ defmodule Wumpex.Gateway do
     * `:ack` - Whether or not a heartbeat ACK has been received.
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
-    * `:guild_sup` - The `Wumpex.Gateway.Guild.Coordinator` supervisor.
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
   """
   @type state :: %{
@@ -43,7 +40,6 @@ defmodule Wumpex.Gateway do
           ack: boolean(),
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
-          guild_sup: pid(),
           shard: {non_neg_integer(), non_neg_integer()}
         }
 
@@ -75,7 +71,6 @@ defmodule Wumpex.Gateway do
   @impl Websocket
   def on_connected(options) do
     token = Keyword.fetch!(options, :token)
-    guild_sup = Keyword.fetch!(options, :guild_sup)
     shard = Keyword.fetch!(options, :shard)
 
     Logger.metadata(shard: inspect(shard))
@@ -86,7 +81,6 @@ defmodule Wumpex.Gateway do
       ack: false,
       sequence: nil,
       session_id: nil,
-      guild_sup: guild_sup,
       shard: shard
     }
   end

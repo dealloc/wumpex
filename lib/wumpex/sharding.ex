@@ -55,8 +55,7 @@ defmodule Wumpex.Sharding do
          timeout: 5_000,
          # Gateway specific options.
          shard: {i, shard_count},
-         token: Wumpex.token(),
-         guild_sup: nil
+         token: Wumpex.token()
        ]}
     end
   end
