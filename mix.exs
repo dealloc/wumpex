@@ -68,6 +68,10 @@ defmodule Wumpex.MixProject do
             Wumpex.Resource.User,
             Wumpex.Resource.UserFlags,
             Wumpex.Resource.VoiceState
+          ],
+          Sharding: [
+            Wumpex.Sharding,
+            Wumpex.Sharding.ShardLedger
           ]
         ]
       ]

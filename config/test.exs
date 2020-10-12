@@ -9,4 +9,6 @@ config :logger,
 config :wumpex,
   key: "DUMMY-TEST-TOKEN",
   endpoint: "http://localhost:8081",
-  buckets: 1
+  buckets: 1,
+  distributed: false,
+  connect: false

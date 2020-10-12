@@ -41,7 +41,10 @@ defmodule Wumpex.Base.Ledger do
 
   defmacro __using__(options) when is_list(options) do
     # Get whether we're compiling a distributed or local Ledger.
-    distributed? = Keyword.fetch!(options, :global)
+    distributed? =
+      Keyword.get_lazy(options, :global, fn ->
+        Application.get_env(:wumpex, :distributed, false)
+      end)
 
     # Ensure that :syn is loaded when we're compiling Ledger for distributed usage.
     if distributed? and Code.ensure_loaded?(:syn) == false do
@@ -55,13 +58,13 @@ defmodule Wumpex.Base.Ledger do
       @doc false
       @spec child_spec(any()) :: Supervisor.child_spec()
       def child_spec(_opts \\ []) do
-        unquote(generate_child_spec(distributed?))
+        unquote(__child_spec__(distributed?))
       end
 
       @doc false
-      @spec start_link(opts :: any()) :: :ignore
+      @spec start_link(opts :: any()) :: term()
       def start_link(_opts \\ []) do
-        :ignore
+        unquote(__start_link__(distributed?))
       end
 
       @doc """
@@ -78,7 +81,7 @@ defmodule Wumpex.Base.Ledger do
       """
       @spec lookup(name :: any()) :: {pid(), any()} | nil
       def lookup(name) do
-        unquote(generate_lookup(distributed?))
+        unquote(__lookup__(distributed?))
       end
 
       @doc """
@@ -91,26 +94,26 @@ defmodule Wumpex.Base.Ledger do
       # GenServer :via interface
       @spec register_name(name :: any() | {any(), any()}, pid :: pid()) :: :yes | :no
       def register_name(name, pid) do
-        unquote(generate_register_name(distributed?))
+        unquote(__register_name__(distributed?))
       end
 
       @doc false
       @spec unregister_name(name :: any()) :: :ok
       def unregister_name(name) do
-        unquote(generate_unregister_name(distributed?))
+        unquote(__unregister_name__(distributed?))
       end
 
       @doc false
       @spec whereis_name(name :: any()) :: pid() | :undefined
       def whereis_name(name) do
-        unquote(generate_whereis_name(distributed?))
+        unquote(__whereis_name__(distributed?))
       end
     end
   end
 
   # Generate the child_spec function for distributed Ledger.
   # Call start_link which does nothing.
-  defp generate_child_spec(distributed?) when distributed? do
+  defp __child_spec__(distributed?) when distributed? do
     quote do
       %{
         id: __MODULE__,
@@ -121,7 +124,7 @@ defmodule Wumpex.Base.Ledger do
 
   # Generate the child_spec for local Ledger
   # Basically just setup a Registry instance.
-  defp generate_child_spec(_distributed?) do
+  defp __child_spec__(_distributed?) do
     quote do
       Registry.child_spec(
         name: __MODULE__,
@@ -131,8 +134,23 @@ defmodule Wumpex.Base.Ledger do
     end
   end
 
+  # Generate the start_link method for distributed ledger.
+  defp __start_link__(distributed?) when distributed? do
+    quote do
+      Application.ensure_started(:syn)
+      :ignore
+    end
+  end
+
+  # Generate the start_link method for local ledger.
+  defp __start_link__(_distributed?) do
+    quote do
+      Registry.start_link(keys: :unique, name: __MODULE__, partitions: System.schedulers_online())
+    end
+  end
+
   # Generates the lookup function for distributed Ledger.
-  defp generate_lookup(distributed?) when distributed? do
+  defp __lookup__(distributed?) when distributed? do
     quote do
       case :syn.whereis(name, :with_meta) do
         :undefined ->
@@ -145,7 +163,7 @@ defmodule Wumpex.Base.Ledger do
   end
 
   # Generates the lookup function for the local Ledger.
-  defp generate_lookup(_distributed?) do
+  defp __lookup__(_distributed?) do
     quote do
       case Registry.lookup(__MODULE__, name) do
         [] ->
@@ -158,7 +176,7 @@ defmodule Wumpex.Base.Ledger do
   end
 
   # Generate the register_name function for distributed Ledger
-  defp generate_register_name(distributed?) when distributed? do
+  defp __register_name__(distributed?) when distributed? do
     quote do
       case name do
         {name, meta} ->
@@ -177,7 +195,7 @@ defmodule Wumpex.Base.Ledger do
   end
 
   # Generate the register_name function for local Ledger
-  defp generate_register_name(_distributed?) do
+  defp __register_name__(_distributed?) do
     quote do
       case name do
         {name, meta} ->
@@ -190,7 +208,7 @@ defmodule Wumpex.Base.Ledger do
   end
 
   # Generate the unregister_name function for the distributed Ledger.
-  defp generate_unregister_name(distributed?) when distributed? do
+  defp __unregister_name__(distributed?) when distributed? do
     quote do
       :syn.unregister_name(name)
 
@@ -199,14 +217,14 @@ defmodule Wumpex.Base.Ledger do
   end
 
   # Generate the unregister_name function for the local Ledger.
-  defp generate_unregister_name(_distributed?) do
+  defp __unregister_name__(_distributed?) do
     quote do
       Registry.unregister_name({__MODULE__, name})
     end
   end
 
   # Generate the whereis_name function for the distributed Ledger.
-  defp generate_whereis_name(distributed?) when distributed? do
+  defp __whereis_name__(distributed?) when distributed? do
     quote do
       case name do
         {name, _metadata} ->
@@ -219,7 +237,7 @@ defmodule Wumpex.Base.Ledger do
   end
 
   # Generate the whereis_name function for the local Ledger.
-  defp generate_whereis_name(_distributed?) do
+  defp __whereis_name__(_distributed?) do
     quote do
       case name do
         {name, _metadata} ->

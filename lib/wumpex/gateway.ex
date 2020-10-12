@@ -10,7 +10,6 @@ defmodule Wumpex.Gateway do
   use Wumpex.Base.Websocket
 
   alias Wumpex.Base.Websocket
-  alias Wumpex.Gateway.Guild.Coordinator
   alias Wumpex.Gateway.Opcodes
 
   require Logger
@@ -21,14 +20,10 @@ defmodule Wumpex.Gateway do
   Contains the following fields:
     * `:token` - The bot token
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
-    * `:gateway` - The URL this shard should connect to.
-    * `:guild_sup` - The `Wumpex.Gateway.Guild.Coordinator`, which acts as a guild supervisor.
   """
   @type options :: [
           token: String.t(),
-          shard: {non_neg_integer(), non_neg_integer()},
-          gateway: String.t(),
-          guild_sup: pid()
+          shard: {non_neg_integer(), non_neg_integer()}
         ]
 
   @typedoc """
@@ -38,7 +33,6 @@ defmodule Wumpex.Gateway do
     * `:ack` - Whether or not a heartbeat ACK has been received.
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
-    * `:guild_sup` - The `Wumpex.Gateway.Guild.Coordinator` supervisor.
     * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
   """
   @type state :: %{
@@ -46,14 +40,17 @@ defmodule Wumpex.Gateway do
           ack: boolean(),
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
-          guild_sup: pid(),
           shard: {non_neg_integer(), non_neg_integer()}
         }
 
   @doc false
   @spec start_link(options :: options()) :: GenServer.on_start()
   def start_link(options) do
-    GenServer.start_link(__MODULE__, options)
+    shard = Keyword.fetch!(options, :shard)
+
+    GenServer.start_link(__MODULE__, options,
+      name: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)}
+    )
   end
 
   @doc """
@@ -74,7 +71,6 @@ defmodule Wumpex.Gateway do
   @impl Websocket
   def on_connected(options) do
     token = Keyword.fetch!(options, :token)
-    guild_sup = Keyword.fetch!(options, :guild_sup)
     shard = Keyword.fetch!(options, :shard)
 
     Logger.metadata(shard: inspect(shard))
@@ -85,7 +81,6 @@ defmodule Wumpex.Gateway do
       ack: false,
       sequence: nil,
       session_id: nil,
-      guild_sup: guild_sup,
       shard: shard
     }
   end
@@ -201,10 +196,10 @@ defmodule Wumpex.Gateway do
 
   # Handles GUILD_CREATE event
   # https://discord.com/developers/docs/topics/gateway#guild-create
-  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, %{guild_sup: guild_sup} = state) do
+  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, state) do
     Logger.info("Guild became available: #{inspect(event)}")
 
-    {:ok, _guild} = Coordinator.start_guild(guild_sup, event.id)
+    # Start new guild
 
     %{state | sequence: sequence}
   end
@@ -214,7 +209,7 @@ defmodule Wumpex.Gateway do
   def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, state) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
-    Coordinator.stop_guild(guild_id)
+    # Stop existing guild.
 
     %{state | sequence: sequence}
   end
@@ -222,6 +217,18 @@ defmodule Wumpex.Gateway do
   # Handles all events that are sent to a specific guild.
   # https://discord.com/developers/docs/topics/gateway#commands-and-events
   def dispatch(%{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event}, state) do
+    Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
+
+    # Temporary disabled, pending refactor.
+    # Coordinator.dispatch!(guild_id, {event_name, event, websocket})
+
+    %{state | sequence: sequence}
+  end
+
+  # Handles all events that are sent to a specific guild.
+  # Sometimes events are sent with the guild_id as a string rather than an atom.
+  # https://discord.com/developers/docs/topics/gateway#commands-and-events
+  def dispatch(%{op: 0, s: sequence, t: event_name, d: %{"guild_id" => guild_id} = event}, state) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
     # Temporary disabled, pending refactor.
