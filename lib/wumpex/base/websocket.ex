@@ -170,6 +170,13 @@ defmodule Wumpex.Base.Websocket do
         {:ok, state}
       end
 
+      @impl GenServer
+      def format_status(_options, [dict, state]) do
+        websocket = Keyword.get(dict, :"$websocket_metadata")
+
+        [data: [Websocket: websocket]]
+      end
+
       @doc false
       @impl GenServer
       # Handles incoming messages from the Gun websocket and dispatch them to the worker.
@@ -299,7 +306,7 @@ defmodule Wumpex.Base.Websocket do
         :gun.ws_send(conn, frame_or_frames)
       end
 
-      defoverridable on_disconnected: 1, on_reconnected: 1
+      defoverridable on_disconnected: 1, on_reconnected: 1, format_status: 2
     end
   end
 

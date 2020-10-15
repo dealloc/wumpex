@@ -268,4 +268,17 @@ defmodule Wumpex.Gateway do
 
     state
   end
+
+  @spec format_status(:normal | :terminate, [pdict :: {term(), term()} | (state :: term()), ...]) :: term()
+  def format_status(options, [dict, state]) do
+    [data: data] = super(options, [dict, state])
+
+    [
+      data: data ++ [
+        Shard: state.shard,
+        Sequence: state.sequence,
+        "Heartbeat Ack'd": state.ack
+      ]
+    ]
+  end
 end
