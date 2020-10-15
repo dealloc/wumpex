@@ -10,6 +10,8 @@ defmodule Wumpex.Gateway do
   use Wumpex.Base.Websocket
 
   alias Wumpex.Base.Websocket
+  alias Wumpex.Gateway.Caching
+  alias Wumpex.Gateway.EventProducer
   alias Wumpex.Gateway.Opcodes
 
   require Logger
@@ -33,14 +35,16 @@ defmodule Wumpex.Gateway do
     * `:ack` - Whether or not a heartbeat ACK has been received.
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
-    * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
+    * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`.
+    * `:producer` - The `t:pid/0` of the `Wumpex.Gateway.EventProducer` for this shard.
   """
   @type state :: %{
           token: String.t(),
           ack: boolean(),
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
-          shard: {non_neg_integer(), non_neg_integer()}
+          shard: {non_neg_integer(), non_neg_integer()},
+          producer: pid()
         }
 
   @doc false
@@ -72,6 +76,8 @@ defmodule Wumpex.Gateway do
   def on_connected(options) do
     token = Keyword.fetch!(options, :token)
     shard = Keyword.fetch!(options, :shard)
+    {:ok, producer} = EventProducer.start_link()
+    {:ok, _cache} = Caching.start_link(producer: producer)
 
     Logger.metadata(shard: inspect(shard))
     Logger.debug("Connected to the gateway!")
@@ -81,7 +87,8 @@ defmodule Wumpex.Gateway do
       ack: false,
       sequence: nil,
       session_id: nil,
-      shard: shard
+      shard: shard,
+      producer: producer
     }
   end
 
@@ -196,31 +203,41 @@ defmodule Wumpex.Gateway do
 
   # Handles GUILD_CREATE event
   # https://discord.com/developers/docs/topics/gateway#guild-create
-  def dispatch(%{op: 0, s: sequence, t: :GUILD_CREATE, d: event}, state) do
+  def dispatch(
+        %{op: 0, s: sequence, t: :GUILD_CREATE, d: event},
+        %{producer: producer} = state
+      ) do
     Logger.info("Guild became available: #{inspect(event)}")
 
-    # Start new guild
+    # Start new guild.
+    EventProducer.dispatch(producer, :GUILD_CREATE, event)
 
     %{state | sequence: sequence}
   end
 
   # Handles GUILD_DELETE
   # https://discord.com/developers/docs/topics/gateway#guild-delete
-  def dispatch(%{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id}}, state) do
+  def dispatch(
+        %{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id} = event},
+        %{producer: producer} = state
+      ) do
     Logger.info("Guild #{guild_id} is no longer available!")
 
     # Stop existing guild.
+    EventProducer.dispatch(producer, :GUILD_DELETE, event)
 
     %{state | sequence: sequence}
   end
 
   # Handles all events that are sent to a specific guild.
   # https://discord.com/developers/docs/topics/gateway#commands-and-events
-  def dispatch(%{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event}, state) do
+  def dispatch(
+        %{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event},
+        %{producer: producer} = state
+      ) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    # Temporary disabled, pending refactor.
-    # Coordinator.dispatch!(guild_id, {event_name, event, websocket})
+    EventProducer.dispatch(producer, event_name, event)
 
     %{state | sequence: sequence}
   end
@@ -228,11 +245,13 @@ defmodule Wumpex.Gateway do
   # Handles all events that are sent to a specific guild.
   # Sometimes events are sent with the guild_id as a string rather than an atom.
   # https://discord.com/developers/docs/topics/gateway#commands-and-events
-  def dispatch(%{op: 0, s: sequence, t: event_name, d: %{"guild_id" => guild_id} = event}, state) do
+  def dispatch(
+        %{op: 0, s: sequence, t: event_name, d: %{"guild_id" => guild_id} = event},
+        %{producer: producer} = state
+      ) do
     Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
 
-    # Temporary disabled, pending refactor.
-    # Coordinator.dispatch!(guild_id, {event_name, event, websocket})
+    EventProducer.dispatch(producer, event_name, event)
 
     %{state | sequence: sequence}
   end
