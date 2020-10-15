@@ -1,4 +1,5 @@
 defmodule Wumpex.Gateway.Caching do
+  # https://discord.com/developers/docs/topics/gateway#tracking-state
   use GenStage
 
   require Logger
@@ -13,15 +14,16 @@ defmodule Wumpex.Gateway.Caching do
 
   @impl GenStage
   def init(producer: producer) do
-    {:consumer, nil, subscribe_to: [{producer, max_demand: 1, min_demand: 0}]}
+    # Once the handler logic for actually handling events is ready, change this to :producer_consumer
+    {:consumer, nil, subscribe_to: [{producer, max_demand: 2, min_demand: 0}]}
   end
 
   @impl GenStage
   def handle_events(events, _from, state) do
-    # Inspect the events.
-    IO.inspect(events, label: "Cache")
+    Process.sleep(5_000)
+    Logger.info("Processed #{Enum.count(events)} events.")
+    # IO.inspect(events, label: "Cache")
 
-    # We are a consumer, so we would never emit items.
     {:noreply, [], state}
   end
 end

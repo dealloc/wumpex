@@ -45,16 +45,18 @@ defmodule Wumpex.Gateway.EventProducer do
   end
 
   @impl GenStage
-  def handle_demand(1, {queue, demand}) do
-    case :queue.out(queue) do
-      {{:value, event}, queue} ->
-        # We took an item off, so demand increased and decreased by 1.
-        {:noreply, [event], {queue, demand}}
+  def handle_demand(incoming, {queue, demand}) do
+    pop_events([], queue, demand + incoming)
 
-      {:empty, queue} ->
-        # No queued events, we increase the demand by one.
-        {:noreply, [], {queue, demand + 1}}
-    end
+    # case :queue.out(queue) do
+    #   {{:value, event}, queue} ->
+    #     # We took an item off, so demand increased and decreased by 1.
+    #     {:noreply, [event], {queue, demand}}
+
+    #   {:empty, queue} ->
+    #     # No queued events, we increase the demand by one.
+    #     {:noreply, [], {queue, demand + 1}}
+    # end
   end
 
   # Called when a new event is published but there's no demand, we queue the event.
@@ -75,5 +77,24 @@ defmodule Wumpex.Gateway.EventProducer do
     # credo:disable-for-next-line Credo.Check.Refactor.VariableRebinding
     {{:value, event}, queue} = :queue.out(queue)
     {:noreply, [event], {queue, demand - 1}}
+  end
+
+  # No more demand to process, return the already queued events.
+  @spec pop_events([event()], :queue.queue(event()), non_neg_integer()) :: {:noreply, [event()], state()}
+  defp pop_events(events, queue, 0) do
+    {:noreply, events, {queue, 0}}
+  end
+
+  # Attempts to push as many events from the queue as demand requests.
+  defp pop_events(events, queue, demand) do
+    case :queue.out(queue) do
+      {{:value, event}, queue} ->
+        # We took an item off, so demand increased and decreased by 1.
+        pop_events(events ++ [event], queue, demand - 1)
+
+      {:empty, queue} ->
+        # No queued events, don't decrease demand.
+        {:noreply, events, {queue, demand}}
+    end
   end
 end

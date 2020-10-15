@@ -77,7 +77,7 @@ defmodule Wumpex.Gateway do
     token = Keyword.fetch!(options, :token)
     shard = Keyword.fetch!(options, :shard)
     {:ok, producer} = EventProducer.start_link()
-    {:ok, _cache} = Caching.start_link(producer: producer)
+    {:ok, _caching} = Caching.start_link(producer: producer)
 
     Logger.metadata(shard: inspect(shard))
     Logger.debug("Connected to the gateway!")
