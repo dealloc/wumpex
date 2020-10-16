@@ -11,6 +11,7 @@ defmodule Wumpex.Gateway do
 
   alias Wumpex.Base.Websocket
   alias Wumpex.Gateway.Caching
+  alias Wumpex.Gateway.EventConsumer
   alias Wumpex.Gateway.EventProducer
   alias Wumpex.Gateway.Opcodes
 
@@ -72,12 +73,21 @@ defmodule Wumpex.Gateway do
     Websocket.send(gateway, {:binary, encoded})
   end
 
+  # Private version of send_opcode/2 which sends directly to the gateway.
+  @spec send_opcode(opcode :: map()) :: :ok
+  defp send_opcode(opcode) when is_map(opcode) do
+    encoded = :erlang.term_to_binary(opcode)
+
+    send_frame({:binary, encoded})
+  end
+
   @impl Websocket
   def on_connected(options) do
     token = Keyword.fetch!(options, :token)
     shard = Keyword.fetch!(options, :shard)
     {:ok, producer} = EventProducer.start_link()
-    {:ok, _caching} = Caching.start_link(producer: producer)
+    {:ok, caching} = Caching.start_link(producer: producer)
+    {:ok, _consumer} = EventConsumer.start_link(producer: caching)
 
     Logger.metadata(shard: inspect(shard))
     Logger.debug("Connected to the gateway!")
@@ -122,7 +132,7 @@ defmodule Wumpex.Gateway do
         :identify,
         %{token: token, sequence: sequence, session_id: session_id, shard: shard} = state
       ) do
-    message =
+    identify_or_resume =
       case session_id do
         nil ->
           Logger.info("Sending IDENTIFY")
@@ -133,17 +143,17 @@ defmodule Wumpex.Gateway do
           Opcodes.resume(token, sequence, session_id)
       end
 
-    send_frame({:binary, :erlang.term_to_binary(message)})
+    send_opcode(identify_or_resume)
     {:noreply, state}
   end
 
   # Handles heartbeats
   @impl GenServer
   def handle_info({:heartbeat, interval}, %{sequence: sequence, ack: true} = state) do
-    message = Opcodes.heartbeat(sequence)
-    send_frame({:binary, :erlang.term_to_binary(message)})
+    hearbeat = Opcodes.heartbeat(sequence)
+    send_opcode(hearbeat)
 
-    Logger.info("Sent heartbeat ##{sequence}")
+    Logger.info("Sent heartbeat #{sequence}")
     Process.send_after(self(), {:heartbeat, interval}, interval)
     {:noreply, %{state | ack: false}}
   end
@@ -187,8 +197,14 @@ defmodule Wumpex.Gateway do
 
   # Handles READY event
   # https://discord.com/developers/docs/topics/gateway#ready
-  def dispatch(%{op: 0, s: sequence, t: :READY, d: %{session_id: session_id}}, state) do
-    Logger.info("Bot is now READY")
+  def dispatch(
+        %{op: 0, s: sequence, t: :READY, d: %{session_id: session_id} = event},
+        %{producer: producer} = state
+      ) do
+    Logger.info("Bot is now READY #{inspect(event)}")
+
+    # Ready, we received initial guilds and user information.
+    EventProducer.dispatch(producer, :READY, event)
 
     %{state | sequence: sequence, session_id: session_id}
   end
@@ -201,56 +217,8 @@ defmodule Wumpex.Gateway do
     %{state | sequence: sequence}
   end
 
-  # Handles GUILD_CREATE event
-  # https://discord.com/developers/docs/topics/gateway#guild-create
-  def dispatch(
-        %{op: 0, s: sequence, t: :GUILD_CREATE, d: event},
-        %{producer: producer} = state
-      ) do
-    Logger.info("Guild became available: #{inspect(event)}")
-
-    # Start new guild.
-    EventProducer.dispatch(producer, :GUILD_CREATE, event)
-
-    %{state | sequence: sequence}
-  end
-
-  # Handles GUILD_DELETE
-  # https://discord.com/developers/docs/topics/gateway#guild-delete
-  def dispatch(
-        %{op: 0, s: sequence, t: :GUILD_DELETE, d: %{id: guild_id} = event},
-        %{producer: producer} = state
-      ) do
-    Logger.info("Guild #{guild_id} is no longer available!")
-
-    # Stop existing guild.
-    EventProducer.dispatch(producer, :GUILD_DELETE, event)
-
-    %{state | sequence: sequence}
-  end
-
-  # Handles all events that are sent to a specific guild.
-  # https://discord.com/developers/docs/topics/gateway#commands-and-events
-  def dispatch(
-        %{op: 0, s: sequence, t: event_name, d: %{guild_id: guild_id} = event},
-        %{producer: producer} = state
-      ) do
-    Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
-
-    EventProducer.dispatch(producer, event_name, event)
-
-    %{state | sequence: sequence}
-  end
-
-  # Handles all events that are sent to a specific guild.
-  # Sometimes events are sent with the guild_id as a string rather than an atom.
-  # https://discord.com/developers/docs/topics/gateway#commands-and-events
-  def dispatch(
-        %{op: 0, s: sequence, t: event_name, d: %{"guild_id" => guild_id} = event},
-        %{producer: producer} = state
-      ) do
-    Logger.debug("#{event_name} (#{guild_id}): #{inspect(event)}")
-
+  # Forwards events to the processing stages.
+  def dispatch(%{op: 0, s: sequence, t: event_name, d: event}, %{producer: producer} = state) do
     EventProducer.dispatch(producer, event_name, event)
 
     %{state | sequence: sequence}
@@ -269,16 +237,19 @@ defmodule Wumpex.Gateway do
     state
   end
 
-  @spec format_status(:normal | :terminate, [pdict :: {term(), term()} | (state :: term()), ...]) :: term()
+  @spec format_status(:normal | :terminate, [pdict :: {term(), term()} | (state :: term()), ...]) ::
+          term()
   def format_status(options, [dict, state]) do
     [data: data] = super(options, [dict, state])
 
     [
-      data: data ++ [
-        Shard: state.shard,
-        Sequence: state.sequence,
-        "Heartbeat Ack'd": state.ack
-      ]
+      data:
+        data ++
+          [
+            Shard: state.shard,
+            Sequence: state.sequence,
+            "Heartbeat Ack'd": state.ack
+          ]
     ]
   end
 end
