@@ -1,10 +1,14 @@
 defmodule Wumpex.Gateway.EventProducer do
   @moduledoc """
-  This module handles the processing of events dispatched by the gateway.
+  This module handles the processing of events dispatched by the gateway, it's the first stage of event processing in Wumpex.
 
-  This is the first stage in processing events for a specific guild.
-  The next step is caching of state (see the official [Discord documentation](https://discord.com/developers/docs/topics/gateway#tracking-state))
-  and finally the event will be released to event handlers.
+  The first stage of event processing is mainly receiving and buffering events until the next stages are ready to process more.
+  If events start arriving faster than the consumers can handle them, the `Wumpex.Gateway.EventProducer` will start buffering them.
+
+  The second stage of event processing is the cache, used for tracking state (as described in the official [Discord documentation](https://discord.com/developers/docs/topics/gateway#tracking-state)).
+  The `Wumpex.Gateway.Caching` stage will check for events that signal a change in state (eg. user update, presence update, ...) and update the relevant state (if it's being tracked).
+
+  Finally, the third and last state of event processing is the `Wumpex.Gateway.EventConsumer`, which handles dispatching the incoming events to the respective handlers.
   """
 
   use GenStage
@@ -36,7 +40,7 @@ defmodule Wumpex.Gateway.EventProducer do
   @doc false
   @spec start_link() :: GenServer.on_start()
   def start_link do
-    GenStage.start_link(__MODULE__, [], name: __MODULE__)
+    GenStage.start_link(__MODULE__, [])
   end
 
   @impl GenStage
@@ -47,16 +51,6 @@ defmodule Wumpex.Gateway.EventProducer do
   @impl GenStage
   def handle_demand(incoming, {queue, demand}) do
     pop_events([], queue, demand + incoming)
-
-    # case :queue.out(queue) do
-    #   {{:value, event}, queue} ->
-    #     # We took an item off, so demand increased and decreased by 1.
-    #     {:noreply, [event], {queue, demand}}
-
-    #   {:empty, queue} ->
-    #     # No queued events, we increase the demand by one.
-    #     {:noreply, [], {queue, demand + 1}}
-    # end
   end
 
   # Called when a new event is published but there's no demand, we queue the event.
@@ -80,7 +74,8 @@ defmodule Wumpex.Gateway.EventProducer do
   end
 
   # No more demand to process, return the already queued events.
-  @spec pop_events([event()], :queue.queue(event()), non_neg_integer()) :: {:noreply, [event()], state()}
+  @spec pop_events([event()], :queue.queue(event()), non_neg_integer()) ::
+          {:noreply, [event()], state()}
   defp pop_events(events, queue, 0) do
     {:noreply, events, {queue, 0}}
   end

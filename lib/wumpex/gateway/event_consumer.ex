@@ -1,6 +1,6 @@
-defmodule Wumpex.Gateway.Caching do
+defmodule Wumpex.Gateway.EventConsumer do
   @moduledoc """
-  Handles the caching and tracking of state (and state updates), this is the second stage of event processing in Wumpex.
+  Handles dispatching events to their respective handlers, this is the third stage of event processing in Wumpex.
 
   The first stage of event processing is mainly receiving and buffering events until the next stages are ready to process more.
   If events start arriving faster than the consumers can handle them, the `Wumpex.Gateway.EventProducer` will start buffering them.
@@ -26,20 +26,20 @@ defmodule Wumpex.Gateway.Caching do
         ]
 
   @doc false
-  @spec start_link(options :: keyword()) :: GenServer.on_start()
+  @spec start_link(options()) :: GenServer.on_start()
   def start_link(options \\ []) do
     GenStage.start_link(__MODULE__, options)
   end
 
   @impl GenStage
   def init(producer: producer) do
-    {:producer_consumer, nil, subscribe_to: [{producer, max_demand: 2, min_demand: 0}]}
+    {:consumer, nil, subscribe_to: [{producer, max_demand: 1, min_demand: 0}]}
   end
 
   @impl GenStage
   def handle_events(events, _from, state) do
-    # Caching should process events and optionally update the cache when relevant events are sent.
+    Logger.debug("EventConsumer: #{inspect(events)}")
 
-    {:noreply, events, state}
+    {:noreply, [], state}
   end
 end
