@@ -70,7 +70,7 @@ defmodule Wumpex.Gateway.Opcodes do
   """
   @spec identify(
           token :: String.t(),
-          shard :: {non_neg_integer(), non_neg_integer()},
+          shard :: Wumpex.shard(),
           intents :: non_neg_integer()
         ) :: opcode()
   def identify(token, shard, intents \\ 32_767) do

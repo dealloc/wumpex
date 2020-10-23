@@ -22,11 +22,11 @@ defmodule Wumpex.Gateway do
 
   Contains the following fields:
     * `:token` - The bot token
-    * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`
+    * `:shard` - the identifier for this shard.
   """
   @type options :: [
           token: String.t(),
-          shard: {non_neg_integer(), non_neg_integer()}
+          shard: Wumpex.shard()
         ]
 
   @typedoc """
@@ -36,7 +36,7 @@ defmodule Wumpex.Gateway do
     * `:ack` - Whether or not a heartbeat ACK has been received.
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
-    * `:shard` - the identifier for this shard, in the form of `{current_shard, shard_count}`.
+    * `:shard` - the identifier for this shard.
     * `:producer` - The `t:pid/0` of the `Wumpex.Gateway.EventProducer` for this shard.
   """
   @type state :: %{
@@ -44,7 +44,7 @@ defmodule Wumpex.Gateway do
           ack: boolean(),
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
-          shard: {non_neg_integer(), non_neg_integer()},
+          shard: Wumpex.shard(),
           producer: pid()
         }
 
@@ -54,9 +54,23 @@ defmodule Wumpex.Gateway do
     shard = Keyword.fetch!(options, :shard)
 
     GenServer.start_link(__MODULE__, options,
-      name: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)}
+      name: via(shard)
     )
   end
+
+  @doc """
+  Gets the server name of the `Wumpex.Gateway` process for a given shard.
+  You can use this to get the `pid` of the gateway, or to send opcodes to it.
+
+      # The shard (represented as a tuple).
+      {0, 1}
+      # Get the server name.
+      |> Wumpex.Gateway.via()
+      # Dispatch an opcode to it.
+      |> Wumpex.Gateway.send_opcode(%{"op" => 1})
+  """
+  @spec via(shard :: Wumpex.shard()) :: GenServer.server()
+  def via(shard), do: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)}
 
   @doc """
   Dispatches an event on the gateway.
@@ -66,11 +80,12 @@ defmodule Wumpex.Gateway do
 
   Invalid messages will cause Discord to close the gateway.
   """
-  @spec send_opcode(gateway :: pid(), opcode :: map()) :: :ok
-  def send_opcode(gateway, opcode) when is_pid(gateway) and is_map(opcode) do
+  @spec send_opcode(gateway :: GenServer.server(), opcode :: map()) :: :ok
+  def send_opcode(gateway, opcode) when is_map(opcode) do
+    pid = GenServer.whereis(gateway)
     encoded = :erlang.term_to_binary(opcode)
 
-    Websocket.send(gateway, {:binary, encoded})
+    Websocket.send(pid, {:binary, encoded})
   end
 
   # Private version of send_opcode/2 which sends directly to the gateway.

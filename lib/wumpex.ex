@@ -3,6 +3,13 @@ defmodule Wumpex do
   Documentation for `Wumpex`.
   """
 
+  @typedoc """
+  Represents the identifier of a shard.
+
+  See `Wumpex.Sharding`, `Wumpex.Gateway` and the official [Discord documentation](https://discord.com/developers/docs/topics/gateway#sharding) for more information.
+  """
+  @type shard :: {non_neg_integer(), non_neg_integer()}
+
   @doc """
   Fetch the bot key from configuration.
 
