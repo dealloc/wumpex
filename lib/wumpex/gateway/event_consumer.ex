@@ -9,31 +9,22 @@ defmodule Wumpex.Gateway.EventConsumer do
   The `Wumpex.Gateway.Caching` stage will check for events that signal a change in state (eg. user update, presence update, ...) and update the relevant state (if it's being tracked).
 
   Finally, the third and last state of event processing is the `Wumpex.Gateway.EventConsumer`, which handles dispatching the incoming events to the respective handlers.
+  There can be multiple instances of `Wumpex.Gateway.EventConsumer`, since one will be started for each event handler.
   """
 
   use GenStage
 
   require Logger
 
-  @typedoc """
-  Represents the options to be passed to `start_link/1`.
-
-  Contains the following fields:
-  * `:producer` - The `t:pid/0` of the producer to subscribe to.
-  """
-  @type options :: [
-          producer: pid()
-        ]
-
   @doc false
-  @spec start_link(options()) :: GenServer.on_start()
+  @spec start_link(term()) :: GenServer.on_start()
   def start_link(options \\ []) do
     GenStage.start_link(__MODULE__, options)
   end
 
   @impl GenStage
-  def init(producer: producer) do
-    {:consumer, nil, subscribe_to: [{producer, max_demand: 1, min_demand: 0}]}
+  def init(_options) do
+    {:consumer, nil}
   end
 
   @impl GenStage
