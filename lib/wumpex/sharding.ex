@@ -13,25 +13,31 @@ defmodule Wumpex.Sharding do
 
   require Logger
 
+  @type options :: [
+          handlers: [module()]
+        ]
+
   @typedoc """
   Represents the state of the Sharding process.
 
   Contains the following fields:
   * `:url` - The URL of the Discord gateway to connect to.
   * `:concurrency` - How many shards can be started concurrently.
+  * `:handlers` - A list of modules that handle incoming events on the gateway.
   """
   @type state :: %{
           url: String.t(),
-          concurrency: non_neg_integer()
+          concurrency: non_neg_integer(),
+          handlers: [module()]
         }
 
-  @spec start_link(options :: keyword()) :: Supervisor.on_start()
-  def start_link(options) do
+  @spec start_link(options()) :: Supervisor.on_start()
+  def start_link(options \\ []) do
     GenServer.start_link(__MODULE__, options, name: __MODULE__)
   end
 
   @impl GenServer
-  def init(_options) do
+  def init(handlers: handlers) do
     %{
       url: url,
       shard_count: shards,
@@ -50,14 +56,15 @@ defmodule Wumpex.Sharding do
     {:ok,
      %{
        url: url,
-       concurrency: concurrency
+       concurrency: concurrency,
+       handlers: handlers
      }}
   end
 
   @impl GenServer
   @spec handle_info({:start_shard, Wumpex.shard()}, state()) :: {:noreply, state()}
   def handle_info({:start_shard, shard}, state) do
-    DynamicSupervisor.start_child(Wumpex.ShardSupervisor, {Wumpex.Gateway,
+    DynamicSupervisor.start_child(Wumpex.GatewaySupervisor, {Wumpex.Gateway,
      [
        # Websocket options.
        host: state.url,
@@ -83,7 +90,8 @@ defmodule Wumpex.Sharding do
          direct_messages: true,
          direct_message_reactions: true,
          direct_message_typing: true
-       }
+       },
+       handlers: state.handlers
      ]})
 
     {:noreply, state}

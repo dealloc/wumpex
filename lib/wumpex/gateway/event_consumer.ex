@@ -23,13 +23,18 @@ defmodule Wumpex.Gateway.EventConsumer do
   end
 
   @impl GenStage
-  def init(_options) do
-    {:consumer, nil}
+  def init(producer: producer, handler: handler) do
+    {:consumer, handler,
+     subscribe_to: [
+       {producer, max_demand: 1, min_demand: 0}
+     ]}
   end
 
   @impl GenStage
   def handle_events(events, _from, state) do
-    Logger.debug("EventConsumer: #{inspect(events)}")
+    # Logger.debug("EventConsumer: #{inspect(events)}")
+
+    state.handle(events)
 
     {:noreply, [], state}
   end
