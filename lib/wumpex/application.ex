@@ -6,7 +6,9 @@ defmodule Wumpex.Application do
   @impl Application
   def start(_type, _args) do
     children = [
-      {Wumpex.Api.Ratelimit, []}
+      {Wumpex.Api.Ratelimit, []},
+      {Wumpex.Sharding.ShardLedger, []},
+      {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.ShardSupervisor}
     ]
 
     Supervisor.start_link(children,

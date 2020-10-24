@@ -5,58 +5,112 @@ defmodule Wumpex.Sharding do
   This module will retrieve the required information from the Discord API and start shards accordingly.
   """
 
-  use Supervisor
+  use GenServer
 
+  alias HTTPoison.Response
   alias Wumpex.Api
-  alias Wumpex.Sharding.ShardLedger
 
   require Logger
 
+  @typedoc """
+  Represents the state of the Sharding process.
+
+  Contains the following fields:
+  * `:url` - The URL of the Discord gateway to connect to.
+  * `:concurrency` - How many shards can be started concurrently.
+  """
+  @type state :: %{
+          url: String.t(),
+          concurrency: non_neg_integer()
+        }
+
   @spec start_link(options :: keyword()) :: Supervisor.on_start()
   def start_link(options) do
-    Supervisor.start_link(__MODULE__, options, name: __MODULE__)
+    GenServer.start_link(__MODULE__, options, name: __MODULE__)
   end
 
-  @impl Supervisor
+  @impl GenServer
   def init(_options) do
-    ShardLedger.start_link()
+    %{
+      url: url,
+      shard_count: shards,
+      concurrency: concurrency
+    } = get_sharding()
 
-    Supervisor.init(get_shards(),
-      strategy: :one_for_one,
-      max_restarts: 0
-    )
+    for i <- 0..(shards - 1) do
+      if i != 0 and rem(i, concurrency) == 0 do
+        Logger.info("Waiting 5s before starting next shards...")
+        Process.sleep(5_000)
+      end
+
+      send(self(), {:start_shard, {i, shards}})
+    end
+
+    {:ok,
+     %{
+       url: url,
+       concurrency: concurrency
+     }}
   end
 
-  # Build a list of child_spec for each shard that needs to be started.
-  @spec get_shards() :: [Supervisor.child_spec()]
-  defp get_shards do
-    %{
-      body: %{
-        "url" => "wss://" <> url,
-        "shards" => shard_count
-      }
+  @impl GenServer
+  @spec handle_info({:start_shard, Wumpex.shard()}, state()) :: {:noreply, state()}
+  def handle_info({:start_shard, shard}, state) do
+    DynamicSupervisor.start_child(Wumpex.ShardSupervisor, {Wumpex.Gateway,
+     [
+       # Websocket options.
+       host: state.url,
+       port: 443,
+       path: "/?v=8&encoding=etf",
+       timeout: 5_000,
+       # Gateway specific options.
+       shard: shard,
+       token: Wumpex.token()
+     ]})
+
+    {:noreply, state}
+  end
+
+  # Get the sharding information from the Discord API.
+  defp get_sharding do
+    %Response{
+      status_code: status_code,
+      body: body
     } = Api.get!("/gateway/bot")
 
-    Logger.debug("Generating #{shard_count} shard(s) to #{url}")
+    case status_code do
+      200 ->
+        get_sharding(body)
 
-    for i <- 0..(shard_count - 1) do
-      %{
-        id: i,
-        start:
-          {Wumpex.Gateway, :start_link,
-           [
-             [
-               # Websocket options.
-               host: url,
-               port: 443,
-               path: "/?v=8&encoding=etf",
-               timeout: 5_000,
-               # Gateway specific options.
-               shard: {i, shard_count},
-               token: Wumpex.token()
-             ]
-           ]}
-      }
+      _status ->
+        raise """
+        Failed to retrieve Discord sharding information, received status #{status_code}!
+        Response: #{inspect(body)}
+        """
     end
+  end
+
+  # Fetch the sharding information from the payload.
+  defp get_sharding(%{
+         "url" => "wss://" <> url,
+         "shards" => shards,
+         "session_start_limit" => %{
+           "max_concurrency" => concurrency,
+           "remaining" => remaining,
+           "reset_after" => reset_after
+         }
+       }) do
+    if shards > remaining do
+      raise """
+      Could not start all required shards (#{shards}) because Discord allows starting #{remaining} anymore.
+      Please wait #{reset_after}ms before attempting to restart.
+      """
+    end
+
+    %{
+      url: url,
+      shard_count: shards,
+      concurrency: concurrency
+    }
   end
 end
