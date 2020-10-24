@@ -9,6 +9,7 @@ defmodule Wumpex.Gateway.EventProducer do
   The `Wumpex.Gateway.Caching` stage will check for events that signal a change in state (eg. user update, presence update, ...) and update the relevant state (if it's being tracked).
 
   Finally, the third and last state of event processing is the `Wumpex.Gateway.EventConsumer`, which handles dispatching the incoming events to the respective handlers.
+  There can be multiple instances of `Wumpex.Gateway.EventConsumer`, since one will be started for each event handler.
   """
 
   use GenStage
