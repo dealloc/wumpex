@@ -6,8 +6,7 @@ defmodule Wumpex.Application do
   @impl Application
   def start(_type, _args) do
     children = [
-      {Wumpex.Api.Ratelimit, []},
-      {Wumpex.Sharding, []}
+      {Wumpex.Api.Ratelimit, []}
     ]
 
     Supervisor.start_link(children,

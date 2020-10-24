@@ -53,9 +53,7 @@ defmodule Wumpex.Gateway do
   def start_link(options) do
     shard = Keyword.fetch!(options, :shard)
 
-    GenServer.start_link(__MODULE__, options,
-      name: via(shard)
-    )
+    GenServer.start_link(__MODULE__, options, name: via(shard))
   end
 
   @doc """
@@ -203,11 +201,16 @@ defmodule Wumpex.Gateway do
 
   # Handles INVALID_SESSION
   # https://discord.com/developers/docs/topics/gateway#invalid-session
-  def dispatch(%{"op" => 9}, state) do
+  def dispatch(%{op: 9, d: resumable}, state) do
+    Logger.warn("Received INVALID_SESSION, Websocket will be closed!")
     send_frame(:close)
 
-    Logger.warn("Received INVALID_SESSION, Websocket will be closed!")
-    state
+    # Check if we can resume, otherwise clear session data.
+    if resumable do
+      state
+    else
+      %{state | session_id: nil, ack: false, sequence: nil}
+    end
   end
 
   # Handles READY event
