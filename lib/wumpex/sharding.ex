@@ -14,13 +14,7 @@ defmodule Wumpex.Sharding do
 
   @spec start_link(options :: keyword()) :: Supervisor.on_start()
   def start_link(options) do
-    case Application.get_env(:wumpex, :connect, true) do
-      false ->
-        :ignore
-
-      true ->
-        Supervisor.start_link(__MODULE__, options, name: __MODULE__)
-    end
+    Supervisor.start_link(__MODULE__, options, name: __MODULE__)
   end
 
   @impl Supervisor
@@ -46,17 +40,23 @@ defmodule Wumpex.Sharding do
     Logger.debug("Generating #{shard_count} shard(s) to #{url}")
 
     for i <- 0..(shard_count - 1) do
-      {Wumpex.Gateway,
-       [
-         # Websocket options.
-         host: url,
-         port: 443,
-         path: "/?v=8&encoding=etf",
-         timeout: 5_000,
-         # Gateway specific options.
-         shard: {i, shard_count},
-         token: Wumpex.token()
-       ]}
+      %{
+        id: i,
+        start:
+          {Wumpex.Gateway, :start_link,
+           [
+             [
+               # Websocket options.
+               host: url,
+               port: 443,
+               path: "/?v=8&encoding=etf",
+               timeout: 5_000,
+               # Gateway specific options.
+               shard: {i, shard_count},
+               token: Wumpex.token()
+             ]
+           ]}
+      }
     end
   end
 end
