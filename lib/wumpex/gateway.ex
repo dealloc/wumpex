@@ -129,8 +129,21 @@ defmodule Wumpex.Gateway do
     token = Keyword.fetch!(options, :token)
     shard = Keyword.fetch!(options, :shard)
     intents = Keyword.fetch!(options, :intents)
+    handlers = Keyword.fetch!(options, :handlers)
     {:ok, producer} = EventProducer.start_link()
     {:ok, caching} = Caching.start_link(producer: producer)
+
+    for handler <- handlers do
+      # Start a new EventConsumer with the given handler
+      DynamicSupervisor.start_child(
+        Wumpex.GatewayListenerSupervisor,
+        {EventConsumer,
+         [
+           producer: caching,
+           handler: handler
+         ]}
+      )
+    end
 
     Logger.metadata(shard: inspect(shard))
     Logger.debug("Connected to the gateway!")
