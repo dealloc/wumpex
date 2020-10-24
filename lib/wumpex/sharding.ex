@@ -9,6 +9,7 @@ defmodule Wumpex.Sharding do
 
   alias HTTPoison.Response
   alias Wumpex.Api
+  alias Wumpex.Gateway.Intents
 
   require Logger
 
@@ -65,7 +66,24 @@ defmodule Wumpex.Sharding do
        timeout: 5_000,
        # Gateway specific options.
        shard: shard,
-       token: Wumpex.token()
+       token: Wumpex.token(),
+       intents: %Intents{
+        guilds: true,
+        guild_members: true,
+        guild_bans: true,
+        guild_emojis: true,
+        guild_integrations: true,
+        guild_webhooks: true,
+        guild_invites: true,
+        guild_voice_states: true,
+        guild_presences: true,
+        guild_messages: true,
+        guild_message_reactions: true,
+        guild_message_typing: true,
+        direct_messages: true,
+        direct_message_reactions: true,
+        direct_message_typing: true
+       }
      ]})
 
     {:noreply, state}

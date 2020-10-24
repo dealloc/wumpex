@@ -13,6 +13,7 @@ defmodule Wumpex.Gateway do
   alias Wumpex.Gateway.Caching
   alias Wumpex.Gateway.EventConsumer
   alias Wumpex.Gateway.EventProducer
+  alias Wumpex.Gateway.Intents
   alias Wumpex.Gateway.Opcodes
 
   require Logger
@@ -23,10 +24,12 @@ defmodule Wumpex.Gateway do
   Contains the following fields:
     * `:token` - The bot token
     * `:shard` - the identifier for this shard.
+    * `:intents` - The `t:Wumpex.Gateway.Intents.t/0` struct containing intent information.
   """
   @type options :: [
           token: String.t(),
-          shard: Wumpex.shard()
+          shard: Wumpex.shard(),
+          intents: Intents.t()
         ]
 
   @typedoc """
@@ -38,6 +41,7 @@ defmodule Wumpex.Gateway do
     * `:session_id` - Session token, can be used to resume an interrupted session.
     * `:shard` - the identifier for this shard.
     * `:producer` - The `t:pid/0` of the `Wumpex.Gateway.EventProducer` for this shard.
+    * `:intents` - The intents information (calculated from `Wumpex.Gateway.Intents.to_integer/1`).
   """
   @type state :: %{
           token: String.t(),
@@ -45,7 +49,8 @@ defmodule Wumpex.Gateway do
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
           shard: Wumpex.shard(),
-          producer: pid()
+          producer: pid(),
+          intents: non_neg_integer()
         }
 
   @doc false
@@ -98,6 +103,7 @@ defmodule Wumpex.Gateway do
   def on_connected(options) do
     token = Keyword.fetch!(options, :token)
     shard = Keyword.fetch!(options, :shard)
+    intents = Keyword.fetch!(options, :intents)
     {:ok, producer} = EventProducer.start_link()
     {:ok, caching} = Caching.start_link(producer: producer)
     {:ok, _consumer} = EventConsumer.start_link(producer: caching)
@@ -111,7 +117,8 @@ defmodule Wumpex.Gateway do
       sequence: nil,
       session_id: nil,
       shard: shard,
-      producer: producer
+      producer: producer,
+      intents: Intents.to_integer(intents)
     }
   end
 
@@ -143,13 +150,19 @@ defmodule Wumpex.Gateway do
   @impl GenServer
   def handle_info(
         :identify,
-        %{token: token, sequence: sequence, session_id: session_id, shard: shard} = state
+        %{
+          token: token,
+          sequence: sequence,
+          session_id: session_id,
+          shard: shard,
+          intents: intents
+        } = state
       ) do
     identify_or_resume =
       case session_id do
         nil ->
           Logger.info("Sending IDENTIFY")
-          Opcodes.identify(token, shard)
+          Opcodes.identify(token, shard, intents)
 
         session_id ->
           Logger.warn("Sending RESUME")
