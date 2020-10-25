@@ -111,7 +111,7 @@ defmodule Wumpex.Gateway do
     {:ok, caching} = Caching.start_link(producer: producer)
 
     for handler <- handlers do
-      Consumers.start_consumer(caching, handler)
+      {:ok, _consumer} = Consumers.start_consumer(caching, handler)
     end
 
     Logger.metadata(shard: inspect(shard))
