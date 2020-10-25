@@ -11,7 +11,7 @@ defmodule Wumpex.Gateway do
 
   alias Wumpex.Base.Websocket
   alias Wumpex.Gateway.Caching
-  alias Wumpex.Gateway.EventConsumer
+  alias Wumpex.Gateway.Consumers
   alias Wumpex.Gateway.EventProducer
   alias Wumpex.Gateway.Intents
   alias Wumpex.Gateway.Opcodes
@@ -25,11 +25,13 @@ defmodule Wumpex.Gateway do
     * `:token` - The bot token
     * `:shard` - the identifier for this shard.
     * `:intents` - The `t:Wumpex.Gateway.Intents.t/0` struct containing intent information.
+    * `:handlers` - The handlers for this gateway's events.
   """
   @type options :: [
           token: String.t(),
           shard: Wumpex.shard(),
-          intents: Intents.t()
+          intents: Intents.t(),
+          handlers: [Consumers.handler_options()]
         ]
 
   @typedoc """
@@ -41,7 +43,6 @@ defmodule Wumpex.Gateway do
     * `:session_id` - Session token, can be used to resume an interrupted session.
     * `:shard` - the identifier for this shard.
     * `:producer` - The `t:pid/0` of the `Wumpex.Gateway.EventProducer` for this shard.
-    * `:caching` - The `t:pid/0` of the `Wumpex.Gateway.Caching` stage for new consumers to subscribe to.
     * `:intents` - The intents information (calculated from `Wumpex.Gateway.Intents.to_integer/1`).
   """
   @type state :: %{
@@ -51,7 +52,6 @@ defmodule Wumpex.Gateway do
           session_id: String.t() | nil,
           shard: Wumpex.shard(),
           producer: pid(),
-          caching: pid(),
           intents: non_neg_integer()
         }
 
@@ -61,29 +61,6 @@ defmodule Wumpex.Gateway do
     shard = Keyword.fetch!(options, :shard)
 
     GenServer.start_link(__MODULE__, options, name: via(shard))
-  end
-
-  @doc """
-  Subscribe to events of a given gateway.
-
-  This allows subscribing a `GenStage` consumer to the event processing stage.
-
-      # Subscribes consumer to the events of shard {0, 1}
-      iex> Wumpex.Gateway.subscribe({0, 1}, consumer)
-  """
-  @spec subscribe(
-          shard :: Wumpex.shard(),
-          consumer :: GenServer.server(),
-          options :: GenStage.subscription_options()
-        ) :: :ok
-  def subscribe(shard, consumer, options \\ []) do
-    pid =
-      shard
-      |> via()
-      |> GenServer.whereis()
-
-    send(pid, {:subscribe, consumer, options})
-    :ok
   end
 
   @doc """
@@ -134,15 +111,7 @@ defmodule Wumpex.Gateway do
     {:ok, caching} = Caching.start_link(producer: producer)
 
     for handler <- handlers do
-      # Start a new EventConsumer with the given handler
-      DynamicSupervisor.start_child(
-        Wumpex.GatewayListenerSupervisor,
-        {EventConsumer,
-         [
-           producer: caching,
-           handler: handler
-         ]}
-      )
+      Consumers.start_consumer(caching, handler)
     end
 
     Logger.metadata(shard: inspect(shard))
@@ -155,7 +124,6 @@ defmodule Wumpex.Gateway do
       session_id: nil,
       shard: shard,
       producer: producer,
-      caching: caching,
       intents: Intents.to_integer(intents)
     }
   end
@@ -180,24 +148,6 @@ defmodule Wumpex.Gateway do
       etf
       |> :erlang.binary_to_term()
       |> dispatch(state)
-
-    {:noreply, state}
-  end
-
-  # Handles incoming requests to subscribe to the events of this gateway.
-  @impl GenServer
-  def handle_info({:subscribe, consumer, options}, %{caching: caching} = state) do
-    options =
-      Keyword.merge(
-        [
-          to: caching,
-          max_demand: 1,
-          min_demand: 0
-        ],
-        options
-      )
-
-    GenStage.sync_subscribe(consumer, options)
 
     {:noreply, state}
   end
