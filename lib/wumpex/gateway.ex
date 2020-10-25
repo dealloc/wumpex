@@ -75,7 +75,7 @@ defmodule Wumpex.Gateway do
       |> Wumpex.Gateway.send_opcode(%{"op" => 1})
   """
   @spec via(shard :: Wumpex.shard()) :: GenServer.server()
-  def via(shard), do: {:via, Wumpex.Sharding.ShardLedger, inspect(shard)}
+  def via(shard), do: {:via, Wumpex.Sharding.ShardLedger, "gateway:" <> inspect(shard)}
 
   @doc """
   Dispatches an event on the gateway.
@@ -241,22 +241,39 @@ defmodule Wumpex.Gateway do
     Logger.info("Bot is now READY #{inspect(event)}")
 
     # Ready, we received initial guilds and user information.
-    EventProducer.dispatch(producer, :READY, event)
+    EventProducer.dispatch(producer, %{
+      shard: state.shard,
+      name: :READY,
+      payload: event,
+      sequence: sequence
+    })
 
     %{state | sequence: sequence, session_id: session_id}
   end
 
   # Handles RESUMED event
   # https://discord.com/developers/docs/topics/gateway#resumed
-  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, state) do
+  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, %{producer: producer} = state) do
     Logger.info("Bot has finished resuming.")
+
+    EventProducer.dispatch(producer, %{
+      shard: state.shard,
+      name: :RESUMED,
+      payload: %{},
+      sequence: sequence
+    })
 
     %{state | sequence: sequence}
   end
 
   # Forwards events to the processing stages.
   def dispatch(%{op: 0, s: sequence, t: event_name, d: event}, %{producer: producer} = state) do
-    EventProducer.dispatch(producer, event_name, event)
+    EventProducer.dispatch(producer, %{
+      shard: state.shard,
+      name: event_name,
+      payload: event,
+      sequence: sequence
+    })
 
     %{state | sequence: sequence}
   end
