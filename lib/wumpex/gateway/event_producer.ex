@@ -11,18 +11,29 @@ defmodule Wumpex.Gateway.EventProducer do
   @type state :: {:queue.queue(), non_neg_integer()}
 
   @typedoc """
-  Represents an event that can be sent to the producer.
+  Represents an event that will be dispatched from the gateway to consumers.
+
+  Contains the following fields:
+  * `:shard` - A `t:Wumpex.shard/0` representing the shard from which the event originates.
+  * `:name` - An atom with the name of the dispatched event.
+  * `:payload` - The event payload in the form of a map.
+  * `:sequence` - The sequence number of the event, can be used to track the same event across handlers.
   """
-  @type event :: {event_name :: atom(), event :: map()}
+  @type event :: %{
+    shard: Wumpex.shard(),
+    name: atom(),
+    payload: map(),
+    sequence: non_neg_integer()
+  }
 
   @doc """
   Dispatch an event to the given producer.
 
   This puts the event in the processing pipeline for caching and eventually handling.
   """
-  @spec dispatch(producer :: pid(), event_name :: atom(), event :: map()) :: :ok
-  def dispatch(producer, event_name, event) do
-    send(producer, {:event, {event_name, event}})
+  @spec dispatch(producer :: pid(), event :: event()) :: :ok
+  def dispatch(producer, event) do
+    send(producer, {:event, event})
   end
 
   @doc false
@@ -43,6 +54,7 @@ defmodule Wumpex.Gateway.EventProducer do
 
   # Called when a new event is published but there's no demand, we queue the event.
   @impl GenStage
+  @spec handle_info({:event, event()}, state()) :: {:noreply, [event()], state()}
   def handle_info({:event, event}, {queue, 0}) do
     queue = :queue.in(event, queue)
 
