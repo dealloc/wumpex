@@ -10,7 +10,15 @@ defmodule DummyHandler do
     ])
   end
 
-  def handle(event) do
+  def init do
+    Logger.info("DummyHandler.init/0")
+
+    nil
+  end
+
+  def handle(event, state) do
     Logger.debug("DummyHandler: #{inspect(event)}")
+
+    state
   end
 end

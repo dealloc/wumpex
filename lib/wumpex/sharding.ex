@@ -71,7 +71,7 @@ defmodule Wumpex.Sharding do
   @impl GenServer
   @spec handle_info({:start_shard, Wumpex.shard()}, state()) :: {:noreply, state()}
   def handle_info({:start_shard, shard}, state) do
-    DynamicSupervisor.start_child(Wumpex.GatewaySupervisor, {Wumpex.Gateway,
+    {:ok, _gateway} = DynamicSupervisor.start_child(Wumpex.GatewaySupervisor, {Wumpex.Gateway,
      [
        # Websocket options.
        host: state.url,
