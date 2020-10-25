@@ -6,7 +6,7 @@ defmodule DummyHandler do
 
   def start_wumpex do
     Wumpex.Sharding.start_link([
-      handlers: [__MODULE__]
+      handlers: [[handler: __MODULE__]]
     ])
   end
 

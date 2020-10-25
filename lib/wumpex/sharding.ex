@@ -9,12 +9,19 @@ defmodule Wumpex.Sharding do
 
   alias HTTPoison.Response
   alias Wumpex.Api
+  alias Wumpex.Gateway.Consumers
   alias Wumpex.Gateway.Intents
 
   require Logger
 
+  @typedoc """
+  Represents the options that can be passed to `start_link/1`.
+
+  Contains the following fields:
+  * `:handlers` - The event handlers that will be registered for each shard.
+  """
   @type options :: [
-          handlers: [module()]
+          handlers: [Consumers.handler_options()]
         ]
 
   @typedoc """
