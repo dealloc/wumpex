@@ -2,7 +2,7 @@ defmodule Wumpex.Gateway.Consumers do
   @moduledoc """
   Handles starting new consumers for the event processing stages.
 
-  The `start_consumer/2` method handles starting both `Wumpex.Gateway.Consumers.EventConsumer` as `Wumpex.Gateway.Consumers.GuildsConsumer` listeners.
+  The `start_consumer/2` method handles starting both `Wumpex.Gateway.Consumers.EventConsumer` as well as `Wumpex.Gateway.Consumers.GuildsConsumer` listeners.
   """
 
   alias Wumpex.Gateway.Consumers.EventConsumer
