@@ -71,35 +71,36 @@ defmodule Wumpex.Sharding do
   @impl GenServer
   @spec handle_info({:start_shard, Wumpex.shard()}, state()) :: {:noreply, state()}
   def handle_info({:start_shard, shard}, state) do
-    {:ok, _gateway} = DynamicSupervisor.start_child(Wumpex.GatewaySupervisor, {Wumpex.Gateway,
-     [
-       # Websocket options.
-       host: state.url,
-       port: 443,
-       path: "/?v=8&encoding=etf",
-       timeout: 5_000,
-       # Gateway specific options.
-       shard: shard,
-       token: Wumpex.token(),
-       intents: %Intents{
-         guilds: true,
-         guild_members: true,
-         guild_bans: true,
-         guild_emojis: true,
-         guild_integrations: true,
-         guild_webhooks: true,
-         guild_invites: true,
-         guild_voice_states: true,
-         guild_presences: true,
-         guild_messages: true,
-         guild_message_reactions: true,
-         guild_message_typing: true,
-         direct_messages: true,
-         direct_message_reactions: true,
-         direct_message_typing: true
-       },
-       handlers: state.handlers
-     ]})
+    {:ok, _gateway} =
+      DynamicSupervisor.start_child(Wumpex.GatewaySupervisor, {Wumpex.Gateway,
+       [
+         # Websocket options.
+         host: state.url,
+         port: 443,
+         path: "/?v=8&encoding=etf",
+         timeout: 5_000,
+         # Gateway specific options.
+         shard: shard,
+         token: Wumpex.token(),
+         intents: %Intents{
+           guilds: true,
+           guild_members: true,
+           guild_bans: true,
+           guild_emojis: true,
+           guild_integrations: true,
+           guild_webhooks: true,
+           guild_invites: true,
+           guild_voice_states: true,
+           guild_presences: true,
+           guild_messages: true,
+           guild_message_reactions: true,
+           guild_message_typing: true,
+           direct_messages: true,
+           direct_message_reactions: true,
+           direct_message_typing: true
+         },
+         handlers: state.handlers
+       ]})
 
     {:noreply, state}
   end

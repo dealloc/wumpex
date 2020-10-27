@@ -25,16 +25,20 @@ defmodule Wumpex.Bot do
       end
 
       def start_link(_options \\ []) do
-        Wumpex.Sharding.start_link([
-          handlers: unquote(handlers)
-        ])
+        Wumpex.Sharding.start_link(handlers: unquote(handlers))
       end
     end
   end
 
   defmacro event(module) do
     quote do
-      @wumpex_handlers [handler: unquote(module)]
+      @wumpex_handlers [module: unquote(module), guild: false]
+    end
+  end
+
+  defmacro guild(module) do
+    quote do
+      @wumpex_handlers [module: unquote(module), guild: true]
     end
   end
 end

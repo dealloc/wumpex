@@ -4,7 +4,7 @@ alias Wumpex.Api
 defmodule DummyBot do
   use Wumpex.Bot
 
-  event DummyHandler
+  guild DummyHandler
 end
 
 defmodule DummyHandler do
