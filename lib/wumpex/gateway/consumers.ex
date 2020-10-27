@@ -26,7 +26,7 @@ defmodule Wumpex.Gateway.Consumers do
   @type handler_options :: [
           {:module, module()}
           | {:filter, function()}
-          | {:guild, boolean() | String.t()}
+          | {:guild, boolean() | non_neg_integer()}
           | {:initial, [Event.t()]}
         ]
 
