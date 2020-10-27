@@ -1,4 +1,13 @@
 defmodule Wumpex.Gateway.EventProducer do
+  @moduledoc """
+  The first stage in processing events received from the `Wumpex.Gateway`.
+
+  This module implements `GenStage` as a `:producer` and handles collecting events from the `Wumpex.Gateway` and buffering them if needed.
+  Whenever consumers (event listeners) are ready to process events the `EventProducer` will dispatch them to the listeners.
+
+  Events are not directly dispatched to event consumers, they are first sent to the `Wumpex.Gateway.Caching` layer to keep the state in sync.
+  """
+
   use GenStage
 
   require Logger
@@ -42,17 +51,22 @@ defmodule Wumpex.Gateway.EventProducer do
     GenStage.start_link(__MODULE__, [])
   end
 
+  @doc false
   @impl GenStage
+  @spec init(term()) :: {:producer, state(), [GenStage.producer_option()]}
   def init(_options) do
     {:producer, {:queue.new(), 0}, dispatcher: GenStage.BroadcastDispatcher}
   end
 
+  @doc false
   @impl GenStage
+  @spec handle_demand(pos_integer(), state()) :: {:noreply, [event()], state()}
   def handle_demand(incoming, {queue, demand}) do
     pop_events([], queue, demand + incoming)
   end
 
   # Called when a new event is published but there's no demand, we queue the event.
+  @doc false
   @impl GenStage
   @spec handle_info({:event, event()}, state()) :: {:noreply, [event()], state()}
   def handle_info({:event, event}, {queue, 0}) do
@@ -62,6 +76,7 @@ defmodule Wumpex.Gateway.EventProducer do
   end
 
   # Called when a new event is published, and there's already demand for an event.
+  @doc false
   @impl GenStage
   def handle_info({:event, event}, {queue, demand}) do
     # Push the event on the queue (there might be other queued events so we can't just pop).

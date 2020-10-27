@@ -1,4 +1,11 @@
 defmodule Wumpex.Gateway.Caching do
+  @moduledoc """
+  Handles state tracking as described in the official [Discord documentation](https://discord.com/developers/docs/topics/gateway#tracking-state).
+
+  This is the second stage in the event processing pipeline, right after `Wumpex.Gateway.EventProducer`.
+  Once an event is properly handled and the state is up to date, the event will be dispatched to all the listeners.
+  """
+
   use GenStage
 
   require Logger

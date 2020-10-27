@@ -38,7 +38,7 @@ defmodule Wumpex.Sharding do
           handlers: [module()]
         }
 
-  @spec start_link(options()) :: Supervisor.on_start()
+  @spec start_link(options()) :: GenServer.on_start()
   def start_link(options \\ []) do
     GenServer.start_link(__MODULE__, options, name: __MODULE__)
   end
