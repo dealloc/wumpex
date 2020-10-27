@@ -8,18 +8,14 @@ defmodule DummyBot do
 end
 
 defmodule DummyHandler do
-  @behaviour Wumpex.Bot
-
   require Logger
 
-  @impl Wumpex.Bot
   def init do
     Logger.info("DummyHandler.init/0")
 
     nil
   end
 
-  @impl Wumpex.Bot
   def handle(event, state) do
     Logger.debug("DummyHandler: #{inspect(event)}")
 
