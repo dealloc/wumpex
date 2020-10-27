@@ -20,11 +20,11 @@ defmodule Wumpex.Gateway.EventProducer do
   * `:sequence` - The sequence number of the event, can be used to track the same event across handlers.
   """
   @type event :: %{
-    shard: Wumpex.shard(),
-    name: atom(),
-    payload: map(),
-    sequence: non_neg_integer()
-  }
+          shard: Wumpex.shard(),
+          name: atom(),
+          payload: map(),
+          sequence: non_neg_integer()
+        }
 
   @doc """
   Dispatch an event to the given producer.
