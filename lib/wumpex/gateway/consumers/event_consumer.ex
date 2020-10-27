@@ -4,7 +4,7 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
 
   The `EventConsumer` provides a convenience layer for subscribing to events from the event processing stages (see `Wumpex.Gateway.EventProducer` and `Wumpex.Gateway.Caching`).
   It implements `GenStage` as a `:consumer` and handles subscribing to the producer.
-  It also takes care of filtering incoming events (through the `:guild` and `:selector` function) and allows specifying `:initial` events to replay when the listener starts up.
+  It also takes care of filtering incoming events (through the `:guild` and `:selector` option) and allows specifying `:initial` events to replay when the listener starts up.
 
   EventConsumers are generally started using `Wumpex.Gateway.Consumers.start_consumer/2`, but you can start one directly by calling `start_link/1`.
   """
