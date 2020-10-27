@@ -11,7 +11,7 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
 
   use GenStage
 
-  alias Wumpex.Gateway.EventProducer
+  alias Wumpex.Gateway.Event
 
   require Logger
 
@@ -32,7 +32,7 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
           handler: [
             module: module(),
             selector: function() | nil,
-            initial: [EventProducer.event()] | nil
+            initial: [Event.t()] | nil
           ]
         ]
 
@@ -75,7 +75,7 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
 
   @doc false
   @impl GenStage
-  @spec handle_events([EventProducer.event()], GenStage.from(), state()) :: {:noreply, [], state()}
+  @spec handle_events([Event.t()], GenStage.from(), state()) :: {:noreply, [], state()}
   def handle_events(events, _from, %{handler: handler, handler_state: handler_state} = state) do
     handler_state = Enum.reduce(events, handler_state, &handler.handle/2)
 
@@ -83,7 +83,8 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
   end
 
   # Get the selector when there's no guild to scope to.
-  @spec get_selector(guild :: nil | non_neg_integer(), handler_options :: keyword()) :: function() | nil
+  @spec get_selector(guild :: nil | non_neg_integer(), handler_options :: keyword()) ::
+          function() | nil
   defp get_selector(nil, handler_options), do: Keyword.get(handler_options, :selector, nil)
 
   # Get the selector but only run if the guild matches since a guild to match on was passed.
@@ -97,19 +98,8 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
           selector
       end
 
-    fn %{name: name, payload: payload} = event ->
-      guild_id =
-        case name do
-          :GUILD_CREATE ->
-            Map.get(payload, :id, nil)
-
-          _name ->
-            Map.get_lazy(payload, :guild_id, fn ->
-              Map.get(payload, "guild_id")
-            end)
-        end
-
-      guild_id == guild and selector.(event)
+    fn event = event ->
+      Event.guild(event) == guild and selector.(event)
     end
   end
 end

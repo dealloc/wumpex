@@ -11,7 +11,7 @@ defmodule Wumpex.Gateway.Consumers.GuildsConsumer do
   use GenStage
 
   alias Wumpex.Gateway.Consumers
-  alias Wumpex.Gateway.EventProducer
+  alias Wumpex.Gateway.Event
 
   require Logger
 
@@ -81,20 +81,22 @@ defmodule Wumpex.Gateway.Consumers.GuildsConsumer do
   end
 
   # Handles incoming :GUILD_CREATE events and starts new EventConsumer instances for each.
-  @spec handle_event(EventProducer.event(), state()) :: DynamicSupervisor.on_start_child()
+  @spec handle_event(Event.t(), state()) :: DynamicSupervisor.on_start_child()
   defp handle_event(%{name: :GUILD_CREATE, payload: %{id: guild}} = event, %{
-        guild_handler: guild_handler,
-        producer: producer
-      }) do
+         guild_handler: guild_handler,
+         producer: producer
+       }) do
     module = Keyword.fetch!(guild_handler, :module)
     filter = Keyword.get(guild_handler, :filter)
 
     Logger.info("Starting new #{inspect(module)} handler for #{guild}")
-    {:ok, _consumer} = Consumers.start_consumer(producer,
-      module: module,
-      filter: filter,
-      guild: guild,
-      initial: [event]
-    )
+
+    {:ok, _consumer} =
+      Consumers.start_consumer(producer,
+        module: module,
+        filter: filter,
+        guild: guild,
+        initial: [event]
+      )
   end
 end

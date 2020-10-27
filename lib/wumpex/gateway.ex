@@ -12,6 +12,7 @@ defmodule Wumpex.Gateway do
   alias Wumpex.Base.Websocket
   alias Wumpex.Gateway.Caching
   alias Wumpex.Gateway.Consumers
+  alias Wumpex.Gateway.Event
   alias Wumpex.Gateway.EventProducer
   alias Wumpex.Gateway.Intents
   alias Wumpex.Gateway.Opcodes
@@ -241,7 +242,7 @@ defmodule Wumpex.Gateway do
     Logger.info("Bot is now READY #{inspect(event)}")
 
     # Ready, we received initial guilds and user information.
-    EventProducer.dispatch(producer, %{
+    EventProducer.dispatch(producer, %Event{
       shard: state.shard,
       name: :READY,
       payload: event,
@@ -256,7 +257,7 @@ defmodule Wumpex.Gateway do
   def dispatch(%{op: 0, s: sequence, t: :RESUMED}, %{producer: producer} = state) do
     Logger.info("Bot has finished resuming.")
 
-    EventProducer.dispatch(producer, %{
+    EventProducer.dispatch(producer, %Event{
       shard: state.shard,
       name: :RESUMED,
       payload: %{},
@@ -268,7 +269,7 @@ defmodule Wumpex.Gateway do
 
   # Forwards events to the processing stages.
   def dispatch(%{op: 0, s: sequence, t: event_name, d: event}, %{producer: producer} = state) do
-    EventProducer.dispatch(producer, %{
+    EventProducer.dispatch(producer, %Event{
       shard: state.shard,
       name: event_name,
       payload: event,

@@ -7,7 +7,7 @@ defmodule Wumpex.Gateway.Consumers do
 
   alias Wumpex.Gateway.Consumers.EventConsumer
   alias Wumpex.Gateway.Consumers.GuildsConsumer
-  alias Wumpex.Gateway.EventProducer
+  alias Wumpex.Gateway.Event
 
   require Logger
 
@@ -27,7 +27,7 @@ defmodule Wumpex.Gateway.Consumers do
           {:module, module()}
           | {:filter, function()}
           | {:guild, boolean() | String.t()}
-          | {:initial, [EventProducer.event()]}
+          | {:initial, [Event.t()]}
         ]
 
   @doc """
@@ -51,7 +51,7 @@ defmodule Wumpex.Gateway.Consumers do
           module :: module(),
           filter :: function() | nil,
           guild :: boolean() | String.t(),
-          initial :: [EventProducer.event()]
+          initial :: [Event.t()]
         ) :: DynamicSupervisor.on_start_child()
   # Start a GuildsConsumer, which listens for GUILD_CREATE events and spawns new listeners scoped to that guild.
   defp start_consumer(producer, module, filter, true, []) do
