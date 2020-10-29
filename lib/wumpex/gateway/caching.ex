@@ -38,6 +38,9 @@ defmodule Wumpex.Gateway.Caching do
   @impl GenStage
   def handle_events(events, _from, state) do
     # Caching should process events and optionally update the cache when relevant events are sent.
+    :telemetry.span([:wumpex, :cache], %{}, fn ->
+      {nil, %{processed: Enum.count(events)}}
+    end)
 
     {:noreply, events, state}
   end

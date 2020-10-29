@@ -77,7 +77,17 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
   @impl GenStage
   @spec handle_events([Event.t()], GenStage.from(), state()) :: {:noreply, [], state()}
   def handle_events(events, _from, %{handler: handler, handler_state: handler_state} = state) do
-    handler_state = Enum.reduce(events, handler_state, &handler.handle/2)
+    handler_state =
+      Enum.reduce(events, handler_state, fn event, state ->
+        :telemetry.span([:wumpex, :event], %{}, fn ->
+          {handler.handle(event, state), %{
+            type: event.name,
+            handler: handler,
+            shard: inspect(event.shard),
+            sequence: event.sequence
+          }}
+        end)
+      end)
 
     {:noreply, [], %{state | handler_state: handler_state}}
   end

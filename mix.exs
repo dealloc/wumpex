@@ -100,8 +100,9 @@ defmodule Wumpex.MixProject do
       {:syn, "~> 2.1", optional: true},
       {:gun, "~> 1.3"},
       {:gen_stage, "~> 1.0"},
+      {:telemetry, "~> 0.4"},
       # Both Gun and FakeServer require cowlib, so we have to override it to keep Mix happy.
-      {:cowlib, "~> 2.7.0", override: true}
+      {:cowlib, "~> 2.9.1", override: true}
     ]
   end
 

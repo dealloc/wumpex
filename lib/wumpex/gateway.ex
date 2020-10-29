@@ -131,7 +131,12 @@ defmodule Wumpex.Gateway do
 
   @impl Websocket
   def on_disconnected(state) do
-    Logger.info("Disconnected...")
+    Logger.warn("Disconnected from gateway!")
+
+    :telemetry.execute([:wumpex, :gateway, :disconnect], %{
+      timestamp: :os.system_time(:millisecond),
+      retry_after: 1_000
+    })
 
     {{:retry, 1_000}, state}
   end
@@ -140,15 +145,24 @@ defmodule Wumpex.Gateway do
   def on_reconnected(state) do
     Logger.info("Reconnected!")
 
+    :telemetry.execute([:wumpex, :gateway, :reconnect], %{
+      timestamp: :os.system_time(:millisecond)
+    })
+
     state
   end
 
   @impl Websocket
   def handle_frame({:binary, etf}, state) do
     state =
-      etf
-      |> :erlang.binary_to_term()
-      |> dispatch(state)
+      :telemetry.span([:wumpex, :gateway, :dispatch], %{}, fn ->
+        result =
+          etf
+          |> :erlang.binary_to_term()
+          |> dispatch(state)
+
+        {result, %{}}
+      end)
 
     {:noreply, state}
   end
