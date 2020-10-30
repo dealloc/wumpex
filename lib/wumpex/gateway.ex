@@ -43,7 +43,6 @@ defmodule Wumpex.Gateway do
     * `:sequence` - The ID of the last received event.
     * `:session_id` - Session token, can be used to resume an interrupted session.
     * `:shard` - the identifier for this shard.
-    * `:producer` - The `t:pid/0` of the `Wumpex.Gateway.EventProducer` for this shard.
     * `:intents` - The intents information (calculated from `Wumpex.Gateway.Intents.to_integer/1`).
   """
   @type state :: %{
@@ -52,7 +51,6 @@ defmodule Wumpex.Gateway do
           sequence: non_neg_integer() | nil,
           session_id: String.t() | nil,
           shard: Wumpex.shard(),
-          producer: pid(),
           intents: non_neg_integer()
         }
 
@@ -62,6 +60,30 @@ defmodule Wumpex.Gateway do
     shard = Keyword.fetch!(options, :shard)
 
     GenServer.start_link(__MODULE__, options, name: via(shard))
+  end
+
+  @doc """
+  Subscribes the current process to events from the given gateway.
+
+  Events will be sent in the form of `{:event, %Wumpex.Gateway.Event{}}`.
+  """
+  @spec subscribe(Wumpex.shard()) :: :ok
+  def subscribe(shard) do
+    group = "wumpex:shard:#{inspect(shard)}"
+
+    :pg.join(:wumpex, group, self())
+  end
+
+  @doc """
+  Subscribes the given processes to events from the given gateway.
+
+  Events will be sent in the form of `{:event, %Wumpex.Gateway.Event{}}`.
+  """
+  @spec subscribe(Wumpex.shard(), pid_or_pids :: pid() | [pid()]) :: :ok
+  def subscribe(shard, pid_or_pids) do
+    group = "wumpex:shard:#{inspect(shard)}"
+
+    :pg.join(:wumpex, group, pid_or_pids)
   end
 
   @doc """
@@ -102,13 +124,22 @@ defmodule Wumpex.Gateway do
     send_frame({:binary, encoded})
   end
 
+  # Broadcasts an event to all listeners for this shard.
+  @spec broadcast(Event.t(), Wumpex.shard()) :: :ok
+  defp broadcast(event, shard) do
+    group = "wumpex:shard:#{inspect(shard)}"
+    listeners = :pg.get_members(:wumpex, group)
+
+    Manifold.send(listeners, {:event, event})
+  end
+
   @impl Websocket
   def on_connected(options) do
     token = Keyword.fetch!(options, :token)
     shard = Keyword.fetch!(options, :shard)
     intents = Keyword.fetch!(options, :intents)
     handlers = Keyword.fetch!(options, :handlers)
-    {:ok, producer} = EventProducer.start_link()
+    {:ok, producer} = EventProducer.start_link(shard: shard)
     {:ok, caching} = Caching.start_link(producer: producer)
 
     for handler <- handlers do
@@ -124,7 +155,6 @@ defmodule Wumpex.Gateway do
       sequence: nil,
       session_id: nil,
       shard: shard,
-      producer: producer,
       intents: Intents.to_integer(intents)
     }
   end
@@ -259,44 +289,53 @@ defmodule Wumpex.Gateway do
   # https://discord.com/developers/docs/topics/gateway#ready
   def dispatch(
         %{op: 0, s: sequence, t: :READY, d: %{session_id: session_id} = event},
-        %{producer: producer} = state
+        state
       ) do
     Logger.info("Bot is now READY #{inspect(event)}")
 
     # Ready, we received initial guilds and user information.
-    EventProducer.dispatch(producer, %Event{
-      shard: state.shard,
-      name: :READY,
-      payload: event,
-      sequence: sequence
-    })
+    broadcast(
+      %Event{
+        shard: state.shard,
+        name: :READY,
+        payload: event,
+        sequence: sequence
+      },
+      state.shard
+    )
 
     %{state | sequence: sequence, session_id: session_id}
   end
 
   # Handles RESUMED event
   # https://discord.com/developers/docs/topics/gateway#resumed
-  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, %{producer: producer} = state) do
+  def dispatch(%{op: 0, s: sequence, t: :RESUMED}, state) do
     Logger.info("Bot has finished resuming.")
 
-    EventProducer.dispatch(producer, %Event{
-      shard: state.shard,
-      name: :RESUMED,
-      payload: %{},
-      sequence: sequence
-    })
+    broadcast(
+      %Event{
+        shard: state.shard,
+        name: :RESUMED,
+        payload: %{},
+        sequence: sequence
+      },
+      state.shard
+    )
 
     %{state | sequence: sequence}
   end
 
   # Forwards events to the processing stages.
-  def dispatch(%{op: 0, s: sequence, t: event_name, d: event}, %{producer: producer} = state) do
-    EventProducer.dispatch(producer, %Event{
-      shard: state.shard,
-      name: event_name,
-      payload: event,
-      sequence: sequence
-    })
+  def dispatch(%{op: 0, s: sequence, t: event_name, d: event}, state) do
+    broadcast(
+      %Event{
+        shard: state.shard,
+        name: event_name,
+        payload: event,
+        sequence: sequence
+      },
+      state.shard
+    )
 
     %{state | sequence: sequence}
   end

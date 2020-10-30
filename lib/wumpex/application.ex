@@ -9,7 +9,8 @@ defmodule Wumpex.Application do
       {Wumpex.Api.Ratelimit, []},
       {Wumpex.Sharding.ShardLedger, []},
       {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.GatewaySupervisor},
-      {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.GatewayListenerSupervisor}
+      {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.GatewayListenerSupervisor},
+      %{id: :pg, start: {:pg, :start_link, [:wumpex]}}
     ]
 
     Supervisor.start_link(children,
