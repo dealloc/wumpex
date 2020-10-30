@@ -10,6 +10,7 @@ defmodule Wumpex.Gateway.EventProducer do
 
   use GenStage
 
+  alias Wumpex.Gateway
   alias Wumpex.Gateway.Event
 
   require Logger
@@ -21,26 +22,18 @@ defmodule Wumpex.Gateway.EventProducer do
   """
   @type state :: {:queue.queue(), non_neg_integer()}
 
-  @doc """
-  Dispatch an event to the given producer.
-
-  This puts the event in the processing pipeline for caching and eventually handling.
-  """
-  @spec dispatch(producer :: pid(), event :: Event.t()) :: :ok
-  def dispatch(producer, event) do
-    send(producer, {:event, event})
-  end
-
   @doc false
-  @spec start_link() :: GenServer.on_start()
-  def start_link do
-    GenStage.start_link(__MODULE__, [])
+  @spec start_link(keyword()) :: GenServer.on_start()
+  def start_link(options) do
+    GenStage.start_link(__MODULE__, options)
   end
 
   @doc false
   @impl GenStage
-  @spec init(term()) :: {:producer, state(), [GenStage.producer_option()]}
-  def init(_options) do
+  @spec init(keyword()) :: {:producer, state(), [GenStage.producer_option()]}
+  def init(shard: shard) do
+    Gateway.subscribe(shard)
+
     {:producer, {:queue.new(), 0}, dispatcher: GenStage.BroadcastDispatcher}
   end
 
