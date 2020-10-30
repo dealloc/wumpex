@@ -80,12 +80,13 @@ defmodule Wumpex.Gateway.Consumers.EventConsumer do
     handler_state =
       Enum.reduce(events, handler_state, fn event, state ->
         :telemetry.span([:wumpex, :event], %{}, fn ->
-          {handler.handle(event, state), %{
-            type: event.name,
-            handler: handler,
-            shard: inspect(event.shard),
-            sequence: event.sequence
-          }}
+          {handler.handle(event, state),
+           %{
+             type: event.name,
+             handler: handler,
+             shard: inspect(event.shard),
+             sequence: event.sequence
+           }}
         end)
       end)
 
