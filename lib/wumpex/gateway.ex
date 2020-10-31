@@ -247,6 +247,14 @@ defmodule Wumpex.Gateway do
     end
   end
 
+  # Handles RECONNECT
+  # https://discord.com/developers/docs/topics/opcodes-and-status-codes#opcodes-and-status-codes
+  def dispatch(%{op: 7}, state) do
+    send_frame(:close)
+
+    state
+  end
+
   # Handles READY event
   # https://discord.com/developers/docs/topics/gateway#ready
   def dispatch(
