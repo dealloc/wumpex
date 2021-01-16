@@ -15,63 +15,22 @@ defmodule Wumpex.MixProject do
       docs: [
         groups_for_modules: [
           Api: [
-            Wumpex.Api,
-            Wumpex.Api.Ratelimit,
-            Wumpex.Api.Ratelimit.Bucket,
-            Wumpex.Api.Ratelimit.StatelessBucket,
-            Wumpex.Api.Ratelimit.Well
+            ~r/Wumpex.Api/
           ],
           Base: [
-            Wumpex.Base.Coordinator,
-            Wumpex.Base.Distributed,
-            Wumpex.Base.Ledger,
-            Wumpex.Base.Websocket
+            ~r/Wumpex.Base/
           ],
           Gateway: [
-            Wumpex.Gateway,
-            Wumpex.Gateway.Worker,
-            Wumpex.Gateway.Opcodes
+            ~r/Wumpex.Gateway/
+          ],
+          Voice: [
+            ~r/Wumpex.Voice/
           ],
           Resources: [
-            Wumpex.Resource,
-            Wumpex.Resource.Activity,
-            Wumpex.Resource.Activity.Assets,
-            Wumpex.Resource.Activity.Emoji,
-            Wumpex.Resource.Activity.Flags,
-            Wumpex.Resource.Activity.Party,
-            Wumpex.Resource.Activity.Secrets,
-            Wumpex.Resource.Activity.Timestamps,
-            Wumpex.Resource.Attachment,
-            Wumpex.Resource.Channel,
-            Wumpex.Resource.Channel.Overwrite,
-            Wumpex.Resource.ChannelMention,
-            Wumpex.Resource.ClientStatus,
-            Wumpex.Resource.Embed,
-            Wumpex.Resource.Embed.Author,
-            Wumpex.Resource.Embed.Field,
-            Wumpex.Resource.Embed.Footer,
-            Wumpex.Resource.Embed.Image,
-            Wumpex.Resource.Embed.Provider,
-            Wumpex.Resource.Embed.Thumbnail,
-            Wumpex.Resource.Embed.Video,
-            Wumpex.Resource.Emoji,
-            Wumpex.Resource.Guild,
-            Wumpex.Resource.Guild.ChannelFlags,
-            Wumpex.Resource.Guild.Member,
-            Wumpex.Resource.Message,
-            Wumpex.Resource.Message.Activity,
-            Wumpex.Resource.Message.Application,
-            Wumpex.Resource.Message.Reaction,
-            Wumpex.Resource.Message.Reference,
-            Wumpex.Resource.PresenceUpdate,
-            Wumpex.Resource.Role,
-            Wumpex.Resource.User,
-            Wumpex.Resource.UserFlags,
-            Wumpex.Resource.VoiceState
+            ~r/Wumpex.Resource/
           ],
           Sharding: [
-            Wumpex.Sharding,
-            Wumpex.Sharding.ShardLedger
+            ~r/Wumpex.Sharding/
           ]
         ]
       ]

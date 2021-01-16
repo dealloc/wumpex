@@ -39,4 +39,10 @@ defmodule WumpexTest do
       end
     end
   end
+
+  describe "Wumpex.user_id/0 should" do
+    test "TODO" do
+      assert false
+    end
+  end
 end
