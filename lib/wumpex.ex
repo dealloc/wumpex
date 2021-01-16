@@ -3,6 +3,8 @@ defmodule Wumpex do
   Documentation for `Wumpex`.
   """
 
+  alias Wumpex.Api.Ratelimit
+
   @typedoc """
   Represents the identifier of a shard.
 
@@ -25,5 +27,34 @@ defmodule Wumpex do
       token ->
         raise "Invalid key #{inspect(token)} configured!"
     end
+  end
+
+  @doc """
+  Fetch the user ID.
+
+    iex> Wumpex.user_id()
+    "DUMMY-USER-KEY"
+  """
+  @spec user_id() :: String.t()
+  def user_id do
+    case Application.get_env(:wumpex, :user_id, nil) do
+      nil ->
+        load_user_id()
+
+      token when is_integer(token) ->
+        token
+    end
+  end
+
+  defp load_user_id do
+    {:ok,
+     %{
+       body: %{
+         "id" => bot_id
+       }
+     }} = Ratelimit.request({:get, "/users/@me", "", [], []}, {:user, :me})
+
+     Application.put_env(:wumpex, :user_id, bot_id)
+     bot_id
   end
 end

@@ -1,111 +1,122 @@
 defmodule Wumpex.Voice.Connection do
-  # High level abstraction over the websocket, UDP and Gateway.
+  @moduledoc """
+  Represents a voice connection and abstracts the voice gateway and UDP connection.
+  """
+
   use GenServer
 
-  alias Wumpex.Voice.AudioConnection
-  alias Wumpex.Voice.GatewayMonitor
-  alias Wumpex.Voice.VoiceGateway
+  import Wumpex.Voice.VoiceServerInformation, only: [get_voice_server: 5]
+
+  alias Wumpex.Voice.Gateway
+  alias Wumpex.Voice.Udp
 
   require Logger
 
-  # Don't include channel because restarts.
   @type options :: [
           shard: Wumpex.shard(),
-          guild: non_neg_integer()
+          guild: String.t(),
+          channel: String.t()
         ]
 
   @type state :: %{
-          ready: boolean(),
-          websocket: pid() | nil,
-          udp: pid() | nil,
-          guild: non_neg_integer()
+          gateway: pid(),
+          udp: pid()
         }
 
+  @spec start_link(options()) :: GenServer.on_start()
   def start_link(options) do
-    GenServer.start_link(__MODULE__, options)
+    GenServer.start_link(__MODULE__, options, [])
   end
 
   @impl GenServer
-  def init(shard: shard, guild: guild) do
-    Logger.metadata(guild_id: guild, shard: shard)
-    GatewayMonitor.start_link(shard: shard, guild: guild, receiver: self())
+  @spec init(options()) :: {:ok, state()}
+  def init(options) do
+    shard = Keyword.fetch!(options, :shard)
+    guild = Keyword.fetch!(options, :guild)
+    channel = Keyword.fetch!(options, :channel)
+    user_id = Wumpex.user_id()
 
-    Logger.debug("Voice is booting up...")
+    Logger.metadata(shard: shard)
+
+    %{
+      endpoint: endpoint,
+      guild_id: ^guild,
+      token: token,
+      session: session
+    } = get_voice_server(shard, guild, channel, user_id, 6_000)
+
+    {:ok, gateway} =
+      Gateway.start_link(
+        endpoint: endpoint,
+        token: token,
+        guild_id: guild,
+        session: session,
+        user_id: user_id,
+        controller: self()
+      )
+
+    {ip, port, _modes, ssrc} = receive_udp()
+    Logger.debug("Received UDP connection details")
+
+    {:ok, udp} =
+      Udp.start_link(
+        ip: ip,
+        mode: "xsalsa20_poly1305",
+        port: port,
+        ssrc: ssrc,
+        controller: self(),
+        ip_discovery?: false
+      )
+
+    {local_ip, local_port} = receive_ip_discovery()
+    Gateway.select_protocol(gateway, local_ip, local_port, "xsalsa20_poly1305")
+
+    secret_key = receive_secret_key()
+    Logger.info("Received secret key from voice gateway")
+    send(udp, {:secret_key, secret_key})
 
     {:ok,
      %{
-       ready: false,
-       udp: nil,
-       websocket: nil,
-       guild: guild
+       gateway: gateway,
+       udp: udp
      }}
   end
 
-  @impl GenServer
-  def handle_info({:server_info, voice_info}, state) do
-    %{
-      session: session,
-      endpoint: endpoint,
-      token: token
-    } = voice_info
-
-    [host, port] = String.split(endpoint, ":")
-
-    Logger.debug("Received server info, starging Websocket connection...")
-
-    {:ok, gateway} =
-      VoiceGateway.start_link(
-        host: host,
-        port: String.to_integer(port),
-        path: "/?v=4",
-        timeout: 5_000,
-        # Voice gateway specific options
-        session: session,
-        token: token,
-        guild: state.guild,
-        overseer: self()
-      )
-
-    {:noreply, %{state | websocket: gateway}}
+  # Receives the UDP information that's being sent from the voice gateway's READY handler.
+  @spec receive_udp() ::
+          {ip :: String.t(), port :: non_neg_integer(), modes :: [String.t()],
+           ssrc :: non_neg_integer()}
+  defp receive_udp do
+    receive do
+      {:udp_info, ip, port, modes, ssrc} ->
+        {ip, port, modes, ssrc}
+    after
+      5_000 ->
+        raise "Did not receive UDP information from voice gateway."
+    end
   end
 
-  @impl GenServer
-  def handle_info({:websocket_ready, voice_info}, state) do
-    Logger.debug("Received server info, starting UDP connection...")
-
-    %{
-      host: host,
-      modes: modes,
-      port: port,
-      ssrc: ssrc
-    } = voice_info
-
-    {:ok, audio} =
-      AudioConnection.start_link(
-        host: host,
-        modes: modes,
-        port: port,
-        ssrc: ssrc,
-        overseer: self()
-      )
-
-    {:noreply, %{state | udp: audio}}
+  # Receives the IP discovery from the UDP connection.
+  @spec receive_ip_discovery() :: {String.t(), :inet.port_number()}
+  defp receive_ip_discovery do
+    receive do
+      {:ip_discovery, local_ip, local_port} ->
+        {local_ip, local_port}
+    after
+      5_000 ->
+        raise "Did not receive IP discovery from UDP connection."
+    end
   end
 
-  @impl GenServer
-  def handle_info({:udp_ready, info}, %{websocket: websocket} = state) do
-    Logger.debug("Received UDP information, sending SELECT PROTOCOL")
-    send(websocket, {:select, info})
-
-    {:noreply, state}
-  end
-
-  @impl GenServer
-  def handle_info({:voice_ready, key}, %{udp: udp} = state) do
-    Logger.debug("Sending encryption key to UDP connection")
-    send(udp, {:ready, key})
-
-    Logger.info("Voice connection is now ready to send/receive")
-    {:noreply, state}
+  # Receives the secret key from the voice gateway.
+  @spec receive_secret_key() :: [non_neg_integer()]
+  defp receive_secret_key do
+    receive do
+      {:secret_key, secret_key} ->
+        secret_key
+    after
+      5_000 ->
+        raise "Did not receive secret key from voice gateway."
+    end
   end
 end

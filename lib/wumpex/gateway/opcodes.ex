@@ -117,4 +117,17 @@ defmodule Wumpex.Gateway.Opcodes do
         "seq" => sequence
       }
     }
+
+  @spec voice_state_update(guild :: String.t(), channel :: String.t(), options :: keyword()) ::
+          opcode()
+  def voice_state_update(guild, channel, options \\ []),
+    do: %{
+      "op" => 4,
+      "d" => %{
+        "guild_id" => guild,
+        "channel_id" => channel,
+        "self_mute" => Keyword.get(options, :mute, false),
+        "self_deaf" => Keyword.get(options, :deafen, false)
+      }
+    }
 end

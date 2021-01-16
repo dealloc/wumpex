@@ -59,7 +59,7 @@ defmodule Wumpex.Gateway do
   def start_link(options) do
     shard = Keyword.fetch!(options, :shard)
 
-    GenServer.start_link(__MODULE__, options, name: via(shard))
+    Websocket.start_link(__MODULE__, options, name: via(shard))
   end
 
   @doc """
@@ -68,11 +68,7 @@ defmodule Wumpex.Gateway do
   Events will be sent in the form of `{:event, %Wumpex.Gateway.Event{}}`.
   """
   @spec subscribe(Wumpex.shard()) :: :ok
-  def subscribe(shard) do
-    group = "wumpex:shard:#{inspect(shard)}"
-
-    :pg.join(:wumpex, group, self())
-  end
+  def subscribe(shard), do: subscribe(shard, self())
 
   @doc """
   Subscribes the given processes to events from the given gateway.
@@ -84,6 +80,22 @@ defmodule Wumpex.Gateway do
     group = "wumpex:shard:#{inspect(shard)}"
 
     :pg.join(:wumpex, group, pid_or_pids)
+  end
+
+  @doc """
+  Unsubscribes the current process of events from the given gateway.
+  """
+  @spec unsubscribe(Wumpex.shard()) :: :ok | :not_joined
+  def unsubscribe(shard), do: unsubscribe(shard, self())
+
+  @doc """
+  Unsubscribes the given processes of events from the given gateway.
+  """
+  @spec unsubscribe(Wumpex.shard(), pid_or_pids :: pid() | [pid()]) :: :ok | :not_joined
+  def unsubscribe(shard, pid_or_pids) do
+    group = "wumpex:shard:#{inspect(shard)}"
+
+    :pg.leave(:wumpex, group, pid_or_pids)
   end
 
   @doc """
