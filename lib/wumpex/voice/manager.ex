@@ -1,4 +1,4 @@
-defmodule Wumpex.Voice.Connection do
+defmodule Wumpex.Voice.Manager do
   @moduledoc """
   Represents a voice connection and abstracts the voice gateway and UDP connection.
   """
@@ -71,9 +71,8 @@ defmodule Wumpex.Voice.Connection do
     {local_ip, local_port} = receive_ip_discovery()
     Gateway.select_protocol(gateway, local_ip, local_port, "xsalsa20_poly1305")
 
-    secret_key = receive_secret_key()
+    _secret_key = receive_secret_key()
     Logger.info("Received secret key from voice gateway")
-    send(udp, {:secret_key, secret_key})
 
     {:ok,
      %{
