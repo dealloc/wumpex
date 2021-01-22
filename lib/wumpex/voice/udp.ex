@@ -60,6 +60,14 @@ defmodule Wumpex.Voice.Udp do
      }}
   end
 
+  @impl GenServer
+  def handle_call(:socket, _from, %{socket: socket, remote: remote} = state) do
+    {:reply, fn (message) ->
+      Logger.info("Sending #{inspect(message)}")
+      :gen_udp.send(socket, remote, message)
+    end, state}
+  end
+
   # Send an IP discovery package to Discord.
   @spec ip_discovery(
           socket :: :inet.socket(),

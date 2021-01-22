@@ -8,4 +8,8 @@ defmodule Wumpex.Voice do
 
     voice
   end
+
+  def play(voice, stream) do
+    GenServer.call(voice, {:play, stream})
+  end
 end

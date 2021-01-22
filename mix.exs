@@ -61,6 +61,9 @@ defmodule Wumpex.MixProject do
       {:gen_stage, "~> 1.0"},
       {:telemetry, "~> 0.4"},
       {:manifold, "~> 1.4"},
+      # Voice
+      {:kcl, "~> 1.3"},
+      {:porcelain, "~> 2.0"},
       # Both Gun and FakeServer require cowlib, so we have to override it to keep Mix happy.
       {:cowlib, "~> 2.9.1", override: true}
     ]
