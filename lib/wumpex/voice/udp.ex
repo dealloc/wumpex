@@ -15,9 +15,7 @@ defmodule Wumpex.Voice.Udp do
   @type state :: %{
           socket: :gen_udp.socket(),
           remote: {:inet.ip_address(), :inet.port_number()},
-          ssrc: non_neg_integer(),
-          controller: pid(),
-          secret_key: [non_neg_integer()] | nil
+          controller: pid()
         }
 
   @spec start_link(options()) :: GenServer.on_start()
@@ -58,15 +56,8 @@ defmodule Wumpex.Voice.Udp do
      %{
        socket: socket,
        remote: {host, port},
-       ssrc: ssrc,
-       controller: controller,
-       secret_key: nil
+       controller: controller
      }}
-  end
-
-  @impl GenServer
-  def handle_info({:secret_key, secret_key}, state) do
-    {:noreply, %{state | secret_key: secret_key}}
   end
 
   # Send an IP discovery package to Discord.
