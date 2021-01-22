@@ -8,6 +8,7 @@ defmodule Wumpex.Voice.Manager do
   import Wumpex.Voice.VoiceServerInformation, only: [get_voice_server: 5]
 
   alias Wumpex.Voice.Gateway
+  alias Wumpex.Voice.Player
   alias Wumpex.Voice.Udp
 
   require Logger
@@ -20,7 +21,8 @@ defmodule Wumpex.Voice.Manager do
 
   @type state :: %{
           gateway: pid(),
-          udp: pid()
+          udp: pid(),
+          player: pid()
         }
 
   @spec start_link(options()) :: GenServer.on_start()
@@ -71,14 +73,26 @@ defmodule Wumpex.Voice.Manager do
     {local_ip, local_port} = receive_ip_discovery()
     Gateway.select_protocol(gateway, local_ip, local_port, "xsalsa20_poly1305")
 
-    _secret_key = receive_secret_key()
+    secret_key = receive_secret_key()
     Logger.info("Received secret key from voice gateway")
+    {:ok, player} = Player.start_link(secret_key: secret_key, ssrc: ssrc, udp: udp)
 
     {:ok,
      %{
        gateway: gateway,
-       udp: udp
+       udp: udp,
+       player: player
      }}
+  end
+
+  @impl GenServer
+  def handle_call({:play, stream}, from, state) do
+    GenServer.cast(state.gateway, {:speak, 5})
+
+    # Forward the call to the Player process, which will respond.
+    send(state.player, {:"$gen_call", from, {:play, stream}})
+
+    {:noreply, state}
   end
 
   # Receives the UDP information that's being sent from the voice gateway's READY handler.
@@ -108,7 +122,7 @@ defmodule Wumpex.Voice.Manager do
   end
 
   # Receives the secret key from the voice gateway.
-  @spec receive_secret_key() :: [non_neg_integer()]
+  @spec receive_secret_key() :: binary()
   defp receive_secret_key do
     receive do
       {:secret_key, secret_key} ->

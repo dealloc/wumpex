@@ -119,6 +119,20 @@ defmodule Wumpex.Voice.Gateway do
     {:noreply, state}
   end
 
+  @impl GenServer
+  def handle_cast({:speak, flag}, state) do
+    send_opcode(%{
+      "op" => 5,
+      "d" => %{
+        "speaking" => flag,
+        "delay" => 0,
+        "ssrc" => 1
+      }
+    })
+
+    {:noreply, state}
+  end
+
   # Handles READY event
   defp dispatch(%{"op" => 2, "d" => event}, %{controller: controller} = state) do
     %{
@@ -161,7 +175,7 @@ defmodule Wumpex.Voice.Gateway do
       "secret_key" => secret_key
     } = event
 
-    send(controller, {:secret_key, secret_key})
+    send(controller, {:secret_key, :erlang.list_to_binary(secret_key)})
 
     state
   end
