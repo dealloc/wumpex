@@ -18,7 +18,7 @@ defmodule DummyHandler do
   end
 
   def handle(event, state) do
-    Logger.debug("DummyHandler: #{inspect(event)}")
+    Logger.debug("DummyHandler: #{inspect(event, limit: :infinity)}")
 
     state
   end

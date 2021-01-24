@@ -22,7 +22,8 @@ defmodule Wumpex.Voice.Manager do
   @type state :: %{
           gateway: pid(),
           udp: pid(),
-          player: pid()
+          player: pid(),
+          ssrc: non_neg_integer()
         }
 
   @spec start_link(options()) :: GenServer.on_start()
@@ -81,13 +82,14 @@ defmodule Wumpex.Voice.Manager do
      %{
        gateway: gateway,
        udp: udp,
-       player: player
+       player: player,
+       ssrc: ssrc
      }}
   end
 
   @impl GenServer
   def handle_call({:play, stream}, from, state) do
-    GenServer.cast(state.gateway, {:speak, 5})
+    GenServer.cast(state.gateway, {:speak, state.ssrc, 5})
 
     # Forward the call to the Player process, which will respond.
     send(state.player, {:"$gen_call", from, {:play, stream}})
