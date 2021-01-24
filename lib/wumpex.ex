@@ -42,8 +42,7 @@ defmodule Wumpex do
   @doc """
   Fetch the user ID.
 
-    iex> Wumpex.user_id()
-    "DUMMY-USER-KEY"
+  The first time this method is called it will execute an API call.
   """
   @spec user_id() :: String.t()
   def user_id do

@@ -17,8 +17,8 @@ defmodule Wumpex.ApiTest do
       {:ok, response} = Api.get("http://localhost:#{FakeServer.port()}/no-ratelimit")
 
       assert %{
-               "x-ratelimit-remaining" => nil,
-               "x-ratelimit-reset" => nil
+               "x-ratelimit-remaining" => 999,
+               "x-ratelimit-reset" => 0
              } = response.headers
     end
 

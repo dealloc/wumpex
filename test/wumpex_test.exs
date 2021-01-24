@@ -1,6 +1,12 @@
 defmodule WumpexTest do
   @moduledoc false
-  use ExUnit.Case
+  use ExUnit.Case, async: false
+
+  import FakeServer
+
+  alias FakeServer.Response
+
+  @moduletag :integration
 
   doctest Wumpex
 
@@ -9,6 +15,7 @@ defmodule WumpexTest do
 
     on_exit(fn ->
       Application.put_env(:wumpex, :key, key)
+      Application.delete_env(:wumpex, :user_id)
     end)
   end
 
@@ -41,8 +48,21 @@ defmodule WumpexTest do
   end
 
   describe "Wumpex.user_id/0 should" do
-    test "TODO" do
-      assert false
+    test_with_server "return the user ID" do
+      route("/users/@me", Response.ok("{\"id\": 123456789}"))
+      Application.put_env(:wumpex, :endpoint, "http://localhost:#{FakeServer.port()}")
+
+      assert 123_456_789 = Wumpex.user_id()
+      assert hits() == 1
+    end
+
+    test_with_server "only hits the API once" do
+      route("/users/@me", Response.ok("{\"id\": 123456789}"))
+      Application.put_env(:wumpex, :endpoint, "http://localhost:#{FakeServer.port()}")
+
+      assert 123_456_789 = Wumpex.user_id()
+      assert 123_456_789 = Wumpex.user_id()
+      assert hits() == 1
     end
   end
 end
