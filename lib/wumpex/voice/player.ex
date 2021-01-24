@@ -1,6 +1,8 @@
 defmodule Wumpex.Voice.Player do
   use GenServer
 
+  alias Wumpex.Voice.Udp
+
   @type options :: [
           secret_key: binary(),
           ssrc: non_neg_integer(),
@@ -10,7 +12,7 @@ defmodule Wumpex.Voice.Player do
   @type state :: %{
           ssrc: non_neg_integer(),
           secret_key: binary(),
-          send_fn: function()
+          socket: Udp.socket()
         }
 
   @spec start_link(options()) :: GenServer.on_start()
@@ -24,13 +26,13 @@ defmodule Wumpex.Voice.Player do
     ssrc = Keyword.fetch!(options, :ssrc)
     secret_key = Keyword.fetch!(options, :secret_key)
     udp = Keyword.fetch!(options, :udp)
-    send_fn = GenServer.call(udp, :socket)
+    socket = GenServer.call(udp, :socket)
 
     {:ok,
      %{
        ssrc: ssrc,
        secret_key: secret_key,
-       send_fn: send_fn
+       socket: socket
      }}
   end
 

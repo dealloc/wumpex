@@ -18,6 +18,16 @@ defmodule Wumpex.Voice.Udp do
           controller: pid()
         }
 
+  @typedoc """
+  Represents a socket that the UDP process can send to.
+  """
+  @opaque socket :: {:gen_udp.socket(), {:inet.ip_address(), :inet.port_number()}}
+
+  @spec send_packet(socket(), binary()) :: :ok | {:error, :not_owner | :inet.posix()}
+  def send_packet({socket, destination}, packet) do
+    :gen_udp.send(socket, destination, packet)
+  end
+
   @spec start_link(options()) :: GenServer.on_start()
   def start_link(options) do
     GenServer.start_link(__MODULE__, options, [])
@@ -62,10 +72,12 @@ defmodule Wumpex.Voice.Udp do
 
   @impl GenServer
   def handle_call(:socket, _from, %{socket: socket, remote: remote} = state) do
-    {:reply, fn (message) ->
-      Logger.info("Sending #{inspect(message)}")
-      :gen_udp.send(socket, remote, message)
-    end, state}
+    {:reply, {socket, remote}, state}
+  end
+
+  @impl GenServer
+  def handle_info({:udp, _socket, _ip, _port, _packet}, state) do
+    {:noreply, state}
   end
 
   # Send an IP discovery package to Discord.
@@ -85,7 +97,7 @@ defmodule Wumpex.Voice.Udp do
     # 2 bytes of unsigned port number
     discover = <<1::16, 70::16, ssrc::32>> <> String.pad_trailing(ip, 64, <<0>>) <> <<port::16>>
 
-    send_packet(socket, destination, discover)
+    :gen_udp.send(socket, destination, discover)
 
     receive do
       {:udp, ^socket, _ip, _port, <<2::16, 70::16, _ssrc::32, address::512, port::16>>} ->
@@ -94,10 +106,5 @@ defmodule Wumpex.Voice.Udp do
       1_000 ->
         raise "IP discovery timed out"
     end
-  end
-
-  # Sends a given packet over the UDP socket.
-  defp send_packet(socket, destination, packet) do
-    :gen_udp.send(socket, destination, packet)
   end
 end
