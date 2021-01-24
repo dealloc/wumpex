@@ -3,7 +3,7 @@ defmodule Wumpex.Gateway do
   Handles incoming events from the gateway.
 
   This module handles the raw incoming events from the gateway's `Wumpex.Base.Websocket`.
-  The messages are encoded, events that are not specific to a guild, such as HELLO, IDENTIFY, INVALID_SESSION etc are handled inline.
+  The messages are decoded, events that are not specific to a guild, such as HELLO, IDENTIFY, INVALID_SESSION etc are handled inline.
   Events specific to a guild (MESSAGE_CREATE, ...) are passed on to the process group for that guild.
   """
 

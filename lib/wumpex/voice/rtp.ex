@@ -1,4 +1,10 @@
-defmodule Wumpex.Voice.RTP do
+defmodule Wumpex.Voice.Rtp do
+  @moduledoc """
+  Contains methods for generating RTP packets.
+
+  Implementation based on the [official documentation](https://discord.com/developers/docs/topics/voice-connections#encrypting-and-sending-voice-voice-packet-structure).
+  """
+
   @doc """
   Generates a "silent" frame.
   """

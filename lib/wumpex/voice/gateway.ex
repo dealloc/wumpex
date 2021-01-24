@@ -1,4 +1,12 @@
 defmodule Wumpex.Voice.Gateway do
+  @moduledoc """
+  Handles incoming events from the voice gateway.
+  The voice gateway is bound to a specific voice connection of a guild (see `Wumpex.Voice.Manager`).
+
+  This module handles the raw incoming events from the gateway's `Wumpex.Base.Websocket`.
+  The messages are decoded and handled approperiately.
+  """
+
   use Wumpex.Base.Websocket
 
   alias Wumpex.Base.Websocket
@@ -36,6 +44,7 @@ defmodule Wumpex.Voice.Gateway do
           nonce: non_neg_integer() | nil
         }
 
+  @doc false
   @spec start_link(options()) :: GenServer.on_start()
   def start_link(options) do
     endpoint = Keyword.fetch!(options, :endpoint)
@@ -69,6 +78,8 @@ defmodule Wumpex.Voice.Gateway do
     :ok
   end
 
+  @doc false
+  # Called when the websocket connection is complete.
   @impl Websocket
   def on_connected(options) do
     user_id = Keyword.fetch!(options, :user_id)
@@ -89,6 +100,8 @@ defmodule Wumpex.Voice.Gateway do
     }
   end
 
+  @doc false
+  # Handles incoming events from the gateway.
   @impl Websocket
   def handle_frame({:text, frame}, state) do
     state =
@@ -99,6 +112,8 @@ defmodule Wumpex.Voice.Gateway do
     {:noreply, state}
   end
 
+  @doc false
+  # Handles heartbeat events.
   @impl GenServer
   def handle_info({:heartbeat, interval}, state) do
     Process.send_after(self(), {:heartbeat, interval}, interval)
@@ -112,6 +127,8 @@ defmodule Wumpex.Voice.Gateway do
     {:noreply, %{state | nonce: nonce}}
   end
 
+  @doc false
+  # Handles request to send the SELECT PROTOCOL opcode.
   @impl GenServer
   def handle_cast({:select_protocol, ip, port, mode}, state) do
     send_opcode(Opcodes.select_protocol(ip, port, mode))
@@ -119,16 +136,11 @@ defmodule Wumpex.Voice.Gateway do
     {:noreply, state}
   end
 
+  @doc false
+  # Handles request to send a SPEAKING frame.
   @impl GenServer
-  def handle_cast({:speak, ssrc, flag}, state) do
-    send_opcode(%{
-      "op" => 5,
-      "d" => %{
-        "speaking" => flag,
-        "delay" => 0,
-        "ssrc" => ssrc
-      }
-    })
+  def handle_cast({:speak, ssrc, flags}, state) do
+    send_opcode(Opcodes.speaking(ssrc, flags))
 
     {:noreply, state}
   end

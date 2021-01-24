@@ -1,17 +1,40 @@
 defmodule Wumpex.Voice.Udp do
+  @moduledoc """
+  Handles the UDP connection required for voice connections.
+
+  Contains the logic for sending and receiving data over the UDP socket.
+  """
+
   use GenServer
 
   require Logger
 
+  @typedoc """
+  The options that can be passed into `start_link/1` and `init/1`.
+
+  Contains the following fields:
+  * `:ip` - The IP address to connect to.
+  * `:port` - The port to connect to.
+  * `:ssrc` - The [SSRC](https://webrtcglossary.com/ssrc/) for this voice connection.
+  * `:controller` - The `t:pid/0` of the `Wumpex.Voice.Manager` controlling this process (used for feeding setup data back).
+  * `:ip_discovery?` - Whether or not to execute IP discovery.
+  """
   @type options :: [
           ip: String.t(),
-          mode: String.t(),
           port: non_neg_integer(),
           ssrc: non_neg_integer(),
           controller: pid(),
           ip_discovery?: boolean()
         ]
 
+  @typedoc """
+  Represents the process state.
+
+  Contains the following fields:
+  * `:socket` - The UDP socket.
+  * `:remote` - A tuple containing information where to send data to.
+  * `:controller` - The `t:pid/0` of the `Wumpex.Voice.Manager` controlling this process (used for feeding setup data back).
+  """
   @type state :: %{
           socket: :gen_udp.socket(),
           remote: {:inet.ip_address(), :inet.port_number()},
@@ -23,16 +46,21 @@ defmodule Wumpex.Voice.Udp do
   """
   @opaque socket :: {:gen_udp.socket(), {:inet.ip_address(), :inet.port_number()}}
 
+  @doc """
+  Send a packet over the socket.
+  """
   @spec send_packet(socket(), binary()) :: :ok | {:error, :not_owner | :inet.posix()}
   def send_packet({socket, destination}, packet) do
     :gen_udp.send(socket, destination, packet)
   end
 
+  @doc false
   @spec start_link(options()) :: GenServer.on_start()
   def start_link(options) do
     GenServer.start_link(__MODULE__, options, [])
   end
 
+  @doc false
   @impl GenServer
   @spec init(options()) :: {:ok, state()}
   def init(options) do
@@ -70,11 +98,15 @@ defmodule Wumpex.Voice.Udp do
      }}
   end
 
+  @doc false
+  # Handles requests that want the `t:socket/0` to send data over.
   @impl GenServer
   def handle_call(:socket, _from, %{socket: socket, remote: remote} = state) do
     {:reply, {socket, remote}, state}
   end
 
+  @doc false
+  # Handles incoming UDP data, currently nothing is done with it.
   @impl GenServer
   def handle_info({:udp, _socket, _ip, _port, _packet}, state) do
     {:noreply, state}

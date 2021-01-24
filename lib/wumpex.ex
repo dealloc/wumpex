@@ -12,6 +12,16 @@ defmodule Wumpex do
   """
   @type shard :: {non_neg_integer(), non_neg_integer()}
 
+  @typedoc """
+  Represents a guild identifier.
+  """
+  @type guild :: pos_integer() | String.t()
+
+  @typedoc """
+  Represents a channel identifier.
+  """
+  @type channel :: pos_integer() | String.t()
+
   @doc """
   Fetch the bot key from configuration.
 
