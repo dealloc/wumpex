@@ -75,4 +75,47 @@ defmodule Wumpex.Voice.Opcodes do
         }
       }
     }
+
+  @doc """
+  Generates a SPEAKING opcode.
+
+      iex> Wumpex.Voice.Opcodes.speaking(0, [])
+      %{"op" => 5, "d" => %{"speaking" => 0, "delay" => 0, "ssrc" => 0}}
+
+      iex> Wumpex.Voice.Opcodes.speaking(0, [:microphone])
+      %{"op" => 5, "d" => %{"speaking" => 1, "delay" => 0, "ssrc" => 0}}
+
+      iex> Wumpex.Voice.Opcodes.speaking(0, [:microphone, :priority])
+      %{"op" => 5, "d" => %{"speaking" => 5, "delay" => 0, "ssrc" => 0}}
+
+      iex> Wumpex.Voice.Opcodes.speaking(0, [:microphone, :priority, :soundshare])
+      %{"op" => 5, "d" => %{"speaking" => 7, "delay" => 0, "ssrc" => 0}}
+  """
+  @spec speaking(non_neg_integer(), list(atom())) :: opcode()
+  def speaking(ssrc, options \\ []) do
+    use Bitwise
+
+    flag =
+      Enum.reduce(options, 0, fn type, flag ->
+        case type do
+          :microphone ->
+            flag ||| 1 <<< 0
+
+          :soundshare ->
+            flag ||| 1 <<< 1
+
+          :priority ->
+            flag ||| 1 <<< 2
+        end
+      end)
+
+    %{
+      "op" => 5,
+      "d" => %{
+        "speaking" => flag,
+        "delay" => 0,
+        "ssrc" => ssrc
+      }
+    }
+  end
 end

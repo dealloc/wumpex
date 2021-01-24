@@ -1,6 +1,11 @@
 defmodule Wumpex.Voice.Manager do
   @moduledoc """
-  Represents a voice connection and abstracts the voice gateway and UDP connection.
+  Represents a voice connection and abstracts the `Wumpex.Voice.Gateway`,
+  `Wumpex.Voice.Udp` connection and the `Wumpex.Voice.Player` process.
+
+  This module coordinates actions that require interaction across the different processes and/or modules.
+  For example, sending audio data requires sending an opcode over the voice gateway
+  and then sending encrypted audio data over the UDP socket.
   """
 
   use GenServer
@@ -13,12 +18,29 @@ defmodule Wumpex.Voice.Manager do
 
   require Logger
 
+  @typedoc """
+  The options that can be passed into `start_link/1` and `init/1`.
+
+  Contains the following fields:
+  * `:shard` - The shard on which to listen for the (regular) gateway events.
+  * `:guild` - The guild to connect to.
+  * `:channel` - The (voice) channel to connect to.
+  """
   @type options :: [
           shard: Wumpex.shard(),
-          guild: String.t(),
-          channel: String.t()
+          guild: Wumpex.guild(),
+          channel: Wumpex.channel()
         ]
 
+  @typedoc """
+  Represents the process state.
+
+  Contains the following fields:
+  * `:gateway` - The `t:pid/0` of the `Wumpex.Voice.Gateway` process.
+  * `:udp` - The `t:pid/0` of the `Wumpex.Voice.Udp` process.
+  * `:player` - The `t:pid/0` of the `Wumpex.Voice.Player` process.
+  * `:ssrc` - The [SSRC](https://webrtcglossary.com/ssrc/) for this voice connection.
+  """
   @type state :: %{
           gateway: pid(),
           udp: pid(),
@@ -26,11 +48,19 @@ defmodule Wumpex.Voice.Manager do
           ssrc: non_neg_integer()
         }
 
+  @doc false
   @spec start_link(options()) :: GenServer.on_start()
   def start_link(options) do
     GenServer.start_link(__MODULE__, options, [])
   end
 
+  @doc false
+  @spec start(options()) :: GenServer.on_start()
+  def start(options) do
+    GenServer.start(__MODULE__, options, [])
+  end
+
+  @doc false
   @impl GenServer
   @spec init(options()) :: {:ok, state()}
   def init(options) do
@@ -64,7 +94,6 @@ defmodule Wumpex.Voice.Manager do
     {:ok, udp} =
       Udp.start_link(
         ip: ip,
-        mode: "xsalsa20_poly1305",
         port: port,
         ssrc: ssrc,
         controller: self(),
@@ -87,9 +116,11 @@ defmodule Wumpex.Voice.Manager do
      }}
   end
 
+  @doc false
+  # Handles the call to play a stream/enumerable.
   @impl GenServer
   def handle_call({:play, stream}, from, state) do
-    GenServer.cast(state.gateway, {:speak, state.ssrc, 5})
+    GenServer.cast(state.gateway, {:speak, state.ssrc, [:microphone]})
 
     # Forward the call to the Player process, which will respond.
     send(state.player, {:"$gen_call", from, {:play, stream}})

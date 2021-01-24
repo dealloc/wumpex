@@ -10,6 +10,11 @@ defmodule Wumpex.Voice.VoiceServerInformation do
 
   require Logger
 
+  @typedoc """
+  Contains all information about the voice server to connect to.
+
+  This information is aggregated from `:VOICE_SERVER_UPDATE` and `:VOICE_STATE_UPDATE` events.
+  """
   @type voice_server :: %{
           token: String.t(),
           guild_id: String.t(),
@@ -17,6 +22,13 @@ defmodule Wumpex.Voice.VoiceServerInformation do
           session: String.t()
         }
 
+  @doc """
+  Attempt to retrieve the `t:voice_server/0` information from the gateway.
+
+  This will dispatch an `Opcodes.voice_state_update/3` opcode on the event gateway.
+  Once both the `:VOICE_STATE_UPDATE` and the `:VOICE_SERVER_UPDATE` event have been received
+  the aggregated information will be returned.
+  """
   @spec get_voice_server(
           shard :: Wumpex.shard(),
           guild :: String.t(),
@@ -39,6 +51,7 @@ defmodule Wumpex.Voice.VoiceServerInformation do
     end
   end
 
+  # Dispatch the voice state update opcode.
   @spec send_voice_update(shard :: Wumpex.shard(), guild :: String.t(), channel :: String.t()) ::
           :ok
   defp send_voice_update(shard, guild, channel) do
