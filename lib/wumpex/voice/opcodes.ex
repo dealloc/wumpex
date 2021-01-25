@@ -38,6 +38,25 @@ defmodule Wumpex.Voice.Opcodes do
     }
 
   @doc """
+  Generates a RESUME opcode.
+
+      iex> Wumpex.Voice.Opcodes.resume("server", "session", "token")
+      %{"op" => 7, "d" => %{"server_id" => "server", "session_id" => "session", "token" => "token"}}
+
+  See the [official documentation](https://discord.com/developers/docs/topics/voice-connections#resuming-voice-connection).
+  """
+  @spec resume(server :: String.t(), session :: String.t(), token :: String.t()) :: opcode()
+  def resume(server, session, token),
+    do: %{
+      "op" => 7,
+      "d" => %{
+        "server_id" => server,
+        "session_id" => session,
+        "token" => token
+      }
+    }
+
+  @doc """
   Generates a HEARTBEAT opcode.
 
       iex> Wumpex.Voice.Opcodes.heartbeat(nil)

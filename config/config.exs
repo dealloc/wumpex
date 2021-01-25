@@ -2,6 +2,7 @@ import Config
 
 # While testing, only show warnings.
 config :logger,
+  truncate: :infinity,
   console: [
     metadata: [:shard, :guild_id, :bucket]
   ],

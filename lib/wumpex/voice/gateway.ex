@@ -39,9 +39,17 @@ defmodule Wumpex.Voice.Gateway do
 
   Contains the following fields:
   * `:nonce` - The last nonce sent in the heartbeats.
+  * `:controller` - The `t:pid/0` of the controlling process (will receive the UDP information).
+  * `:server` - The guild we're connected to
+  * `:session` - The session token received from the `:VOICE_STATE_UPDATE`, used for resuming the connection.
+  * `:token` - The token received from the `:VOICE_SERVER_UPDATE`, used for resuming the connection.
   """
   @type state :: %{
-          nonce: non_neg_integer() | nil
+          nonce: non_neg_integer() | nil,
+          controller: pid(),
+          server: String.t(),
+          session: String.t(),
+          token: String.t()
         }
 
   @doc false
@@ -81,6 +89,7 @@ defmodule Wumpex.Voice.Gateway do
   @doc false
   # Called when the websocket connection is complete.
   @impl Websocket
+  @spec on_connected(options()) :: state()
   def on_connected(options) do
     user_id = Keyword.fetch!(options, :user_id)
     guild_id = Keyword.fetch!(options, :guild_id)
@@ -96,8 +105,31 @@ defmodule Wumpex.Voice.Gateway do
     # Return state.
     %{
       nonce: nil,
-      controller: controller
+      controller: controller,
+      server: guild_id,
+      session: session,
+      token: token
     }
+  end
+
+  @doc false
+  @impl Websocket
+  def on_reconnected(%{server: server, session: session, token: token} = state) do
+    opcode = Opcodes.resume(server, session, token)
+    send_opcode(opcode)
+
+    Logger.info("Attempting to resume")
+    state
+  end
+
+  @impl Websocket
+  def on_disconnected(%{session: nil} = state) do
+    {:stop, state}
+  end
+
+  @impl Websocket
+  def on_disconnected(state) do
+    {:retry, state}
   end
 
   @doc false
@@ -118,7 +150,16 @@ defmodule Wumpex.Voice.Gateway do
   def handle_frame({:close, 4014, reason}, state) do
     Logger.debug("Voice websocket is closing: #{inspect(reason)}")
 
-    {:noreply, state}
+    {:noreply, %{state | session: nil}}
+  end
+
+  @doc false
+  # Handles graceful shutdown, code 4006 is when our session is no longer valid.
+  @impl Websocket
+  def handle_frame({:close, 4006, reason}, state) do
+    Logger.warn("Voice websocket forcibly closed: #{inspect(reason)}")
+
+    {:noreply, %{state | session: nil}}
   end
 
   @doc false
@@ -172,6 +213,11 @@ defmodule Wumpex.Voice.Gateway do
   defp dispatch(%{"op" => 8, "d" => %{"heartbeat_interval" => interval}}, state) do
     send(self(), {:heartbeat, round(interval)})
 
+    state
+  end
+
+  # Handles RESUMED event.
+  defp dispatch(%{"op" => 9, "d" => nil}, state) do
     state
   end
 
