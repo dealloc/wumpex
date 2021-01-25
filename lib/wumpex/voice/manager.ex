@@ -155,7 +155,11 @@ defmodule Wumpex.Voice.Manager do
   @doc false
   # Handles the call to change the voice states, like (un)mute, (un)deafen and change channel.
   @impl GenServer
-  def handle_call({:connect, options}, _from, %{guild: guild, channel: channel, shard: shard} = state) do
+  def handle_call(
+        {:connect, options},
+        _from,
+        %{guild: guild, channel: channel, shard: shard} = state
+      ) do
     alias Wumpex.Gateway
     alias Wumpex.Gateway.Opcodes
 
@@ -163,10 +167,11 @@ defmodule Wumpex.Voice.Manager do
     deafen? = Keyword.get(options, :deafen, false)
     channel = Keyword.get(options, :channel, channel)
 
-    opcode = Opcodes.voice_state_update(guild, channel, [
-      mute: mute?,
-      deafen: deafen?
-    ])
+    opcode =
+      Opcodes.voice_state_update(guild, channel,
+        mute: mute?,
+        deafen: deafen?
+      )
 
     shard
     |> Gateway.via()
