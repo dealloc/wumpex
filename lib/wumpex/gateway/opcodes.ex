@@ -118,7 +118,7 @@ defmodule Wumpex.Gateway.Opcodes do
       }
     }
 
-  @spec voice_state_update(guild :: String.t(), channel :: String.t(), options :: keyword()) ::
+  @spec voice_state_update(guild :: String.t(), channel :: String.t() | nil, options :: keyword()) ::
           opcode()
   def voice_state_update(guild, channel, options \\ []),
     do: %{

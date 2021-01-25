@@ -113,6 +113,15 @@ defmodule Wumpex.Voice.Gateway do
   end
 
   @doc false
+  # Handles graceful shutdown, code 4014 is when the bot is disconnected.
+  @impl Websocket
+  def handle_frame({:close, 4014, reason}, state) do
+    Logger.debug("Voice websocket is closing: #{inspect(reason)}")
+
+    {:noreply, state}
+  end
+
+  @doc false
   # Handles heartbeat events.
   @impl GenServer
   def handle_info({:heartbeat, interval}, state) do
