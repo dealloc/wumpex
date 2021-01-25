@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
@@ -13,59 +13,57 @@ jobs:
 
     strategy:
       matrix:
-        elixir: ["1.10.4"]
-        include:
-          - elixir: "1.10.4"
-            otp: "23.0.3"
+        elixir: ["1.10.4", "1.11.0"]
+        otp: ["23.0.3"]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Test Elixir
-      uses: actions/setup-elixir@v1.4.1
-      with:
-        otp-version: ${{ matrix.otp }}
-        elixir-version: ${{ matrix.elixir }}
-    - name: Restore dependencies cache
-      uses: actions/cache@v2
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Setup local config
-      run: echo "import Config" > config/.secret.exs
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Compile app
-      run: mix compile --force --warnings-as-errors
-      env:
+      - uses: actions/checkout@v2
+      - name: Test Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Restore dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Setup local config
+        run: echo "import Config" > config/.secret.exs
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile app
+        run: mix compile --force --warnings-as-errors
+        env:
           MIX_ENV: "test"
-    - name: Run tests
-      run: mix test
+      - name: Run tests
+        run: mix test
 
   analyse:
     name: Static analysis
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Elixir
-      uses: actions/setup-elixir@v1
-      with:
-        elixir-version: '1.10.4'
-        otp-version: '23'
-    - name: Restore dependencies cache
-      uses: actions/cache@v2
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Setup local config
-      run: echo "import Config" > config/.secret.exs
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Compile app
-      run: mix compile --force --warnings-as-errors
-    - name: Run Credo
-      run: mix credo
-    - name: Check formatting
-      run: mix format --check-formatted
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: "1.11.0"
+          otp-version: "23"
+      - name: Restore dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Setup local config
+        run: echo "import Config" > config/.secret.exs
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile app
+        run: mix compile --force --warnings-as-errors
+      - name: Run Credo
+        run: mix credo
+      - name: Check formatting
+        run: mix format --check-formatted
