@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build and test ${{matrix.elixir}}
+    name: Build and test
     runs-on: ubuntu-latest
 
     strategy:
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: "1.10.4"
+          elixir-version: "1.11.0"
           otp-version: "23"
       - name: Restore dependencies cache
         uses: actions/cache@v2
