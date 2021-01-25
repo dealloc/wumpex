@@ -8,7 +8,7 @@ defmodule Wumpex.Voice.Manager do
   and then sending encrypted audio data over the UDP socket.
   """
 
-  use GenServer
+  use GenServer, restart: :transient
 
   import Wumpex.Voice.VoiceServerInformation, only: [get_voice_server: 5]
 
@@ -22,7 +22,7 @@ defmodule Wumpex.Voice.Manager do
   The options that can be passed into `start_link/1` and `init/1`.
 
   Contains the following fields:
-  * `:shard` - The shard on which to listen for the (regular) gateway events.
+  * `:shard` - The shard on which to listen for the (regular) gateway events and send outgoing events.
   * `:guild` - The guild to connect to.
   * `:channel` - The (voice) channel to connect to.
   """
@@ -40,12 +40,18 @@ defmodule Wumpex.Voice.Manager do
   * `:udp` - The `t:pid/0` of the `Wumpex.Voice.Udp` process.
   * `:player` - The `t:pid/0` of the `Wumpex.Voice.Player` process.
   * `:ssrc` - The [SSRC](https://webrtcglossary.com/ssrc/) for this voice connection.
+  * `:shard` - The shard on which to listen for the (regular) gateway events and send outgoing events.
+  * `:guild` - The guild we're connected to.
+  * `:channel` - The voice channel we're connected to.
   """
   @type state :: %{
           gateway: pid(),
           udp: pid(),
           player: pid(),
-          ssrc: non_neg_integer()
+          ssrc: non_neg_integer(),
+          shard: Wumpex.shard(),
+          guild: Wumpex.guild(),
+          channel: Wumpex.channel()
         }
 
   @doc false
@@ -112,7 +118,10 @@ defmodule Wumpex.Voice.Manager do
        gateway: gateway,
        udp: udp,
        player: player,
-       ssrc: ssrc
+       ssrc: ssrc,
+       shard: shard,
+       guild: guild,
+       channel: channel
      }}
   end
 
@@ -126,6 +135,44 @@ defmodule Wumpex.Voice.Manager do
     send(state.player, {:"$gen_call", from, {:play, stream}})
 
     {:noreply, state}
+  end
+
+  @doc false
+  # Handles the call to disconnect (channel is set to nil).
+  @impl GenServer
+  def handle_call({:connect, [channel: nil]}, _from, %{shard: shard, guild: guild} = state) do
+    alias Wumpex.Gateway
+    alias Wumpex.Gateway.Opcodes
+    opcode = Opcodes.voice_state_update(guild, nil, [])
+
+    shard
+    |> Gateway.via()
+    |> Gateway.send_opcode(opcode)
+
+    {:stop, :normal, state}
+  end
+
+  @doc false
+  # Handles the call to change the voice states, like (un)mute, (un)deafen and change channel.
+  @impl GenServer
+  def handle_call({:connect, options}, _from, %{guild: guild, channel: channel, shard: shard} = state) do
+    alias Wumpex.Gateway
+    alias Wumpex.Gateway.Opcodes
+
+    mute? = Keyword.get(options, :mute, false)
+    deafen? = Keyword.get(options, :deafen, false)
+    channel = Keyword.get(options, :channel, channel)
+
+    opcode = Opcodes.voice_state_update(guild, channel, [
+      mute: mute?,
+      deafen: deafen?
+    ])
+
+    shard
+    |> Gateway.via()
+    |> Gateway.send_opcode(opcode)
+
+    {:reply, channel, %{state | channel: channel}}
   end
 
   # Receives the UDP information that's being sent from the voice gateway's READY handler.
