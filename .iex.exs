@@ -8,8 +8,8 @@ defmodule DummyBot do
   event(DummyHandler)
 
   def voice do
-    # Wumpex.Voice.connect({0, 1}, 706_426_601_608_577_036, 706_426_601_608_577_041)
-    Wumpex.Voice.connect({0, 1}, 790_949_880_292_966_410, 790_949_880_754_864_128)
+    Wumpex.Voice.connect({0, 1}, 706_426_601_608_577_036, 706_426_601_608_577_041)
+    # Wumpex.Voice.connect({0, 1}, 790_949_880_292_966_410, 790_949_880_754_864_128)
   end
 
   def play(voice) do

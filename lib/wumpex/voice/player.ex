@@ -10,6 +10,8 @@ defmodule Wumpex.Voice.Player do
   alias Wumpex.Voice.Rtp
   alias Wumpex.Voice.Udp
 
+  require Logger
+
   @typedoc """
   The options that can be passed into `start_link/1` and `init/1`.
 
@@ -34,14 +36,16 @@ defmodule Wumpex.Voice.Player do
   * `:current` - The currently being played audio data.
   * `:sequence` - The sequence used when building RTP header data.
   * `:time` - The time used when building RTP header data.
+  * `:queue` - A list of all the audio fragments that are waiting to be played.
   """
   @type state :: %{
           ssrc: non_neg_integer(),
           secret_key: binary(),
           socket: Udp.socket(),
-          current: Enum.t() | nil,
+          current: reference() | nil,
           sequence: non_neg_integer(),
-          time: non_neg_integer()
+          time: non_neg_integer(),
+          queue: [{reference(), Enum.t()}]
         }
 
   @doc false
@@ -66,33 +70,87 @@ defmodule Wumpex.Voice.Player do
        socket: socket,
        current: nil,
        sequence: 0,
-       time: 0
+       time: 0,
+       queue: []
      }}
   end
 
   @doc false
   # Handles calls to queue/play a new audio stream.
   @impl GenServer
-  def handle_call({:play, stream}, _from, state) do
+  def handle_call({:play, stream}, _from, %{queue: []} = state) do
     key = make_ref()
+    queue = [{key, stream}]
 
     send(self(), {:play, key})
-    {:reply, key, %{state | current: stream}}
+    {:reply, key, %{state | current: key, queue: queue}}
+  end
+
+  @doc false
+  # Handles calls to queue/play a new audio stream.
+  @impl GenServer
+  def handle_call({:play, stream}, _from, %{queue: queue} = state) do
+    key = make_ref()
+    queue = queue ++ [{key, stream}]
+
+    {:reply, key, %{state | queue: queue}}
   end
 
   # Play audio fragment and queue the next audio fragment.
   @impl GenServer
-  def handle_info({:play, key}, %{current: stream} = state) do
-    [frame] = Enum.take(stream, 1)
-    stream = Enum.drop(stream, 1)
+  def handle_info({:play, key}, %{current: current, queue: queue} = state) when key == current do
+    [{^key, stream} | queue] = queue
+    {frame, new_stream} = pop_frame(stream)
 
     packet = Rtp.encode(frame, state.sequence, state.time, state.ssrc, state.secret_key)
     Udp.send_packet(state.socket, packet)
 
-    unless Enum.empty?(stream) do
-      Process.send_after(self(), {:play, key}, 20)
+    {new_current, new_queue} =
+      if Enum.empty?(new_stream) do
+        send_silence(state.socket)
+        get_next_item(queue)
+      else
+        Process.send_after(self(), {:play, key}, 20)
+
+        {key, [{key, new_stream}] ++ queue}
+      end
+
+    {:noreply,
+     %{
+       state
+       | sequence: state.sequence + 1,
+         time: state.time + 960,
+         queue: new_queue,
+         current: new_current
+     }}
+  end
+
+  @spec send_silence(Udp.socket()) :: :ok
+  defp send_silence(socket) do
+    for _i <- 1..5 do
+      Udp.send_packet(socket, Rtp.silence())
     end
 
-    {:noreply, %{state | sequence: state.sequence + 1, time: state.time + 960, current: stream}}
+    :ok
+  end
+
+  # Pop the frame from the stream (uses Enum to support all Enumerable types).
+  @spec pop_frame(Enum.t()) :: {binary(), Enum.t()}
+  defp pop_frame(stream) do
+    [frame] = Enum.take(stream, 1)
+
+    {frame, Enum.drop(stream, 1)}
+  end
+
+  @spec get_next_item(queue :: list()) :: {reference() | nil, list()}
+  defp get_next_item(queue) do
+    case Enum.take(queue, 1) do
+      [] ->
+        {nil, []}
+
+      [{key, _stream}] ->
+        Process.send_after(self(), {:play, key}, 20)
+        {key, queue}
+    end
   end
 end
