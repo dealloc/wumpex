@@ -63,7 +63,7 @@ defmodule Wumpex do
        }
      }} = Ratelimit.request({:get, "/users/@me", "", [], []}, {:user, :me})
 
-     Application.put_env(:wumpex, :user_id, bot_id)
-     bot_id
+    Application.put_env(:wumpex, :user_id, bot_id)
+    bot_id
   end
 end

@@ -43,9 +43,10 @@ defmodule Wumpex.Voice do
   """
   @spec set_state(voice :: pid(), options :: list(atom())) :: :ok
   def set_state(voice, options) do
-    options = options
-    |> Enum.map(fn option -> {option, true} end)
-    |> Keyword.take([:mute, :deafen])
+    options =
+      options
+      |> Enum.map(fn option -> {option, true} end)
+      |> Keyword.take([:mute, :deafen])
 
     GenServer.call(voice, {:connect, options})
     :ok
