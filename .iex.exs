@@ -6,6 +6,16 @@ defmodule DummyBot do
 
   guild(DummyHandler)
   event(DummyHandler)
+
+  def voice do
+    # Wumpex.Voice.connect({0, 1}, 706_426_601_608_577_036, 706_426_601_608_577_041)
+    Wumpex.Voice.connect({0, 1}, 790_949_880_292_966_410, 790_949_880_754_864_128)
+  end
+
+  def play(voice) do
+    stream = File.read!("/home/dealloc/encoded.opus")
+    Wumpex.Voice.play(voice, :erlang.binary_to_term(stream))
+  end
 end
 
 defmodule DummyHandler do
