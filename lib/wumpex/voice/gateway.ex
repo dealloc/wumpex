@@ -174,6 +174,7 @@ defmodule Wumpex.Voice.Gateway do
     |> Opcodes.heartbeat()
     |> send_opcode()
 
+    Logger.debug("Sent heartbeat #{nonce}")
     {:noreply, %{state | nonce: nonce}}
   end
 
@@ -183,6 +184,7 @@ defmodule Wumpex.Voice.Gateway do
   def handle_cast({:select_protocol, ip, port, mode}, state) do
     send_opcode(Opcodes.select_protocol(ip, port, mode))
 
+    Logger.debug("Voice protocol selected: #{mode}")
     {:noreply, state}
   end
 
@@ -204,6 +206,7 @@ defmodule Wumpex.Voice.Gateway do
       "ssrc" => ssrc
     } = event
 
+    Logger.debug("Received voice UDP information from gateway")
     send(controller, {:udp_info, ip, port, modes, ssrc})
 
     state
@@ -242,6 +245,7 @@ defmodule Wumpex.Voice.Gateway do
       "secret_key" => secret_key
     } = event
 
+    Logger.debug("Received encryption key from voice gateway")
     send(controller, {:secret_key, :erlang.list_to_binary(secret_key)})
 
     state
