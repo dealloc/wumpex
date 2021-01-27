@@ -57,14 +57,18 @@ defmodule Wumpex.Voice.Manager do
   @doc false
   @spec start_link(options()) :: GenServer.on_start()
   def start_link(options) do
-    GenServer.start_link(__MODULE__, options, [])
+    guild = Keyword.fetch!(options, :guild)
+    GenServer.start_link(__MODULE__, options, name: via(guild))
   end
 
-  @doc false
-  @spec start(options()) :: GenServer.on_start()
-  def start(options) do
-    GenServer.start(__MODULE__, options, [])
-  end
+  @doc """
+  Gets the server name of the `Wumpex.Voice.Manager` process for a given guild.
+  You can use this to get the `pid` of the connection or to send commands to it.
+
+  See also `Wumpex.Gateway.via/1` for usage information.
+  """
+  @spec via(guild :: Wumpex.guild()) :: GenServer.server()
+  def via(guild), do: {:via, Wumpex.Voice.VoiceLedger, "voice:#{guild}"}
 
   @doc false
   @impl GenServer

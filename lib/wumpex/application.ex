@@ -8,8 +8,10 @@ defmodule Wumpex.Application do
     children = [
       {Wumpex.Api.Ratelimit, []},
       {Wumpex.Sharding.ShardLedger, []},
+      {Wumpex.Voice.VoiceLedger, []},
       {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.GatewaySupervisor},
       {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.GatewayListenerSupervisor},
+      {DynamicSupervisor, strategy: :one_for_one, name: Wumpex.VoiceSupervisor},
       %{id: :pg, start: {:pg, :start_link, [:wumpex]}}
     ]
 
