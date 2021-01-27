@@ -82,6 +82,7 @@ defmodule Wumpex.Voice.Player do
     key = make_ref()
     queue = [{key, stream}]
 
+    Logger.info("Begin playing #{inspect(key)}")
     send(self(), {:play, key})
     {:reply, key, %{state | current: key, queue: queue}}
   end
@@ -93,6 +94,7 @@ defmodule Wumpex.Voice.Player do
     key = make_ref()
     queue = queue ++ [{key, stream}]
 
+    Logger.info("Queued #{inspect(key)}, #{Enum.count(queue) - 1} items before it.")
     {:reply, key, %{state | queue: queue}}
   end
 
@@ -108,6 +110,8 @@ defmodule Wumpex.Voice.Player do
     {new_current, new_queue} =
       if Enum.empty?(new_stream) do
         send_silence(state.socket)
+
+        Logger.info("Finished playing #{inspect(key)}")
         get_next_item(queue)
       else
         Process.send_after(self(), {:play, key}, 20)
@@ -146,9 +150,11 @@ defmodule Wumpex.Voice.Player do
   defp get_next_item(queue) do
     case Enum.take(queue, 1) do
       [] ->
+        Logger.info("Finished playing all items in queue")
         {nil, []}
 
       [{key, _stream}] ->
+        Logger.info("Begin playing #{inspect(key)}")
         Process.send_after(self(), {:play, key}, 20)
         {key, queue}
     end

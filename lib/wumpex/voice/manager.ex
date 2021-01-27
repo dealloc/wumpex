@@ -110,7 +110,7 @@ defmodule Wumpex.Voice.Manager do
     Gateway.select_protocol(gateway, local_ip, local_port, "xsalsa20_poly1305")
 
     secret_key = receive_secret_key()
-    Logger.info("Received secret key from voice gateway")
+    Logger.debug("Received secret key from voice gateway")
     {:ok, player} = Player.start_link(secret_key: secret_key, ssrc: ssrc, udp: udp)
 
     {:ok,
@@ -149,6 +149,7 @@ defmodule Wumpex.Voice.Manager do
     |> Gateway.via()
     |> Gateway.send_opcode(opcode)
 
+    Logger.info("Voice connection closing")
     {:stop, :normal, state}
   end
 
@@ -177,6 +178,7 @@ defmodule Wumpex.Voice.Manager do
     |> Gateway.via()
     |> Gateway.send_opcode(opcode)
 
+    Logger.info("Voice state changed (mute:#{mute?} deafen?: #{deafen?} channel: #{channel})")
     {:reply, channel, %{state | channel: channel}}
   end
 

@@ -58,7 +58,7 @@ defmodule Wumpex.Voice.VoiceServerInformation do
     opcode =
       Opcodes.voice_state_update(guild, channel,
         mute: false,
-        deafen: true
+        deafen: false
       )
 
     shard
