@@ -37,9 +37,12 @@ defmodule Wumpex.Voice do
   @doc """
   Disconnects the given voice connection from it's currently connected channel.
   """
-  @spec disconnect(voice :: pid()) :: :ok
+  @spec disconnect(voice :: GenServer.server()) :: :ok
   def disconnect(voice) do
-    GenServer.call(voice, {:connect, [channel: nil]})
+    voice
+    |> GenServer.whereis()
+    |> GenServer.call({:connect, [channel: nil]})
+
     :ok
   end
 
@@ -50,20 +53,26 @@ defmodule Wumpex.Voice do
   The `:options` parameter is a list that takes either `:mute` or `:deafen` as it's members.
   Passing in either of these two will cause the bot to mute or deafen (respectively).
   """
-  @spec set_state(voice :: pid(), options :: list(atom())) :: :ok
+  @spec set_state(voice :: GenServer.server(), options :: list(atom())) :: :ok
   def set_state(voice, options) do
     options =
       options
       |> Enum.map(fn option -> {option, true} end)
       |> Keyword.take([:mute, :deafen])
 
-    GenServer.call(voice, {:connect, options})
+    voice
+    |> GenServer.whereis()
+    |> GenServer.call({:connect, options})
+
     :ok
   end
 
-  @spec change_channel(voice :: pid(), channel :: Wumpex.channel()) :: :ok
+  @spec change_channel(voice :: GenServer.server(), channel :: Wumpex.channel()) :: :ok
   def change_channel(voice, channel) do
-    GenServer.call(voice, {:connect, [channel: channel]})
+    voice
+    |> GenServer.whereis()
+    |> GenServer.call({:connect, [channel: channel]})
+
     :ok
   end
 
@@ -75,8 +84,16 @@ defmodule Wumpex.Voice do
   If you want to cancel the playback (either while it's playing or when it's still queued),
   you can use this reference to identity the playback request.
   """
-  @spec play(voice :: pid(), stream :: Enum.t()) :: reference()
+  @spec play(voice :: GenServer.server(), stream :: Enum.t()) :: reference()
   def play(voice, stream) do
-    GenServer.call(voice, {:play, stream})
+    voice
+    |> GenServer.whereis()
+    |> GenServer.call({:play, stream})
   end
+
+  @doc """
+  Get the server name for the given guild.
+  """
+  @spec for(guild :: Wumpex.guild()) :: GenServer.server()
+  def for(guild), do: Manager.via(guild)
 end
