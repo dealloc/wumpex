@@ -9,6 +9,9 @@ defmodule Wumpex.Voice do
   Connects to a given voice channel.
 
   Returns `{:ok, pid}` where `pid` is the `t:pid/0` of the voice connection.
+  If there's already a voice connection active for the given guild,
+  the bot will change to the given channel (using `change_channel/2`)
+  and return `{:ok, pid}` as if started (allowing you to match on the same pattern for all success cases).
 
   Takes the following parameters:
   * `:shard` - The shard on which the `:guild` is running.
@@ -16,13 +19,19 @@ defmodule Wumpex.Voice do
   * `:channel` - The ID of the channel to connect to.
   """
   @spec connect(shard :: Wumpex.shard(), guild :: Wumpex.guild(), channel :: Wumpex.channel()) ::
-          GenServer.on_start()
+          Supervisor.on_start_child()
   def connect(shard, guild, channel) do
-    Manager.start_link(
-      shard: shard,
-      guild: guild,
-      channel: channel
-    )
+    case GenServer.whereis(Manager.via(guild)) do
+      nil ->
+        DynamicSupervisor.start_child(
+          Wumpex.VoiceSupervisor,
+          {Manager, [shard: shard, guild: guild, channel: channel]}
+        )
+
+      voice ->
+        change_channel(voice, channel)
+        {:ok, voice}
+    end
   end
 
   @doc """
@@ -49,6 +58,12 @@ defmodule Wumpex.Voice do
       |> Keyword.take([:mute, :deafen])
 
     GenServer.call(voice, {:connect, options})
+    :ok
+  end
+
+  @spec change_channel(voice :: pid(), channel :: Wumpex.channel()) :: :ok
+  def change_channel(voice, channel) do
+    GenServer.call(voice, {:connect, [channel: channel]})
     :ok
   end
 
