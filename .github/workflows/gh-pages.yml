@@ -10,13 +10,18 @@ jobs:
     name: Generate and publish
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        elixir: ["1.11.0"]
+        otp: ["23.0.3"]
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Elixir
-      uses: actions/setup-elixir@v1
+      uses: erlef/setup-elixir@v1
       with:
-        elixir-version: '1.10.4'
-        otp-version: '23.0.3'
+        otp-version: ${{ matrix.otp }}
+        elixir-version: ${{ matrix.elixir }}
 
     - name: Restore dependencies cache
       uses: actions/cache@v2
