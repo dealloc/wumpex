@@ -15,6 +15,8 @@ defmodule Wumpex.Base.Websocket do
   * `:path` - the path to which the websocket will connect (ex: `"/?v=8"`) and can (but doesn't have to) contain a query string.
   * `:timeout` is a `t:timeout/0` used to determine how long to wait for connecting and upgrading.
 
+  See `t:options/0` for more information.
+
   ## Example
 
   A module implementing the behaviour will be able to respond to incoming messages by implementing `handle_frame`:
@@ -24,7 +26,7 @@ defmodule Wumpex.Base.Websocket do
 
         require Logger
 
-        def on_connected(_options, state) do
+        def on_connected(_options) do
           Logger.info("Connected!")
         end
 
@@ -72,7 +74,7 @@ defmodule Wumpex.Base.Websocket do
         ]
 
   @typedoc """
-  Reconnection strategy to use when calling `on_disconnected/1`.
+  Reconnection strategy to use when returning from `on_disconnected/1`.
 
   There are currently 3 reconnection strategies supported:
   * `:stop` - No reconnection, this will gracefully shut down the server.
