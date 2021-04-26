@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Api.Ratelimit — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Api.Ratelimit <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>The <a href="#content"><code class="inline">Wumpex.Api.Ratelimit</code></a> module handles dispatching HTTP requests through the <a href="Wumpex.Api.html"><code class="inline">Wumpex.Api</code></a> module, but handles rate limits.</p><h2 id="module-examples" class="section-heading">
+  <a href="#module-examples" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Examples
+</h2>
+<pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Api.Ratelimit</span><span class="o">.</span><span class="n">get</span><span class="p" data-group-id="0799765220-1">(</span><span class="s">&quot;http://localhost/test&quot;</span><span class="p" data-group-id="0799765220-1">)</span><span class="w">
+</span><span class="p" data-group-id="0799765220-2">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="c">_response</span><span class="p" data-group-id="0799765220-2">}</span></code></pre>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:bucket_tag/0">bucket_tag()</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:state/0">state()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The state of the <a href="#content"><code class="inline">Wumpex.Api.Ratelimit</code></a> process.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#child_spec/1">child_spec(init_arg)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#request/3">request(http_call, tag, timeout \\ 5000)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Executes a given request using <a href="Wumpex.Api.html#request/5"><code class="inline">Wumpex.Api.request/5</code></a> using ratelimits.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:bucket_tag/0">
+
+  <div class="detail-header">
+    <a href="#t:bucket_tag/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">bucket_tag()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit.ex#L16" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>bucket_tag() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">tuple</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:state/0">
+
+  <div class="detail-header">
+    <a href="#t:state/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">state()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit.ex#L26" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>state() :: %{
+  buckets: <a href="http://www.erlang.org/doc/man/ets.html#type-tid">:ets.tid</a>(),
+  bucket_states: <a href="http://www.erlang.org/doc/man/ets.html#type-tid">:ets.tid</a>(),
+  well: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>()
+}</pre>
+
+      </div>
+
+<p>The state of the <a href="#content"><code class="inline">Wumpex.Api.Ratelimit</code></a> process.</p><p>Contains the following values:</p><ul><li><code class="inline">:buckets</code> - The <code class="inline">:ets</code> table containing all the bucket identifiers</li><li><code class="inline">:bucket_states</code> - The <code class="inline">:ets</code> table containing the state for all buckets.</li><li><code class="inline">:well</code> - The <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0"><code class="inline">GenServer.server/0</code></a> of the <a href="Wumpex.Api.Ratelimit.Well.html"><code class="inline">Wumpex.Api.Ratelimit.Well</code></a> process.</li></ul>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="child_spec/1">
+
+  <div class="detail-header">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">child_spec(init_arg)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit.ex#L10" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="request/3">
+
+    <span id="request/2"></span>
+
+  <div class="detail-header">
+    <a href="#request/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">request(http_call, tag, timeout \\ 5000)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit.ex#L53" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>request(
+  <a href="Wumpex.Api.Ratelimit.StatelessBucket.html#t:http_call/0">Wumpex.Api.Ratelimit.StatelessBucket.http_call</a>(),
+  <a href="#t:bucket_tag/0">bucket_tag</a>(),
+  <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()
+) :: <a href="Wumpex.Api.Ratelimit.StatelessBucket.html#t:http_response/0">Wumpex.Api.Ratelimit.StatelessBucket.http_response</a>() | {:error, :bounced}</pre>
+
+      </div>
+
+<p>Executes a given request using <a href="Wumpex.Api.html#request/5"><code class="inline">Wumpex.Api.request/5</code></a> using ratelimits.</p><p>This means that if a rate limit would be encountered the request will either be bounced or delayed, depending on the configured timeout and when the resource will become available.</p><p>For example, imagine the URL <code class="inline">&quot;/test&quot;</code> can be called once per 10 seconds:</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Api.Ratelimit</span><span class="o">.</span><span class="n">request</span><span class="p" data-group-id="7632740572-1">(</span><span class="p" data-group-id="7632740572-2">{</span><span class="ss">:get</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://localhost/test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-3">[</span><span class="p" data-group-id="7632740572-3">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-4">[</span><span class="p" data-group-id="7632740572-4">]</span><span class="p" data-group-id="7632740572-2">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-5">{</span><span class="s">&quot;ratelimit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;demo&quot;</span><span class="p" data-group-id="7632740572-5">}</span><span class="p" data-group-id="7632740572-1">)</span><span class="w">
+  </span><span class="p" data-group-id="7632740572-6">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-7">%</span><span class="nc" data-group-id="7632740572-7">HTTPoison.Response</span><span class="p" data-group-id="7632740572-7">{</span><span class="p" data-group-id="7632740572-7">}</span><span class="p" data-group-id="7632740572-6">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Api.Ratelimit</span><span class="o">.</span><span class="n">request</span><span class="p" data-group-id="7632740572-8">(</span><span class="p" data-group-id="7632740572-9">{</span><span class="ss">:get</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;http://localhost/test&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-10">[</span><span class="p" data-group-id="7632740572-10">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-11">[</span><span class="p" data-group-id="7632740572-11">]</span><span class="p" data-group-id="7632740572-9">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7632740572-12">{</span><span class="s">&quot;ratelimit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;demo&quot;</span><span class="p" data-group-id="7632740572-12">}</span><span class="p" data-group-id="7632740572-8">)</span><span class="w">
+  </span><span class="p" data-group-id="7632740572-13">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="ss">:bounced</span><span class="p" data-group-id="7632740572-13">}</span></code></pre><p>The first request executes and returns the response (an instance of <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Response.html#t:t/0"><code class="inline">HTTPoison.Response.t/0</code></a>), but the second request gets <code class="inline">{:error, :bounced}</code>.
+This is because after the first request we'd have to wait 10s, while we specified we only want to wait up to 5s (default, can be overriden by passing in a third parameter).
+If we'd have passed in 11s for example, the request would have been delayed 10s before executing, after which the response would be returned.</p><p>You can choose to <em>always</em> execute the request, regardless of how long it would take until it can execute by passing <code class="inline">:infinity</code> as the third parameter.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

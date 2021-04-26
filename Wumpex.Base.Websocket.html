@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Base.Websocket — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Base.Websocket <small>behaviour</small> <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>A behaviour module for implementing the client of a websocket connection.</p><p>A Websocket is a process like a common <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> but handles the opening of the websocket transparently for you.
+All extensions made to the regular <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a> have been designed to closely match the behaviour of a regular <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a>.</p><p>For example the <code class="inline">handle_frame</code> callback has very similiar return values to the <code class="inline">handle_call</code> callback of the GenServer.</p><h2 id="module-options" class="section-heading">
+  <a href="#module-options" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Options
+</h2>
+<p>The Websocket requires a few options to be passed in the <code class="inline">start_link</code> method:</p><ul><li><code class="inline">:host</code> - the hostname (ex: <code class="inline">&quot;gateway.discord.gg&quot;</code>).</li><li><code class="inline">:port</code> - the port to connect to (usually <code class="inline">80</code> for unencrypted and <code class="inline">443</code> for encrypted connections).</li><li><code class="inline">:path</code> - the path to which the websocket will connect (ex: <code class="inline">&quot;/?v=8&quot;</code>) and can (but doesn't have to) contain a query string.</li><li><code class="inline">:timeout</code> is a <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types"><code class="inline">timeout/0</code></a> used to determine how long to wait for connecting and upgrading.</li></ul><p>See <a href="#t:options/0"><code class="inline">options/0</code></a> for more information.</p><h2 id="module-example" class="section-heading">
+  <a href="#module-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Example
+</h2>
+<p>A module implementing the behaviour will be able to respond to incoming messages by implementing <code class="inline">handle_frame</code>:</p><pre><code class="nohighlight makeup elixir"><span class="kd">defmodule</span><span class="w"> </span><span class="nc">ExampleWebsocket</span><span class="w"> </span><span class="k" data-group-id="4696070260-1">do</span><span class="w">
+  </span><span class="kn">use</span><span class="w"> </span><span class="nc">Wumpex.Base.Websocket</span><span class="w">
+
+  </span><span class="kn">require</span><span class="w"> </span><span class="nc">Logger</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">on_connected</span><span class="p" data-group-id="4696070260-2">(</span><span class="c">_options</span><span class="p" data-group-id="4696070260-2">)</span><span class="w"> </span><span class="k" data-group-id="4696070260-3">do</span><span class="w">
+    </span><span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="p" data-group-id="4696070260-4">(</span><span class="s">&quot;Connected!&quot;</span><span class="p" data-group-id="4696070260-4">)</span><span class="w">
+  </span><span class="k" data-group-id="4696070260-3">end</span><span class="w">
+
+  </span><span class="kd">def</span><span class="w"> </span><span class="nf">handle_frame</span><span class="p" data-group-id="4696070260-5">(</span><span class="p" data-group-id="4696070260-6">{</span><span class="ss">:text</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p" data-group-id="4696070260-6">}</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="4696070260-5">)</span><span class="w"> </span><span class="k" data-group-id="4696070260-7">do</span><span class="w">
+    </span><span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="p" data-group-id="4696070260-8">(</span><span class="s">&quot;Received message&quot;</span><span class="p" data-group-id="4696070260-8">)</span><span class="w">
+
+    </span><span class="p" data-group-id="4696070260-9">{</span><span class="ss">:noreply</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p" data-group-id="4696070260-9">}</span><span class="w">
+  </span><span class="k" data-group-id="4696070260-7">end</span><span class="w">
+</span><span class="k" data-group-id="4696070260-1">end</span></code></pre>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:frame/0">frame()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents a single websocket frame that can be sent or received over the websocket.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:options/0">options()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The options that are required to be passed to the websocket on startup.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:reconnect_strategy/0">reconnect_strategy()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Reconnection strategy to use when returning from <code class="inline">on_disconnected/1</code>.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#send/2">send(websocket, frame_or_frames)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Send one or more frames over the given websocket.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/2">start_link(module, init_args)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>See <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/2"><code class="inline">GenServer.start_link/2</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/3">start_link(module, init_args, options)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>See <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/3"><code class="inline">GenServer.start_link/3</code></a>.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-callbacks summary">
+    <h2>
+      <a href="#callbacks">Callbacks</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:handle_frame/2">handle_frame(frame, state)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Invoked to handle incoming frames from the websocket connection.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:on_connected/1">on_connected(options)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Invoked when the websocket connects to the server.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:on_disconnected/1">on_disconnected(state)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Called when the socket connection closes.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#c:on_reconnected/1">on_reconnected(state)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Called when the socket is reconnected.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:frame/0">
+
+  <div class="detail-header">
+    <a href="#t:frame/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">frame()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L53" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>frame() ::
+  {:text, <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()}
+  | {:binary, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()}
+  | {:close, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()}
+  | :close</pre>
+
+      </div>
+
+<p>Represents a single websocket frame that can be sent or received over the websocket.</p><p>There's three supported frames:</p><ul><li><code class="inline">{:text, message}</code> - Used to send/receive textual data.</li><li><code class="inline">{:binary, message}</code> - Used to send/receive binary data (like <a href="https://erlang.org/doc/apps/erts/erl_ext_dist.html">ETF</a>).</li><li><code class="inline">:close</code> or <code class="inline">{:close, status, reason}</code> - Signals that the websocket will be closed (to the receiving side), optionall you can pass in a status code and a reason.</li></ul><p><code class="inline">:ping</code> and <code class="inline">:pong</code> frames are handled internally and not exposed.</p>
+  </section>
+</section>
+<section class="detail" id="t:options/0">
+
+  <div class="detail-header">
+    <a href="#t:options/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">options()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L69" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>options() :: [
+  host: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  port: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  path: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  timeout: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()
+]</pre>
+
+      </div>
+
+<p>The options that are required to be passed to the websocket on startup.</p><p><code class="inline">host</code> is the hostname (ex: <code class="inline">&quot;gateway.discord.gg&quot;</code>),
+<code class="inline">port</code> is the port to connect to (usually <code class="inline">80</code> for unencrypted and <code class="inline">443</code> for encrypted connections),
+<code class="inline">path</code> is the path to which the websocket will connect (ex: <code class="inline">&quot;/?v=8&quot;</code>) and can (but doesn't have to) contain a query string
+and finally <code class="inline">timeout</code> is a <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types"><code class="inline">timeout/0</code></a> used to determine how long to wait for connecting and upgrading.</p><p>All options are required to be passed in.</p>
+  </section>
+</section>
+<section class="detail" id="t:reconnect_strategy/0">
+
+  <div class="detail-header">
+    <a href="#t:reconnect_strategy/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">reconnect_strategy()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L87" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>reconnect_strategy() :: :stop | :retry | {:retry, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()}</pre>
+
+      </div>
+
+<p>Reconnection strategy to use when returning from <code class="inline">on_disconnected/1</code>.</p><p>There are currently 3 reconnection strategies supported:</p><ul><li><code class="inline">:stop</code> - No reconnection, this will gracefully shut down the server.</li><li><code class="inline">:retry</code> - Immediately attempt to reconnect.</li><li><code class="inline">{:retry, delay}</code> - Wait for <code class="inline">delay</code> milliseconds, then attempt to reconnect.</li></ul><p>Note that when using the delayed reconnect, the server will block and not process any messages until reconnection is complete.
+This is done to prevent receiving messages in the server when it is in a disconnected state.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="send/2">
+
+  <div class="detail-header">
+    <a href="#send/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">send(websocket, frame_or_frames)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L347" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>send(websocket :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), frame_or_frames :: <a href="#t:frame/0">frame</a>() | [<a href="#t:frame/0">frame</a>()]) :: :ok</pre>
+
+      </div>
+
+<p>Send one or more frames over the given websocket.</p><p><code class="inline">websocket</code> is the pid of the websocket, <code class="inline">frame_or_frames</code> is one (or a list of) <a href="#t:frame/0"><code class="inline">frame/0</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="start_link/2">
+
+  <div class="detail-header">
+    <a href="#start_link/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">start_link(module, init_args)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L353" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/2"><code class="inline">GenServer.start_link/2</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="start_link/3">
+
+  <div class="detail-header">
+    <a href="#start_link/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">start_link(module, init_args, options)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L351" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>See <a href="https://hexdocs.pm/elixir/GenServer.html#start_link/3"><code class="inline">GenServer.start_link/3</code></a>.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="callbacks" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#callbacks">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Callbacks
+          </h1>
+          <div class="callbacks-list">
+<section class="detail" id="c:handle_frame/2">
+
+  <div class="detail-header">
+    <a href="#c:handle_frame/2" class="detail-link" title="Link to this callback">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature">handle_frame(frame, state)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L135" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>handle_frame(frame :: <a href="#t:frame/0">frame</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
+  {:reply, reply, new_state}
+  | {:reply, reply, new_state, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()}
+  | {:noreply, new_state}
+  | {:noreply, new_state, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>()}
+  | {:stop, new_state}
+  | {:stop, close_reason, new_state}
+when reply: <a href="#t:frame/0">frame</a>(),
+     new_state: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+     close_reason: {<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">iodata</a>()}</pre>
+
+      </div>
+
+<p>Invoked to handle incoming frames from the websocket connection.</p><p><code class="inline">frame</code> is the <a href="#t:frame/0"><code class="inline">frame/0</code></a> send by the server this websocket is connected to and <code class="inline">state</code> is the current state of the process.</p><p>Returning <code class="inline">{:reply, frame, new_state}</code> will dispatch <code class="inline">frame</code> on the websocket and set <code class="inline">new_state</code> as the state of the process,
+while returning <code class="inline">{:noreply, new_state}</code> will not send any frames and set <code class="inline">new_state</code> as the new state of the process.</p><p>You can also use the <code class="inline">:reply</code> and <code class="inline">:noreply</code> returns with an additional <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types"><code class="inline">timeout/0</code></a> parameter,
+which behaves the same but will also set a timeout (See <a href="https://hexdocs.pm/elixir/GenServer.html#module-timeouts">GenServer timeout</a> section for more information).</p><p>You can also reply with <code class="inline">{:stop, new_state}</code> to gracefully close the connection (after sending a close frame to the server) and terminate the process,
+or <code class="inline">{:stop, close_reason, new_state}</code> to send a status and reason along in the close frame that's being sent to the server.</p><p>This callback and it's return types have intentionally been designed to be similiar to those of <a href="https://hexdocs.pm/elixir/GenServer.html#c:handle_call/3"><code class="inline">GenServer.handle_call/3</code></a>,
+with the exception of the hibernate options, which is intentional.</p>
+  </section>
+</section>
+<section class="detail" id="c:on_connected/1">
+
+  <div class="detail-header">
+    <a href="#c:on_connected/1" class="detail-link" title="Link to this callback">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature">on_connected(options)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L99" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>on_connected(options :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
+
+      </div>
+
+<p>Invoked when the websocket connects to the server.</p><p>This method is invoked the first time the websocket connects.
+This method can be compared with the <code class="inline">init/1</code> method of the <a href="https://hexdocs.pm/elixir/GenServer.html"><code class="inline">GenServer</code></a>, and is used to set the state of the process.</p><p>It receives the options passed to <code class="inline">start_link</code></p><p>The returned value will be used as the process state.</p>
+  </section>
+</section>
+<section class="detail" id="c:on_disconnected/1">
+
+  <div class="detail-header">
+    <a href="#c:on_disconnected/1" class="detail-link" title="Link to this callback">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature">on_disconnected(state)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L109" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+      <span class="note">(optional)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>on_disconnected(state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) :: {<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), <a href="#t:reconnect_strategy/0">reconnect_strategy</a>()}</pre>
+
+      </div>
+
+<p>Called when the socket connection closes.</p><p><code class="inline">state</code> is the current process state,
+and the return value if this function is a tuple with the first element being the new process state and the second the <a href="#t:reconnect_strategy/0"><code class="inline">reconnect_strategy/0</code></a> to use.</p><p>See <a href="#t:reconnect_strategy/0"><code class="inline">reconnect_strategy/0</code></a> for more information.</p>
+  </section>
+</section>
+<section class="detail" id="c:on_reconnected/1">
+
+  <div class="detail-header">
+    <a href="#c:on_reconnected/1" class="detail-link" title="Link to this callback">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature">on_reconnected(state)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/base/websocket.ex#L116" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+      <span class="note">(optional)</span>
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>on_reconnected(state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()</pre>
+
+      </div>
+
+<p>Called when the socket is reconnected.</p><p>This function takes the current state and returns the new state for the process.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

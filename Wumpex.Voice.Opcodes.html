@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Voice.Opcodes — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Voice.Opcodes <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Provides methods for generating opcodes.</p><p>See the [official documentation](<a href="https://discord.com/developers/docs/topics/opcodes-and-status-codes#voice.">https://discord.com/developers/docs/topics/opcodes-and-status-codes#voice.</a></p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:opcode/0">opcode()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents a generic OPCODE response.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#heartbeat/1">heartbeat(nonce)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generates a HEARTBEAT opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#identify/4">identify(server, user, session, token)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generates an IDENTIFY opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#resume/3">resume(server, session, token)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generates a RESUME opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#select_protocol/3">select_protocol(ip, port, mode)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>generates a SELECT PROTOCOL opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#speaking/2">speaking(ssrc, options \\ [])</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generates a SPEAKING opcode.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:opcode/0">
+
+  <div class="detail-header">
+    <a href="#t:opcode/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">opcode()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L13" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>opcode() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()</pre>
+
+      </div>
+
+<p>Represents a generic OPCODE response.</p><p>Opcodes usually have a top level <code class="inline">&quot;op&quot;</code> field which contains the numerical ID and a <code class="inline">&quot;d&quot;</code> field which contains the payload.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="heartbeat/1">
+
+  <div class="detail-header">
+    <a href="#heartbeat/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">heartbeat(nonce)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L71" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>heartbeat(nonce :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generates a HEARTBEAT opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">heartbeat</span><span class="p" data-group-id="2784863265-1">(</span><span class="no">nil</span><span class="p" data-group-id="2784863265-1">)</span><span class="w">
+</span><span class="p" data-group-id="2784863265-2">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="2784863265-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">heartbeat</span><span class="p" data-group-id="2784863265-3">(</span><span class="mi">100</span><span class="p" data-group-id="2784863265-3">)</span><span class="w">
+</span><span class="p" data-group-id="2784863265-4">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="2784863265-4">}</span></code></pre><p>See the <a href="https://discord.com/developers/docs/topics/voice-connections#heartbeating-example-heartbeat-payload">official documentation</a>.</p>
+  </section>
+</section>
+<section class="detail" id="identify/4">
+
+  <div class="detail-header">
+    <a href="#identify/4" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">identify(server, user, session, token)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L29" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>identify(
+  server :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  user :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  session :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  token :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generates an IDENTIFY opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">identify</span><span class="p" data-group-id="7893855037-1">(</span><span class="s">&quot;server&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;session&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="p" data-group-id="7893855037-1">)</span><span class="w">
+</span><span class="p" data-group-id="7893855037-2">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="7893855037-3">%{</span><span class="s">&quot;server_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;server&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;user_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;session_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;session&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="p" data-group-id="7893855037-3">}</span><span class="p" data-group-id="7893855037-2">}</span></code></pre><p>See the <a href="https://discord.com/developers/docs/topics/voice-connections#establishing-a-voice-websocket-connection-example-voice-identify-payload">official documentation</a>.</p>
+  </section>
+</section>
+<section class="detail" id="resume/3">
+
+  <div class="detail-header">
+    <a href="#resume/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">resume(server, session, token)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L49" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>resume(server :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), session :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), token :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generates a RESUME opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">resume</span><span class="p" data-group-id="7970339576-1">(</span><span class="s">&quot;server&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;session&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="p" data-group-id="7970339576-1">)</span><span class="w">
+</span><span class="p" data-group-id="7970339576-2">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="7970339576-3">%{</span><span class="s">&quot;server_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;server&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;session_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;session&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;token&quot;</span><span class="p" data-group-id="7970339576-3">}</span><span class="p" data-group-id="7970339576-2">}</span></code></pre><p>See the <a href="https://discord.com/developers/docs/topics/voice-connections#resuming-voice-connection">official documentation</a>.</p>
+  </section>
+</section>
+<section class="detail" id="select_protocol/3">
+
+  <div class="detail-header">
+    <a href="#select_protocol/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">select_protocol(ip, port, mode)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L85" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>select_protocol(ip :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), port :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), mode :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>generates a SELECT PROTOCOL opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">select_protocol</span><span class="p" data-group-id="1449862854-1">(</span><span class="s">&quot;ip&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">123</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mode&quot;</span><span class="p" data-group-id="1449862854-1">)</span><span class="w">
+</span><span class="p" data-group-id="1449862854-2">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1449862854-3">%{</span><span class="s">&quot;protocol&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;udp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;data&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="1449862854-4">%{</span><span class="s">&quot;address&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;ip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;port&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">123</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;mode&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;mode&quot;</span><span class="p" data-group-id="1449862854-4">}</span><span class="p" data-group-id="1449862854-3">}</span><span class="p" data-group-id="1449862854-2">}</span></code></pre>
+  </section>
+</section>
+<section class="detail" id="speaking/2">
+
+    <span id="speaking/1"></span>
+
+  <div class="detail-header">
+    <a href="#speaking/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">speaking(ssrc, options \\ [])</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/opcodes.ex#L114" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>speaking(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(), [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()]) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generates a SPEAKING opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">speaking</span><span class="p" data-group-id="3127974933-1">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3127974933-2">[</span><span class="p" data-group-id="3127974933-2">]</span><span class="p" data-group-id="3127974933-1">)</span><span class="w">
+</span><span class="p" data-group-id="3127974933-3">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="3127974933-4">%{</span><span class="s">&quot;speaking&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;delay&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ssrc&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p" data-group-id="3127974933-4">}</span><span class="p" data-group-id="3127974933-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">speaking</span><span class="p" data-group-id="3127974933-5">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3127974933-6">[</span><span class="ss">:microphone</span><span class="p" data-group-id="3127974933-6">]</span><span class="p" data-group-id="3127974933-5">)</span><span class="w">
+</span><span class="p" data-group-id="3127974933-7">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="3127974933-8">%{</span><span class="s">&quot;speaking&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;delay&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ssrc&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p" data-group-id="3127974933-8">}</span><span class="p" data-group-id="3127974933-7">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">speaking</span><span class="p" data-group-id="3127974933-9">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3127974933-10">[</span><span class="ss">:microphone</span><span class="p">,</span><span class="w"> </span><span class="ss">:priority</span><span class="p" data-group-id="3127974933-10">]</span><span class="p" data-group-id="3127974933-9">)</span><span class="w">
+</span><span class="p" data-group-id="3127974933-11">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="3127974933-12">%{</span><span class="s">&quot;speaking&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;delay&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ssrc&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p" data-group-id="3127974933-12">}</span><span class="p" data-group-id="3127974933-11">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Voice.Opcodes</span><span class="o">.</span><span class="n">speaking</span><span class="p" data-group-id="3127974933-13">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3127974933-14">[</span><span class="ss">:microphone</span><span class="p">,</span><span class="w"> </span><span class="ss">:priority</span><span class="p">,</span><span class="w"> </span><span class="ss">:soundshare</span><span class="p" data-group-id="3127974933-14">]</span><span class="p" data-group-id="3127974933-13">)</span><span class="w">
+</span><span class="p" data-group-id="3127974933-15">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="3127974933-16">%{</span><span class="s">&quot;speaking&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;delay&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ssrc&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p" data-group-id="3127974933-16">}</span><span class="p" data-group-id="3127974933-15">}</span></code></pre>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Gateway — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Gateway <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Handles incoming events from the gateway.</p><p>This module handles the raw incoming events from the gateway's <a href="Wumpex.Base.Websocket.html"><code class="inline">Wumpex.Base.Websocket</code></a>.
+The messages are decoded, events that are not specific to a guild, such as HELLO, IDENTIFY, INVALID_SESSION etc are handled inline.
+Events specific to a guild (MESSAGE_CREATE, ...) are passed on to the process group for that guild.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:frame_or_frames/0">frame_or_frames()</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:options/0">options()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The options that can be passed into <code class="inline">start_link/1</code> and <code class="inline">init/1</code>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:state/0">state()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The state of the <code class="inline">Wumpex.Gateway.Worker</code> module.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#child_spec/1">child_spec(init_arg)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#dispatch/2">dispatch(event, state)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The dispatch event is called for all incoming events from the Discord gateway.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#send_opcode/2">send_opcode(gateway, opcode)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Dispatches an event on the gateway.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#subscribe/1">subscribe(shard)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Subscribes the current process to events from the given gateway.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#subscribe/2">subscribe(shard, pid_or_pids)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Subscribes the given processes to events from the given gateway.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#unsubscribe/1">unsubscribe(shard)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Unsubscribes the current process of events from the given gateway.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#unsubscribe/2">unsubscribe(shard, pid_or_pids)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Unsubscribes the given processes of events from the given gateway.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#via/1">via(shard)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Gets the server name of the <a href="#content"><code class="inline">Wumpex.Gateway</code></a> process for a given shard.
+You can use this to get the <code class="inline">pid</code> of the gateway, or to send opcodes to it.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:frame_or_frames/0">
+
+  <div class="detail-header">
+    <a href="#t:frame_or_frames/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">frame_or_frames()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L10" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>frame_or_frames() ::
+  <a href="Wumpex.Base.Websocket.html#t:frame/0">Wumpex.Base.Websocket.frame</a>() | [<a href="Wumpex.Base.Websocket.html#t:frame/0">Wumpex.Base.Websocket.frame</a>()]</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="t:options/0">
+
+  <div class="detail-header">
+    <a href="#t:options/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">options()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L31" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>options() :: [
+  token: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  shard: <a href="Wumpex.html#t:shard/0">Wumpex.shard</a>(),
+  intents: <a href="Wumpex.Gateway.Intents.html#t:t/0">Wumpex.Gateway.Intents.t</a>(),
+  handlers: [<a href="Wumpex.Gateway.Consumers.html#t:handler_options/0">Wumpex.Gateway.Consumers.handler_options</a>()]
+]</pre>
+
+      </div>
+
+<p>The options that can be passed into <code class="inline">start_link/1</code> and <code class="inline">init/1</code>.</p><p>Contains the following fields:</p><ul><li><code class="inline">:token</code> - The bot token</li><li><code class="inline">:shard</code> - the identifier for this shard.</li><li><code class="inline">:intents</code> - The <a href="Wumpex.Gateway.Intents.html#t:t/0"><code class="inline">Wumpex.Gateway.Intents.t/0</code></a> struct containing intent information.</li><li><code class="inline">:handlers</code> - The handlers for this gateway's events.</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:state/0">
+
+  <div class="detail-header">
+    <a href="#t:state/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">state()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L48" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>state() :: %{
+  token: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  ack: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  sequence: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | nil,
+  session_id: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  shard: <a href="Wumpex.html#t:shard/0">Wumpex.shard</a>(),
+  intents: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
+}</pre>
+
+      </div>
+
+<p>The state of the <code class="inline">Wumpex.Gateway.Worker</code> module.</p><ul><li><code class="inline">:token</code> - The <a href="https://discord.com/developers/docs/reference#authentication">bot token</a> to authenticate against Discord.</li><li><code class="inline">:ack</code> - Whether or not a heartbeat ACK has been received.</li><li><code class="inline">:sequence</code> - The ID of the last received event.</li><li><code class="inline">:session_id</code> - Session token, can be used to resume an interrupted session.</li><li><code class="inline">:shard</code> - the identifier for this shard.</li><li><code class="inline">:intents</code> - The intents information (calculated from <a href="Wumpex.Gateway.Intents.html#to_integer/1"><code class="inline">Wumpex.Gateway.Intents.to_integer/1</code></a>).</li></ul>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="child_spec/1">
+
+  <div class="detail-header">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">child_spec(init_arg)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L10" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="dispatch/2">
+
+  <div class="detail-header">
+    <a href="#dispatch/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">dispatch(event, state)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L262" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>dispatch(event :: <a href="#t:state/0">state</a>(), state :: <a href="#t:state/0">state</a>()) :: <a href="#t:state/0">state</a>()</pre>
+
+      </div>
+
+<p>The dispatch event is called for all incoming events from the Discord gateway.</p><p>The <code class="inline">Wumpex.Gateway.Worker</code> tries to handle any non-specific event inline, maintains the sequence state and handles resumes.
+Unknown events are simply discarded and a warning is logged.</p>
+  </section>
+</section>
+<section class="detail" id="send_opcode/2">
+
+  <div class="detail-header">
+    <a href="#send_opcode/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">send_opcode(gateway, opcode)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L124" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>send_opcode(gateway :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(), opcode :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: :ok</pre>
+
+      </div>
+
+<p>Dispatches an event on the gateway.</p><p>This method will handle rate limiting, encoding of the message etc.
+Note that there's <em>no</em> validation on what's being sent, so be careful invoking this method.</p><p>Invalid messages will cause Discord to close the gateway.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe/1">
+
+  <div class="detail-header">
+    <a href="#subscribe/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">subscribe(shard)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L71" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>subscribe(<a href="Wumpex.html#t:shard/0">Wumpex.shard</a>()) :: :ok</pre>
+
+      </div>
+
+<p>Subscribes the current process to events from the given gateway.</p><p>Events will be sent in the form of <code class="inline">{:event, %Wumpex.Gateway.Event{}}</code>.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe/2">
+
+  <div class="detail-header">
+    <a href="#subscribe/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">subscribe(shard, pid_or_pids)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L79" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>subscribe(<a href="Wumpex.html#t:shard/0">Wumpex.shard</a>(), pid_or_pids :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()]) :: :ok</pre>
+
+      </div>
+
+<p>Subscribes the given processes to events from the given gateway.</p><p>Events will be sent in the form of <code class="inline">{:event, %Wumpex.Gateway.Event{}}</code>.</p>
+  </section>
+</section>
+<section class="detail" id="unsubscribe/1">
+
+  <div class="detail-header">
+    <a href="#unsubscribe/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">unsubscribe(shard)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L89" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>unsubscribe(<a href="Wumpex.html#t:shard/0">Wumpex.shard</a>()) :: :ok | :not_joined</pre>
+
+      </div>
+
+<p>Unsubscribes the current process of events from the given gateway.</p>
+  </section>
+</section>
+<section class="detail" id="unsubscribe/2">
+
+  <div class="detail-header">
+    <a href="#unsubscribe/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">unsubscribe(shard, pid_or_pids)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L95" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>unsubscribe(<a href="Wumpex.html#t:shard/0">Wumpex.shard</a>(), pid_or_pids :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>() | [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()]) :: :ok | :not_joined</pre>
+
+      </div>
+
+<p>Unsubscribes the given processes of events from the given gateway.</p>
+  </section>
+</section>
+<section class="detail" id="via/1">
+
+  <div class="detail-header">
+    <a href="#via/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">via(shard)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway.ex#L113" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>via(shard :: <a href="Wumpex.html#t:shard/0">Wumpex.shard</a>()) :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>()</pre>
+
+      </div>
+
+<p>Gets the server name of the <a href="#content"><code class="inline">Wumpex.Gateway</code></a> process for a given shard.
+You can use this to get the <code class="inline">pid</code> of the gateway, or to send opcodes to it.</p><pre><code class="nohighlight makeup elixir"><span class="c1"># The shard (represented as a tuple).</span><span class="w">
+</span><span class="p" data-group-id="2883658070-1">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2883658070-1">}</span><span class="w">
+</span><span class="c1"># Get the server name.</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Wumpex.Gateway</span><span class="o">.</span><span class="n">via</span><span class="p" data-group-id="2883658070-2">(</span><span class="p" data-group-id="2883658070-2">)</span><span class="w">
+</span><span class="c1"># Dispatch an opcode to it.</span><span class="w">
+</span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Wumpex.Gateway</span><span class="o">.</span><span class="n">send_opcode</span><span class="p" data-group-id="2883658070-3">(</span><span class="p" data-group-id="2883658070-4">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2883658070-4">}</span><span class="p" data-group-id="2883658070-3">)</span></code></pre>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Resource.Guild — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Resource.Guild <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<blockquote><p>Guilds in Discord represent an isolated collection of users and channels, and are often referred to as &quot;servers&quot; in the UI.</p></blockquote><p>See the official <a href="https://discord.com/developers/docs/resources/guild">Discord documentation</a>.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:explicit_content_filter_level/0">explicit_content_filter_level()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Whether Discord will scan and automatically delete messages with explicit content.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:message_notifications_level/0">message_notifications_level()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This will determine whether members who have not explicitly set their notification settings receive a notification for every message sent in this server or not.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:mfa_level/0">mfa_level()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>When enabled, this requires members with moderation powers to have two-factor authentication enabled on their account in order to take moderation actions (e.g. kick, ban, and delete message).
+This can help prevent malicious people who compromise a mod or admin's account from taking destructive actions.
+<strong>This setting can only be changed by the server owner if they have 2FA enabled on their account.</strong></p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:premium_tier/0">premium_tier()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>server boost level</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the struct form of this module.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:verification_level/0">verification_level()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Members of the server must meet the following criteria before they can send messages in text channels or initiate a direct message conversation.
+If a member has an assigned role this does nto apply.
+Discord recommends setting a verification level for a public guild.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#to_struct/1">to_struct(data)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Maps the incoming data into struct form.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:explicit_content_filter_level/0">
+
+  <div class="detail-header">
+    <a href="#t:explicit_content_filter_level/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">explicit_content_filter_level()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L52" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>explicit_content_filter_level() :: 0 | 1 | 2</pre>
+
+      </div>
+
+<p>Whether Discord will scan and automatically delete messages with explicit content.</p><p>Can have the following values:</p><ul><li><code class="inline">0</code> (<strong>DISABLED</strong>) - Direct messages will not be scanned for explicit content.</li><li><code class="inline">1</code> (<strong>MEMBERS_WITHOUT_ROLES</strong>) - Scan direct messages from everyone unless they are a friend.</li><li><code class="inline">2</code> (<strong>ALL_MEMBERS</strong>) - Scan direct messages from everyone.</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:message_notifications_level/0">
+
+  <div class="detail-header">
+    <a href="#t:message_notifications_level/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">message_notifications_level()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L42" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>message_notifications_level() :: 0 | 1</pre>
+
+      </div>
+
+<p>This will determine whether members who have not explicitly set their notification settings receive a notification for every message sent in this server or not.</p><p>Discord highly recommends setting this to only @mentions or <code class="inline">1</code> in the code, for a public Discord to avoid <a href="https://www.youtube.com/watch?v=zGl796352RI">this insanity</a>.</p><p>Can have the following values:</p><ul><li><code class="inline">0</code> (<strong>ALL_MESSAGES</strong>) - All Messages</li><li><code class="inline">1</code> (<strong>ONLY_MENTIONS</strong>) - Only <strong>@mentions</strong></li></ul>
+  </section>
+</section>
+<section class="detail" id="t:mfa_level/0">
+
+  <div class="detail-header">
+    <a href="#t:mfa_level/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">mfa_level()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L63" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>mfa_level() :: 0 | 1</pre>
+
+      </div>
+
+<p>When enabled, this requires members with moderation powers to have two-factor authentication enabled on their account in order to take moderation actions (e.g. kick, ban, and delete message).
+This can help prevent malicious people who compromise a mod or admin's account from taking destructive actions.
+<strong>This setting can only be changed by the server owner if they have 2FA enabled on their account.</strong></p><p>Can have the following values:</p><ul><li><code class="inline">0</code> (<strong>NONE</strong>)</li><li><code class="inline">1</code> (<strong>ELEVATED</strong>)</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:premium_tier/0">
+
+  <div class="detail-header">
+    <a href="#t:premium_tier/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">premium_tier()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L74" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>premium_tier() :: 0 | 1 | 2 | 3</pre>
+
+      </div>
+
+<p>server boost level</p><p>Can have the following values:</p><ul><li><code class="inline">0</code> - None</li><li><code class="inline">1</code> - Tier 1</li><li><code class="inline">2</code> - Tier 2</li><li><code class="inline">3</code> - Tier 3</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">t()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L127" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>t() :: %Wumpex.Resource.Guild{
+  afk_channel_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  afk_timeout: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  application_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  approximate_member_count: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  approximate_presence_count: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  banner: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  channels: [<a href="Wumpex.Resource.Channel.html#t:t/0">Wumpex.Resource.Channel.t</a>()],
+  default_message_notifications: <a href="#t:message_notifications_level/0">message_notifications_level</a>(),
+  description: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  discovery_splash: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  embed_channel_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  embed_enabled: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  emojis: [<a href="Wumpex.Resource.Emoji.html#t:t/0">Wumpex.Resource.Emoji.t</a>()],
+  explicit_content_filter: <a href="#t:explicit_content_filter_level/0">explicit_content_filter_level</a>(),
+  features: [<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()],
+  icon: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  joined_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(),
+  large: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  max_members: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  max_presences: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  max_video_channel_users: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  member_count: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  members: [<a href="Wumpex.Resource.Guild.Member.html#t:t/0">Wumpex.Resource.Guild.Member.t</a>()],
+  mfa_level: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  owner: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  owner_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  permissions: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  preferred_locale: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  premium_subscription_count: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  premium_tier: <a href="#t:premium_tier/0">premium_tier</a>(),
+  presences: [<a href="Wumpex.Resource.PresenceUpdate.html#t:t/0">Wumpex.Resource.PresenceUpdate.t</a>()],
+  public_updates_channel_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  region: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  roles: [<a href="Wumpex.Resource.Role.html#t:t/0">Wumpex.Resource.Role.t</a>()],
+  rules_channel_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  splash: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  system_channel_flags: <a href="Wumpex.Resource.Guild.ChannelFlags.html#t:t/0">Wumpex.Resource.Guild.ChannelFlags.t</a>(),
+  system_channel_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  unavailable: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  vanity_url_code: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  verification_level: <a href="#t:verification_level/0">verification_level</a>(),
+  voice_states: [<a href="Wumpex.Resource.VoiceState.html#t:t/0">Wumpex.Resource.VoiceState.t</a>()],
+  widget_channel_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  widget_enabled: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
+}</pre>
+
+      </div>
+
+<p>Represents the struct form of this module.</p><p>Contains the following fields:</p><ul><li><code class="inline">:id</code> - The guild ID.</li><li><code class="inline">:name</code> - The guild name (2 - 100 characters, excluding trailing and leading whitespace).</li><li><code class="inline">:icon</code> - The icon hash.</li><li><code class="inline">:splash</code> - The splash hash.</li><li><code class="inline">:discovery_splash</code> - The discovery splash hash (only present for guilds with the <code class="inline">&quot;DISCOVERABLE&quot;</code> feature).</li><li><code class="inline">:owner</code> - true if the user is the owner of the guild.</li><li><code class="inline">:owner_id</code> - The ID of the owner.</li><li><code class="inline">:permissions</code> - Total permissions of the user in the guild (excluding overrides).</li><li><code class="inline">:region</code> - The voice region (ID) of the guild.</li><li><code class="inline">:afk_channel_id</code> - The ID of the AFk channel.</li><li><code class="inline">:afk_timeout</code> - The AFK timeout (in seconds).</li><li><code class="inline">:embed_enabled</code> - <strong>deprecated</strong>, use <code class="inline">widget_enabled</code> instead).</li><li><code class="inline">:embed_channel_id</code> - <strong>deprecated</strong>, use <code class="inline">widget_channel_id</code> instead.</li><li><code class="inline">:verification_level</code> - The <a href="#t:verification_level/0"><code class="inline">verification_level/0</code></a> required for the guild.</li><li><code class="inline">:default_message_notifications</code> - The default <a href="#t:message_notifications_level/0"><code class="inline">message_notifications_level/0</code></a>.</li><li><code class="inline">:explicit_content_filter</code> - The <a href="#t:explicit_content_filter_level/0"><code class="inline">explicit_content_filter_level/0</code></a>.</li><li><code class="inline">:roles</code> - An array of the <a href="Wumpex.Resource.Role.html"><code class="inline">Wumpex.Resource.Role</code></a> in the guild.</li><li><code class="inline">:emojis</code> - Custom guild emojis.</li><li><code class="inline">:features</code> - A list of enabled guild features.</li><li><code class="inline">:mfa_level</code> - The MFA level for this guild.</li><li><code class="inline">:application_id</code> - The application ID of the guild creator, if it's bot-created.</li><li><code class="inline">:widget_enabled</code> - Set to <code class="inline">true</code> if the server widget is enabled.</li><li><code class="inline">:widget_channel_id</code> - The channel ID that the widget will generate an invite to, or null if set to no invite.</li><li><code class="inline">:system_channel_id</code> - The ID of the channel where guild notices such as welcome and boost evens are posted.</li><li><code class="inline">:system_channel_flags</code> - The <a href="Wumpex.Resource.Guild.ChannelFlags.html"><code class="inline">Wumpex.Resource.Guild.ChannelFlags</code></a> for the guild.</li><li><code class="inline">:rules_channel_id</code> - The ID of the channel where guilds with the <code class="inline">&quot;PUBLIC&quot;</code> feature can display rules and/or guidelines.</li><li><code class="inline">:joined_at</code> - When this guild was joined.</li><li><code class="inline">:large</code> - Whether this guild is considered large.</li><li><code class="inline">:unavailable</code> - Whether this guild is unavailable due to an outage.</li><li><code class="inline">:member_count</code> - Total number of members in this guild.</li><li><code class="inline">:voice_states</code> - Voice states of members curretly in voice channels (without the <code class="inline">guild_id</code> key).</li><li><code class="inline">:members</code> - An array of <a href="Wumpex.Resource.Guild.Member.html"><code class="inline">Wumpex.Resource.Guild.Member</code></a> objects representing the users in the guild.</li><li><code class="inline">:channels</code> - A list of <a href="Wumpex.Resource.Channel.html"><code class="inline">Wumpex.Resource.Channel</code></a> objects representing the channels in the guild.</li><li><code class="inline">:presences</code> - Presences of the members in the guild, will only include non-offline mbmers if the size is greater than <code class="inline">large treshold</code>.</li><li><code class="inline">:max_presences</code> - The maximum number of presences for the guild (default value, currently 25000, is in effect when <code class="inline">null</code> is returned).</li><li><code class="inline">:max_members</code> - The maximum number of members for the guild.</li><li><code class="inline">:vanity_url_code</code> - The vanity URL code for the guild.</li><li><code class="inline">:description</code> - The description for the guild, if discoverable.</li><li><code class="inline">:banner</code> - The banner hash.</li><li><code class="inline">:premium_tier</code> - The server boost level (premium level).</li><li><code class="inline">:premium_subscription_count</code> - The number of boosts this guild currently has.</li><li><code class="inline">:preferred_locale</code> - The preferred locale of a guild with the <code class="inline">&quot;PUBLIC&quot;</code> feature, used in server discovery and notices from Discord (defaults to <code class="inline">&quot;en-US&quot;</code>).</li><li><code class="inline">:pubic_updates_channel_id</code> - The ID of the channel where admins and moderators of guilds with the <code class="inline">&quot;PUBLIC&quot;</code> feature receive notices from Discord.</li><li><code class="inline">:max_video_channel_users</code> - The maximum amount of users in a video channel.</li><li><code class="inline">:approximate_member_count</code> - The approximate number of members in this guild, returned from the get guilds endpoint (when passing <code class="inline">with_counts</code> set to true).</li><li><code class="inline">:approximate_presence_count</code> - Approximate number of non-offline members in this guild, returned from the get guilds endpoint (when passing <code class="inline">with_counts</code> set to true).</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:verification_level/0">
+
+  <div class="detail-header">
+    <a href="#t:verification_level/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">verification_level()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L31" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>verification_level() :: 0 | 1 | 2 | 3 | 4</pre>
+
+      </div>
+
+<p>Members of the server must meet the following criteria before they can send messages in text channels or initiate a direct message conversation.
+If a member has an assigned role this does nto apply.
+Discord recommends setting a verification level for a public guild.</p><p>Can have the following values:</p><ul><li><code class="inline">0</code> (<strong>NONE</strong>) - Unrestricted.</li><li><code class="inline">1</code> (<strong>LOW</strong>) - Must have verified email on account.</li><li><code class="inline">2</code> (<strong>MEDIUM</strong>) - Must be registered on Discord for longer than 5 minutes.</li><li><code class="inline">3</code> (<strong>HIGH</strong>) - (╯°□°）╯︵ ┻━┻ - must be a member of the server for longer than 10 minutes.</li><li><code class="inline">4</code> (<strong>VERY_HIGH</strong>) - ┻━┻ ミヽ(ಠ 益 ಠ)ﾉ彡 ┻━┻ - must have a verified phone number.</li></ul>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="to_struct/1">
+
+  <div class="detail-header">
+    <a href="#to_struct/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">to_struct(data)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/guild.ex#L236" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>to_struct(data :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Maps the incoming data into struct form.</p><h2 id="to_struct/1-example" class="section-heading">
+  <a href="#to_struct/1-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Example:
+</h2>
+<p>You can pass in invalid or missing data, it will ignore what doesn't match.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Resource.Guild</span><span class="o">.</span><span class="n">to_struct</span><span class="p" data-group-id="8861043332-1">(</span><span class="p" data-group-id="8861043332-2">%{</span><span class="p" data-group-id="8861043332-2">}</span><span class="p" data-group-id="8861043332-1">)</span><span class="w">
+</span><span class="p" data-group-id="8861043332-3">%</span><span class="nc" data-group-id="8861043332-3">Wumpex.Resource.Guild</span><span class="p" data-group-id="8861043332-3">{</span><span class="p" data-group-id="8861043332-3">}</span></code></pre>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

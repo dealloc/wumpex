@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Voice — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Voice <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Contains functionality for connecting and interacting with voice connections.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#change_channel/2">change_channel(voice, channel)</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#connect/3">connect(shard, guild, channel)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Connects to a given voice channel.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#disconnect/1">disconnect(voice)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Disconnects the given voice connection from it's currently connected channel.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#for/1">for(guild)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Get the server name for the given guild.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#play/2">play(voice, stream)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Requests to play the given enumerable/stream on the given voice connection.
+The <code class="inline">stream</code> parameter can be both a list (or other enumerable) or a <a href="https://hexdocs.pm/elixir/Stream.html"><code class="inline">Stream</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#set_state/2">set_state(voice, options)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Set the voice state for the given voice connection.
+This involves (un)muting and (un)deafening.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="change_channel/2">
+
+  <div class="detail-header">
+    <a href="#change_channel/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">change_channel(voice, channel)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L71" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>change_channel(voice :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(), channel :: <a href="Wumpex.html#t:channel/0">Wumpex.channel</a>()) :: :ok</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="connect/3">
+
+  <div class="detail-header">
+    <a href="#connect/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">connect(shard, guild, channel)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L23" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>connect(
+  shard :: <a href="Wumpex.html#t:shard/0">Wumpex.shard</a>(),
+  guild :: <a href="Wumpex.html#t:guild/0">Wumpex.guild</a>(),
+  channel :: <a href="Wumpex.html#t:channel/0">Wumpex.channel</a>()
+) :: <a href="https://hexdocs.pm/elixir/Supervisor.html#t:on_start_child/0">Supervisor.on_start_child</a>()</pre>
+
+      </div>
+
+<p>Connects to a given voice channel.</p><p>Returns <code class="inline">{:ok, pid}</code> where <code class="inline">pid</code> is the <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types"><code class="inline">pid/0</code></a> of the voice connection.
+If there's already a voice connection active for the given guild,
+the bot will change to the given channel (using <a href="#change_channel/2"><code class="inline">change_channel/2</code></a>)
+and return <code class="inline">{:ok, pid}</code> as if started (allowing you to match on the same pattern for all success cases).</p><p>Takes the following parameters:</p><ul><li><code class="inline">:shard</code> - The shard on which the <code class="inline">:guild</code> is running.</li><li><code class="inline">:guild</code> - The ID of the guild the given channel is in.</li><li><code class="inline">:channel</code> - The ID of the channel to connect to.</li></ul>
+  </section>
+</section>
+<section class="detail" id="disconnect/1">
+
+  <div class="detail-header">
+    <a href="#disconnect/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">disconnect(voice)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L41" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>disconnect(voice :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>()) :: :ok</pre>
+
+      </div>
+
+<p>Disconnects the given voice connection from it's currently connected channel.</p>
+  </section>
+</section>
+<section class="detail" id="for/1">
+
+  <div class="detail-header">
+    <a href="#for/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">for(guild)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L98" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>for(guild :: <a href="Wumpex.html#t:guild/0">Wumpex.guild</a>()) :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>()</pre>
+
+      </div>
+
+<p>Get the server name for the given guild.</p>
+  </section>
+</section>
+<section class="detail" id="play/2">
+
+  <div class="detail-header">
+    <a href="#play/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">play(voice, stream)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L88" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>play(voice :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(), stream :: <a href="https://hexdocs.pm/elixir/Enum.html#t:t/0">Enum.t</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">reference</a>()</pre>
+
+      </div>
+
+<p>Requests to play the given enumerable/stream on the given voice connection.
+The <code class="inline">stream</code> parameter can be both a list (or other enumerable) or a <a href="https://hexdocs.pm/elixir/Stream.html"><code class="inline">Stream</code></a>.</p><p>This method will return a <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types"><code class="inline">reference/0</code></a> that refers to this audio request.
+If you want to cancel the playback (either while it's playing or when it's still queued),
+you can use this reference to identity the playback request.</p>
+  </section>
+</section>
+<section class="detail" id="set_state/2">
+
+  <div class="detail-header">
+    <a href="#set_state/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">set_state(voice, options)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice.ex#L57" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>set_state(voice :: <a href="https://hexdocs.pm/elixir/GenServer.html#t:server/0">GenServer.server</a>(), options :: [<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()]) :: :ok</pre>
+
+      </div>
+
+<p>Set the voice state for the given voice connection.
+This involves (un)muting and (un)deafening.</p><p>The <code class="inline">:options</code> parameter is a list that takes either <code class="inline">:mute</code> or <code class="inline">:deafen</code> as it's members.
+Passing in either of these two will cause the bot to mute or deafen (respectively).</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

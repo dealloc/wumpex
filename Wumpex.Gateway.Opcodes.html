@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Gateway.Opcodes — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Gateway.Opcodes <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway/opcodes.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Provides methods for generating opcodes.</p><p>See the <a href="https://discord.com/developers/docs/topics/gateway#commands-and-events-gateway-commands">official documentation</a> for a full list.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:opcode/0">opcode()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents a generic OPCODE response.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#heartbeat/1">heartbeat(sequence)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generates a HEARTBEAT opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#identify/3">identify(token, shard, intents \\ 32767)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generate an IDENTIFY opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#resume/3">resume(token, sequence, session_id)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Generate a RESUME opcode.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#voice_state_update/3">voice_state_update(guild, channel, options \\ [])</a>
+
+  </div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:opcode/0">
+
+  <div class="detail-header">
+    <a href="#t:opcode/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">opcode()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway/opcodes.ex#L13" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>opcode() :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()</pre>
+
+      </div>
+
+<p>Represents a generic OPCODE response.</p><p>Opcodes usually have a top level <code class="inline">&quot;op&quot;</code> field which contains the numerical ID and a <code class="inline">&quot;d&quot;</code> field which contains the payload.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="heartbeat/1">
+
+  <div class="detail-header">
+    <a href="#heartbeat/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">heartbeat(sequence)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway/opcodes.ex#L27" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>heartbeat(sequence :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | nil) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generates a HEARTBEAT opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Gateway.Opcodes</span><span class="o">.</span><span class="n">heartbeat</span><span class="p" data-group-id="2837297505-1">(</span><span class="no">nil</span><span class="p" data-group-id="2837297505-1">)</span><span class="w">
+</span><span class="p" data-group-id="2837297505-2">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="no">nil</span><span class="p" data-group-id="2837297505-2">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Gateway.Opcodes</span><span class="o">.</span><span class="n">heartbeat</span><span class="p" data-group-id="2837297505-3">(</span><span class="mi">100</span><span class="p" data-group-id="2837297505-3">)</span><span class="w">
+</span><span class="p" data-group-id="2837297505-4">%{</span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">100</span><span class="p" data-group-id="2837297505-4">}</span></code></pre><p>See the <a href="https://discord.com/developers/docs/topics/gateway#heartbeat">official documentation</a>.</p>
+  </section>
+</section>
+<section class="detail" id="identify/3">
+
+    <span id="identify/2"></span>
+
+  <div class="detail-header">
+    <a href="#identify/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">identify(token, shard, intents \\ 32767)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway/opcodes.ex#L76" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>identify(
+  token :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  shard :: <a href="Wumpex.html#t:shard/0">Wumpex.shard</a>(),
+  intents :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()
+) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generate an IDENTIFY opcode.</p><p>If you don't specify which intents you wish to use it will use <code class="inline">32767</code> by default, which uses <strong>ALL</strong> intents.
+Since version 8 this requires you to enable privileged gateway intents in the settings of your bot.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Gateway.Opcodes</span><span class="o">.</span><span class="n">identify</span><span class="p" data-group-id="8329069227-1">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8329069227-2">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="8329069227-2">}</span><span class="p" data-group-id="8329069227-1">)</span><span class="w">
+</span><span class="p" data-group-id="8329069227-3">%{</span><span class="w">
+  </span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8329069227-4">%{</span><span class="w">
+    </span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;shard&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8329069227-5">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="8329069227-5">]</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;intents&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">32_767</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;properties&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8329069227-6">%{</span><span class="w">
+      </span><span class="s">&quot;$os&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:linux</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;$browser&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;wumpex&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;$device&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;wumpex&quot;</span><span class="w">
+    </span><span class="p" data-group-id="8329069227-6">}</span><span class="w">
+  </span><span class="p" data-group-id="8329069227-4">}</span><span class="w">
+</span><span class="p" data-group-id="8329069227-3">}</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Gateway.Opcodes</span><span class="o">.</span><span class="n">identify</span><span class="p" data-group-id="8329069227-7">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="8329069227-8">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="8329069227-8">}</span><span class="p">,</span><span class="w"> </span><span class="mi">513</span><span class="p" data-group-id="8329069227-7">)</span><span class="w">
+</span><span class="p" data-group-id="8329069227-9">%{</span><span class="w">
+  </span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8329069227-10">%{</span><span class="w">
+    </span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;shard&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8329069227-11">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="8329069227-11">]</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;intents&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">513</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;properties&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="8329069227-12">%{</span><span class="w">
+      </span><span class="s">&quot;$os&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="ss">:linux</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;$browser&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;wumpex&quot;</span><span class="p">,</span><span class="w">
+      </span><span class="s">&quot;$device&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;wumpex&quot;</span><span class="w">
+    </span><span class="p" data-group-id="8329069227-12">}</span><span class="w">
+  </span><span class="p" data-group-id="8329069227-10">}</span><span class="w">
+</span><span class="p" data-group-id="8329069227-9">}</span></code></pre><p>See the <a href="https://discord.com/developers/docs/topics/gateway#identify">official documentation</a></p>
+  </section>
+</section>
+<section class="detail" id="resume/3">
+
+  <div class="detail-header">
+    <a href="#resume/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">resume(token, sequence, session_id)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway/opcodes.ex#L111" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>resume(
+  token :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  sequence :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  session_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+<p>Generate a RESUME opcode.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Gateway.Opcodes</span><span class="o">.</span><span class="n">resume</span><span class="p" data-group-id="9626405381-1">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;session&quot;</span><span class="p" data-group-id="9626405381-1">)</span><span class="w">
+</span><span class="p" data-group-id="9626405381-2">%{</span><span class="w">
+  </span><span class="s">&quot;op&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+  </span><span class="s">&quot;d&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="p" data-group-id="9626405381-3">%{</span><span class="w">
+    </span><span class="s">&quot;token&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;session_id&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;session&quot;</span><span class="p">,</span><span class="w">
+    </span><span class="s">&quot;seq&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">20</span><span class="w">
+  </span><span class="p" data-group-id="9626405381-3">}</span><span class="w">
+</span><span class="p" data-group-id="9626405381-2">}</span></code></pre><p>See the <a href="https://discord.com/developers/docs/topics/gateway#resume">official documentation</a></p>
+  </section>
+</section>
+<section class="detail" id="voice_state_update/3">
+
+    <span id="voice_state_update/2"></span>
+
+  <div class="detail-header">
+    <a href="#voice_state_update/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">voice_state_update(guild, channel, options \\ [])</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/gateway/opcodes.ex#L123" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>voice_state_update(
+  guild :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  channel :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil,
+  options :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()
+) :: <a href="#t:opcode/0">opcode</a>()</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

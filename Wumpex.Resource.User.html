@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Resource.User — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Resource.User <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/user.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<blockquote><p>Users in Discord are generally considered the base entity.
+Users can spawn across the entire platform, be members of guilds, participate in text and voice chat, and much more.
+Users are separated by a distinction of &quot;bot&quot; vs &quot;normal&quot;.
+Although they are similar, bot users are automated users that are &quot;owned&quot; by another user.
+Unlike normal users, bot users do not have a limitation on the number of Guilds they can be a part of.</p></blockquote><p>See the official <a href="https://discord.com/developers/docs/resources/user#users-resource">Discord documentation</a>.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:premium_type/0">premium_type()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Premium types denote the level of premium a user has.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the struct form of this module.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#to_struct/1">to_struct(data)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Maps the incoming data into struct form.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:premium_type/0">
+
+  <div class="detail-header">
+    <a href="#t:premium_type/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">premium_type()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/user.ex#L63" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>premium_type() :: 0 | 1 | 2</pre>
+
+      </div>
+
+<p>Premium types denote the level of premium a user has.</p><p>Can have the following values:</p><ul><li><code class="inline">0</code> None</li><li><code class="inline">1</code> Nitro Classic</li><li><code class="inline">2</code> Nitro</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">t()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/user.ex#L37" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>t() :: %Wumpex.Resource.User{
+  avatar: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  bot: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  discriminator: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  email: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  flags: <a href="Wumpex.Resource.UserFlags.html#t:t/0">Wumpex.Resource.UserFlags.t</a>(),
+  id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  locale: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  member: <a href="Wumpex.Resource.Guild.Member.html#t:t/0">Wumpex.Resource.Guild.Member.t</a>(),
+  mfa_enabled: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  premium_type: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>(),
+  public_flags: <a href="Wumpex.Resource.UserFlags.html#t:t/0">Wumpex.Resource.UserFlags.t</a>(),
+  system: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  username: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  verified: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
+}</pre>
+
+      </div>
+
+<p>Represents the struct form of this module.</p><p>Contains the following fields:</p><ul><li><code class="inline">:id</code> - The ID of the user.</li><li><code class="inline">:username</code> - The user's username, not unique across the platform.</li><li><code class="inline">:discriminator</code> - The user's 4 digit discord-tag.</li><li><code class="inline">:avatar</code> - The user's avatar hash.</li><li><code class="inline">:bot</code> - Whether the user belongs to an OAuth2 application.</li><li><code class="inline">:system</code> - Whether the user is an official Discord system user (part of the urgent message system).</li><li><code class="inline">:mfa_enabled</code> - Whether the user has two factor enabled on their account.</li><li><code class="inline">:locale</code>- The user's preferred locale.</li><li><code class="inline">:verified</code> - Whether the user's email has been verified.</li><li><code class="inline">:email</code> - The user's email.</li><li><code class="inline">:flags</code> - The flags on a user's account.</li><li><code class="inline">:premium_type</code> - The type of Nitro subscription of the user.</li><li><code class="inline">:public_flags</code> - The public flags on a user's account.</li><li><code class="inline">:member</code> - Only passed when the user object was received through a <a href="Wumpex.Resource.Message.html"><code class="inline">Wumpex.Resource.Message</code></a> object.</li></ul>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="to_struct/1">
+
+  <div class="detail-header">
+    <a href="#to_struct/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">to_struct(data)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/user.ex#L93" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>to_struct(data :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Maps the incoming data into struct form.</p><h2 id="to_struct/1-example" class="section-heading">
+  <a href="#to_struct/1-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Example:
+</h2>
+<p>You can pass in invalid or missing data, it will ignore what doesn't match.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Resource.User</span><span class="o">.</span><span class="n">to_struct</span><span class="p" data-group-id="6307673093-1">(</span><span class="p" data-group-id="6307673093-2">%{</span><span class="p" data-group-id="6307673093-2">}</span><span class="p" data-group-id="6307673093-1">)</span><span class="w">
+</span><span class="p" data-group-id="6307673093-3">%</span><span class="nc" data-group-id="6307673093-3">Wumpex.Resource.User</span><span class="p" data-group-id="6307673093-3">{</span><span class="p" data-group-id="6307673093-3">}</span></code></pre>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

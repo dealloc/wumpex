@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Voice.VoiceLedger — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Voice.VoiceLedger <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/voice_ledger.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Keeps track of all voice connections by their name.</p><p>This module uses <a href="Wumpex.Base.Ledger.html"><code class="inline">Wumpex.Base.Ledger</code></a> under the hood.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#lookup/1">lookup(name)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Looks up the <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types"><code class="inline">pid/0</code></a> with metadata for a given <code class="inline">name</code>.
+Returns <code class="inline">nil</code> if no entry could be found for the given name.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#register/3">register(name, pid, metadata \\ nil)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Register a given <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types"><code class="inline">pid/0</code></a> under the given <code class="inline">:name</code> in the registry, optionally passing in metadata.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="lookup/1">
+
+  <div class="detail-header">
+    <a href="#lookup/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">lookup(name)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/voice_ledger.ex#L8" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>lookup(name :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: {<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()} | nil</pre>
+
+      </div>
+
+<p>Looks up the <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types"><code class="inline">pid/0</code></a> with metadata for a given <code class="inline">name</code>.
+Returns <code class="inline">nil</code> if no entry could be found for the given name.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">MyLedger</span><span class="o">.</span><span class="n">register</span><span class="p" data-group-id="0147154939-1">(</span><span class="s">&quot;some-process&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">self</span><span class="p" data-group-id="0147154939-2">(</span><span class="p" data-group-id="0147154939-2">)</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;metadata&quot;</span><span class="p" data-group-id="0147154939-1">)</span><span class="w">
+</span><span class="ss">:yes</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">MyLedger</span><span class="o">.</span><span class="n">lookup</span><span class="p" data-group-id="0147154939-3">(</span><span class="s">&quot;some-process&quot;</span><span class="p" data-group-id="0147154939-3">)</span><span class="w">
+</span><span class="p" data-group-id="0147154939-4">{</span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;metadata&quot;</span><span class="p" data-group-id="0147154939-4">}</span></code></pre><p>See <a href="#register/3"><code class="inline">register/3</code></a> for setting metadata.</p>
+  </section>
+</section>
+<section class="detail" id="register/3">
+
+    <span id="register/2"></span>
+
+  <div class="detail-header">
+    <a href="#register/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">register(name, pid, metadata \\ nil)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/voice/voice_ledger.ex#L8" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>register(name :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>(), pid :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), metadata :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: :yes | :no</pre>
+
+      </div>
+
+<p>Register a given <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types"><code class="inline">pid/0</code></a> under the given <code class="inline">:name</code> in the registry, optionally passing in metadata.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

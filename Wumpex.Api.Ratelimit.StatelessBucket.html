@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Api.Ratelimit.StatelessBucket — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Api.Ratelimit.StatelessBucket <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Represents a single &quot;bucket&quot; in the rate limit system of Discord as described in the <a href="https://discord.com/developers/docs/topics/rate-limits#rate-limits">official documentation</a>.</p><p>Buckets are responsible for checking whether the given request is allowed to execute, and if not queue or bounce the request according to the given configuration.
+The StatelessBucket module gets an ETS table passed in on every request that contains the state for that specific bucket.
+This allows executing multiple requests on the same Discord bucket (but spread across multiple processes) and having a worker pool of buckets (using <code class="inline">:poolboy</code>).</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:bucket_state/0">bucket_state()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The state stored in the <code class="inline">:ets</code> table passed in <a href="#t:command/0"><code class="inline">command/0</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:command/0">command()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents a command for the bucket to execute.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:http_call/0">http_call()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Contains all the information required for making a HTTP call.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:http_response/0">http_response()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the result of an executed <a href="#t:http_call/0"><code class="inline">http_call/0</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:state/0">state()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This module does not keep any state in the process.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#child_spec/1">child_spec(init_arg)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#execute/1">execute(http_call)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Executes the given <a href="#t:http_call/0"><code class="inline">http_call/0</code></a> and returns the <a href="#t:http_response/0"><code class="inline">http_response/0</code></a>.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:bucket_state/0">
+
+  <div class="detail-header">
+    <a href="#t:bucket_state/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">bucket_state()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L55" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>bucket_state() :: %{
+  remaining: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | nil,
+  reset_at: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | nil
+}</pre>
+
+      </div>
+
+<p>The state stored in the <code class="inline">:ets</code> table passed in <a href="#t:command/0"><code class="inline">command/0</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="t:command/0">
+
+  <div class="detail-header">
+    <a href="#t:command/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">command()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L40" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>command() :: %{
+  http: <a href="#t:http_call/0">http_call</a>(),
+  timeout: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">timeout</a>(),
+  state: <a href="http://www.erlang.org/doc/man/ets.html#type-tid">:ets.tid</a>(),
+  bucket: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()
+}</pre>
+
+      </div>
+
+<p>Represents a command for the bucket to execute.</p><p>Each command contains 4 fields:</p><ul><li><code class="inline">:http</code> - A <a href="#t:http_call/0"><code class="inline">http_call/0</code></a> that represents the HTTP call to execute (if possible).</li><li><code class="inline">:timeout</code> - A <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types"><code class="inline">timeout/0</code></a> that indicates how long the caller is willing to wait in case we need to queue.</li><li><code class="inline">:state</code> - An <a href="http://www.erlang.org/doc/man/ets.html#type-tid"><code class="inline">:ets.tid/0</code></a> table that contains the state for the http call resource (eg. remaining rate limit, reset, ...).</li><li><code class="inline">:bucket</code> - The name of the bucket in which this command will execute (used for state lookup).</li></ul>
+  </section>
+</section>
+<section class="detail" id="t:http_call/0">
+
+  <div class="detail-header">
+    <a href="#t:http_call/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">http_call()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L23" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>http_call() ::
+  {<a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Request.html#t:method/0">HTTPoison.Request.method</a>(), <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Request.html#t:url/0">HTTPoison.Request.url</a>(),
+   <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Request.html#t:body/0">HTTPoison.Request.body</a>(), <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Request.html#t:headers/0">HTTPoison.Request.headers</a>(),
+   <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Request.html#t:options/0">HTTPoison.Request.options</a>()}</pre>
+
+      </div>
+
+<p>Contains all the information required for making a HTTP call.</p><p>The elements correspond to the parameters of <a href="Wumpex.Api.html#request/5"><code class="inline">Wumpex.Api.request/5</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="t:http_response/0">
+
+  <div class="detail-header">
+    <a href="#t:http_response/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">http_response()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L29" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>http_response() ::
+  {:ok, <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()}
+  | {:error, <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>() | <a href="https://hexdocs.pm/httpoison/1.8.0/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()}</pre>
+
+      </div>
+
+<p>Represents the result of an executed <a href="#t:http_call/0"><code class="inline">http_call/0</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="t:state/0">
+
+  <div class="detail-header">
+    <a href="#t:state/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">state()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L50" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>state() :: nil</pre>
+
+      </div>
+
+<p>This module does not keep any state in the process.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="child_spec/1">
+
+  <div class="detail-header">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">child_spec(init_arg)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L10" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>
+  </section>
+</section>
+<section class="detail" id="execute/1">
+
+  <div class="detail-header">
+    <a href="#execute/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">execute(http_call)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/api/ratelimit/stateless_bucket.ex#L106" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>execute(<a href="#t:http_call/0">http_call</a>()) :: <a href="#t:http_response/0">http_response</a>()</pre>
+
+      </div>
+
+<p>Executes the given <a href="#t:http_call/0"><code class="inline">http_call/0</code></a> and returns the <a href="#t:http_response/0"><code class="inline">http_response/0</code></a>.</p><p>Calls are executed using <a href="Wumpex.Api.html#request/5"><code class="inline">Wumpex.Api.request/5</code></a>.</p>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>

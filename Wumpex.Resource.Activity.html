@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.23.0">
+    <meta name="project" content="wumpex v0.1.0">
+
+    <title>Wumpex.Resource.Activity — wumpex v0.1.0</title>
+    <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
+
+    <script src="dist/sidebar_items-18f800ade8.js"></script>
+
+      <script src="docs_config.js"></script>
+
+    <script async src="dist/app-60a0c9f10e9e52eae31f.js"></script>
+
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
+
+<div class="main">
+
+<button class="sidebar-button sidebar-toggle">
+  <span class="icon-menu" title="Collapse/expand sidebar"></span>
+</button>
+
+<section class="sidebar">
+  <form class="sidebar-search" action="search.html">
+    <button type="submit" class="search-button" aria-label="Submit Search">
+      <span class="icon-search" aria-hidden="true" title="Submit search"></span>
+    </button>
+    <button type="button" tabindex="-1" class="search-close-button" aria-label="Cancel Search">
+      <span class="icon-cross" aria-hidden="true" title="Cancel search"></span>
+    </button>
+    <label class="search-label">
+      <input name="q" type="text" id="search-list" class="search-input" placeholder="Search..." aria-label="Input your search terms" autocomplete="off" />
+    </label>
+  </form>
+
+  <div class="autocomplete">
+    <div class="autocomplete-results">
+    </div>
+  </div>
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectDetails">
+      <a href="api-reference.html" class="sidebar-projectName">
+wumpex
+      </a>
+      <strong class="sidebar-projectVersion">
+        v0.1.0
+      </strong>
+    </div>
+
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+
+
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+      <h1>
+Wumpex.Resource.Activity <small class="app-vsn">(wumpex v0.1.0)</small>
+
+          <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/activity.ex#L1" title="View Source" class="view-source" rel="help">
+            <span class="icon-code" aria-hidden="true"></span>
+            <span class="sr-only">View Source</span>
+          </a>
+
+      </h1>
+
+
+        <section id="moduledoc">
+<p>Represents the activity of a presence update in Discord.</p><p>See the official <a href="https://discord.com/developers/docs/topics/gateway#activity-object">Discord documentation</a>.</p>
+        </section>
+
+
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+            Summary
+          </h1>
+
+  <div class="summary-types summary">
+    <h2>
+      <a href="#types">Types</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:activity_type/0">activity_type()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the type of activity.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#t:t/0">t()</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Represents the struct form of this module.</p></div>
+
+</div>
+
+  </div>
+
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#to_struct/1">to_struct(data)</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Maps the incoming data into struct form.</p></div>
+
+</div>
+
+  </div>
+
+        </section>
+
+
+        <section id="types" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#types">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Types
+          </h1>
+          <div class="types-list">
+<section class="detail" id="t:activity_type/0">
+
+  <div class="detail-header">
+    <a href="#t:activity_type/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">activity_type()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/activity.ex#L30" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>activity_type() :: 0 | 1 | 2 | 4</pre>
+
+      </div>
+
+<p>Represents the type of activity.</p><p>Can contain the following values:</p><table><thead><tr><th style="text-align: left;">ID</th><th style="text-align: left;">Name</th><th style="text-align: left;">Format</th><th style="text-align: left;">Example</th></tr></thead><tbody><tr><td style="text-align: left;">0</td><td style="text-align: left;">Game</td><td style="text-align: left;">Playing {name}</td><td style="text-align: left;">&quot;Playing Rocket League&quot;</td></tr><tr><td style="text-align: left;">1</td><td style="text-align: left;">Streaming</td><td style="text-align: left;">Streaming {details}</td><td style="text-align: left;">&quot;Streaming Rocket League&quot;</td></tr><tr><td style="text-align: left;">2</td><td style="text-align: left;">Listening</td><td style="text-align: left;">Listening to {name}</td><td style="text-align: left;">&quot;Listening to Spotify&quot;</td></tr><tr><td style="text-align: left;">4</td><td style="text-align: left;">Custom</td><td style="text-align: left;">{emoji} {name}</td><td style="text-align: left;">&quot;:smiley: I am cool&quot;</td></tr></tbody></table>
+  </section>
+</section>
+<section class="detail" id="t:t/0">
+
+  <div class="detail-header">
+    <a href="#t:t/0" class="detail-link" title="Link to this type">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature">t()</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/activity.ex#L51" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>t() :: %Wumpex.Resource.Activity{
+  application_id: <a href="Wumpex.Resource.html#t:snowflake/0">Wumpex.Resource.snowflake</a>(),
+  assets: <a href="Wumpex.Resource.Activity.Assets.html#t:t/0">Wumpex.Resource.Activity.Assets.t</a>(),
+  created_at: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(),
+  details: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  emoji: <a href="Wumpex.Resource.Activity.Emoji.html#t:t/0">Wumpex.Resource.Activity.Emoji.t</a>(),
+  flags: <a href="Wumpex.Resource.Activity.Flags.html#t:t/0">Wumpex.Resource.Activity.Flags.t</a>(),
+  instance: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(),
+  name: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  party: <a href="Wumpex.Resource.Activity.Party.html#t:t/0">Wumpex.Resource.Activity.Party.t</a>(),
+  secrets: <a href="Wumpex.Resource.Activity.Secrets.html#t:t/0">Wumpex.Resource.Activity.Secrets.t</a>(),
+  state: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  timestamps: <a href="Wumpex.Resource.Activity.Timestamps.html#t:t/0">Wumpex.Resource.Activity.Timestamps.t</a>(),
+  type: <a href="#t:activity_type/0">activity_type</a>(),
+  url: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()
+}</pre>
+
+      </div>
+
+<p>Represents the struct form of this module.</p><p>Contains the following fields:</p><ul><li><code class="inline">:name</code> - the activity's name</li><li><code class="inline">:type</code> - the <a href="#t:activity_type/0"><code class="inline">activity_type/0</code></a> activity type.</li><li><code class="inline">:url</code> - stream URL, is validated when <code class="inline">:type</code> is <code class="inline">1</code>.</li><li><code class="inline">:created_at</code> - unix timestamp of when the activity was added to the user's session.</li><li><code class="inline">:timestamps</code> - unix <code class="inline">t:TWumpex.Resource.Timestamps.t/0</code> for start and end of the game.</li><li><code class="inline">:application_id</code> - application id for the game.</li><li><code class="inline">:details</code> - what the player is currently doing.</li><li><code class="inline">:state</code> - the user's current party status.</li><li><code class="inline">:emoji</code> - the emoji used for a custom status.</li><li><code class="inline">:party</code> - information for the current party of the player.</li><li><code class="inline">:assets</code> - images for the presence and their hover texts.</li><li><code class="inline">:secrets</code> - secrets for Rich Presence joining and spectating.</li><li><code class="inline">:instance</code> - whether or not the activity is an instance game session.</li><li><code class="inline">:flags</code> - <a href="Wumpex.Resource.Activity.Flags.html#t:t/0"><code class="inline">Wumpex.Resource.Activity.Flags.t/0</code></a> describes what the payload includes.</li></ul>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <span class="icon-link" aria-hidden="true"></span>
+              <span class="sr-only">Link to this section</span>
+            </a>
+Functions
+          </h1>
+          <div class="functions-list">
+<section class="detail" id="to_struct/1">
+
+  <div class="detail-header">
+    <a href="#to_struct/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">to_struct(data)</h1>
+
+      <a href="https://github.com/dealloc/wumpex/blob/master/lib/wumpex/resource/activity.ex#L118" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <h2>Specs</h2>
+      <div class="specs">
+
+          <pre>to_struct(data :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="#t:t/0">t</a>()</pre>
+
+      </div>
+
+<p>Maps the incoming data into struct form.</p><h2 id="to_struct/1-example" class="section-heading">
+  <a href="#to_struct/1-example" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Example:
+</h2>
+<p>You can pass in invalid or missing data, it will ignore what doesn't match.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Resource.Activity</span><span class="o">.</span><span class="n">to_struct</span><span class="p" data-group-id="4155364263-1">(</span><span class="p" data-group-id="4155364263-2">%{</span><span class="p" data-group-id="4155364263-2">}</span><span class="p" data-group-id="4155364263-1">)</span><span class="w">
+</span><span class="p" data-group-id="4155364263-3">%</span><span class="nc" data-group-id="4155364263-3">Wumpex.Resource.Activity</span><span class="p" data-group-id="4155364263-3">{</span><span class="w">
+  </span><span class="ss">application_id</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">assets</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">created_at</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">details</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">emoji</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">flags</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">instance</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">party</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">secrets</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">state</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">timestamps</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w">
+  </span><span class="ss">url</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="w">
+</span><span class="p" data-group-id="4155364263-3">}</span></code></pre><p>If you pass in known properties, they'll be mapped.</p><pre><code class="nohighlight makeup elixir"><span class="gp unselectable">iex&gt; </span><span class="nc">Wumpex.Resource.Activity</span><span class="o">.</span><span class="n">to_struct</span><span class="p" data-group-id="2543734302-1">(</span><span class="p" data-group-id="2543734302-2">%{</span><span class="s">&quot;name&quot;</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="s">&quot;the name of the activity&quot;</span><span class="p" data-group-id="2543734302-2">}</span><span class="p" data-group-id="2543734302-1">)</span><span class="w">
+</span><span class="p" data-group-id="2543734302-3">%</span><span class="nc" data-group-id="2543734302-3">Wumpex.Resource.Activity</span><span class="p" data-group-id="2543734302-3">{</span><span class="w">
+  </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;the name of the activity&quot;</span><span class="w">
+</span><span class="p" data-group-id="2543734302-3">}</span></code></pre>
+  </section>
+</section>
+
+          </div>
+        </section>
+
+      <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener">ExDoc</a> (v0.23.0) for the
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank">Elixir programming language</a>.
+          </span>
+          <span class="line">
+            Designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" rel="noopener" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+          </span>
+        </p>
+        <p>
+
+            <a href="api-reference.html" title="API reference" class="line footer-button">API Reference</a>
+
+          <button class="line footer-button display-shortcuts-help">
+            Display keyboard shortcuts
+          </button>
+          <button class="line footer-button night-mode-toggle">
+            Toggle night mode
+          </button>
+          <button class="line footer-button display-quick-switch">
+            Go to a HexDocs package
+          </button>
+          <button class="line footer-button tooltips-toggle">
+            <span class="tooltips-option-disable">Disable tooltips</span>
+            <span class="tooltips-option-enable">Enable tooltips</span>
+          </button>
+        </p>
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+
+  </body>
+</html>
