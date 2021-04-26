@@ -43,6 +43,6 @@ jobs:
       with:
           target_branch: gh-pages
           build_dir: doc
-          fqdn: "wumpex.dealloc.dev"
+          fqdn: "wumpex.dealloc.be"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
